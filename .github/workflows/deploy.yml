@@ -28,6 +28,6 @@ jobs:
             - name: Deploy
               uses: peaceiris/actions-gh-pages@v3
               with:
-                  github_token: ${{ secrets.cyclone77.github.io }}
+                  github_token: ${{ secrets.cyclone77_io }}
                   publish_dir: ./public
                   publish_branch: gh-pages # deploying branch
