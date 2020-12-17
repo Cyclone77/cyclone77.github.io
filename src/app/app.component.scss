@@ -1,0 +1,50 @@
+// 导航开关条的宽度
+$navbar-width: 100px;
+
+// 导航菜单宽度
+$menu-width: 300px;
+
+.cy_lyt {
+    display: flex;
+    flex-direction: row;
+
+    .navbar {
+        width: $navbar-width;
+        min-width: $navbar-width;
+        height: 100%;
+        background-color: #212121;
+        z-index: 9;
+        text-align: center;
+
+        &.open {
+            width: $menu-width + $navbar-width;
+        }
+
+        .menu {
+            float: left;
+            height: 100%;
+            background-color: #000;
+
+            &.open {
+                width: $menu-width;
+            }
+        }
+
+        .switch_content {
+            float: left;
+            width: $navbar-width;
+            .switch {
+                font-size: 70px;
+                color: #fff;
+                height: $navbar-width;
+                width: $navbar-width;
+
+                cursor: pointer;
+            }
+        }
+    }
+
+    .container {
+        flex: 1;
+    }
+}

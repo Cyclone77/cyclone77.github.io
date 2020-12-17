@@ -1,0 +1,11 @@
+<section class="cy_lyt view">
+    <aside class="navbar" [class.open]="menu_switch">
+        <div class="menu" [class.open]="menu_switch"></div>
+        <div class="switch_content" (click)="menu_switch = !this.menu_switch">
+            <div class="switch">+</div>
+        </div>
+    </aside>
+    <article class="container">
+        <router-outlet></router-outlet>
+    </article>
+</section>
