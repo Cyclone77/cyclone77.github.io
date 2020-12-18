@@ -5,6 +5,14 @@
     padding: 0;
 }
 
+@font-face {
+    font-family: 'Fira Code';
+    src: url('assets/fonts/Fira_Code_v4/woff2/FiraCode-Light.woff2') format('woff2'),
+        url('assets/fonts/Fira_Code_v4/woff/FiraCode-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+}
+
 html {
     body {
         overflow: hidden;
