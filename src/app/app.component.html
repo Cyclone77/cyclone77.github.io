@@ -14,7 +14,7 @@
             <div class="switch" [class.close]="menu_switch">+</div>
         </div>
     </aside>
-    <article class="container">
+    <article class="container" (click)="menu_switch = false">
         <router-outlet></router-outlet>
     </article>
 </section>
