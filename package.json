@@ -5,6 +5,7 @@
         "ng": "ng",
         "start": "ng serve --port 4277",
         "build": "ng build",
+        "build:actions": "ng build --prod --extractCss=true --outputHashing=all",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"
