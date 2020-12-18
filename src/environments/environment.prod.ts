@@ -1,5 +1,7 @@
 export const environment = {
     production: true,
+    user: 'cyclone77',
+    repo: 'cyclone77.github.io',
     menus: [
         { title: 'HOME', router: '' },
         { title: 'BLOG', router: '' },

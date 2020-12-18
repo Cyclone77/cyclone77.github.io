@@ -4,6 +4,8 @@
 
 export const environment = {
     production: false,
+    user: 'cyclone77',
+    repo: 'cyclone77.github.io',
     menus: [
         { title: 'home', router: '' },
         { title: 'blog', router: 'blog' },
