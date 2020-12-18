@@ -1,6 +1,25 @@
-<section class="cy_lyt view">
-    <aside class="navbar" [class.open]="menu_switch">
-        <div class="menu" [class.open]="menu_switch"></div>
+<section class="cy_lyt" [class.open]="menu_switch">
+    <aside class="navbar">
+        <div class="menu">
+            <div class="menu_content">
+                <div class="menu_item">
+                    <a>HOME</a>
+                </div>
+                <div class="menu_item">
+                    <a>BLOG</a>
+                </div>
+                <div class="menu_item">
+                    <a>PROJECT SHOW</a>
+                </div>
+                <div class="menu_item">
+                    <a>ABOUT</a>
+                </div>
+                <div class="menu_item">
+                    <a>MESSAGE BOARD</a>
+                </div>
+            </div>
+            <div class="menu_footer"></div>
+        </div>
         <div class="switch_content" (click)="menu_switch = !this.menu_switch">
             <div class="switch">+</div>
         </div>

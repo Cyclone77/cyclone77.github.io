@@ -1,0 +1,22 @@
+name: ng Theme Action
+on:
+    push:
+        branches:
+            - ng_theme
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Install
+              run: |
+                  npm install 
+                  npm run build:actions
+            - name: Build and Deploy
+              uses: JamesIves/github-pages-deploy-action@releases/v3
+              with:
+                  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+                  BRANCH: gh-pages
+                  FOLDER: dist

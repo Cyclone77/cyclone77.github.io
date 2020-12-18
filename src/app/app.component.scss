@@ -5,8 +5,16 @@ $navbar-width: 100px;
 $menu-width: 300px;
 
 .cy_lyt {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: row;
+    transform: translateZ(0);
+    transition: transform 287ms cubic-bezier(0.215, 0.61, 0.355, 1);
+
+    &.open {
+        transform: translateX($menu-width);
+    }
 
     .navbar {
         width: $navbar-width;
@@ -15,23 +23,43 @@ $menu-width: 300px;
         background-color: #212121;
         z-index: 9;
         text-align: center;
+        position: relative;
 
-        &.open {
-            width: $menu-width + $navbar-width;
-        }
+        // &.open {
+        //     width: $menu-width + $navbar-width;
+        // }
 
         .menu {
-            float: left;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: $navbar-width;
+            width: $menu-width;
             background-color: #000;
 
-            &.open {
-                width: $menu-width;
+            display: flex;
+            /*实现垂直居中*/
+            align-items: center;
+            /*实现水平居中*/
+            justify-content: center;
+
+            .menu_content {
+                margin-right: 20px;
+                margin-bottom: 50px;
+
+                .menu_item {
+                    font-family: futura-pt, sans-serif;
+                    font-weight: 300;
+                    font-size: 20px;
+                    color: #a9a9a9;
+                    text-transform: uppercase;
+                    text-align: left;
+                    line-height: 1.5;
+                }
             }
         }
 
         .switch_content {
-            float: left;
             width: $navbar-width;
             .switch {
                 font-size: 70px;
