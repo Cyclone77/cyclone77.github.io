@@ -3,7 +3,14 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+    production: false,
+    menus: [
+        { title: 'home', router: '' },
+        { title: 'blog', router: 'blog' },
+        { title: 'experimental project', router: 'experimental_project' },
+        { title: 'about', router: 'about' },
+        { title: 'message board', router: 'message_board' },
+    ],
 };
 
 /*

@@ -1,5 +1,5 @@
 // 导航开关条的宽度
-$navbar-width: 100px;
+$navbar-width: 80px;
 
 // 导航菜单宽度
 $menu-width: 300px;
@@ -48,13 +48,22 @@ $menu-width: 300px;
                 margin-bottom: 50px;
 
                 .menu_item {
-                    font-family: futura-pt, sans-serif;
-                    font-weight: 300;
-                    font-size: 20px;
-                    color: #a9a9a9;
-                    text-transform: uppercase;
-                    text-align: left;
                     line-height: 1.5;
+                    text-align: left;
+
+                    a {
+                        font-family: futura-pt, sans-serif;
+                        font-weight: 300;
+                        font-size: 20px;
+                        color: #a9a9a9;
+                        text-transform: uppercase;
+                        outline: none;
+                        text-decoration: none;
+
+                        &:hover {
+                            color: #fff;
+                        }
+                    }
                 }
             }
         }
@@ -62,12 +71,25 @@ $menu-width: 300px;
         .switch_content {
             width: $navbar-width;
             .switch {
-                font-size: 70px;
+                font-size: 60px;
                 color: #fff;
                 height: $navbar-width;
                 width: $navbar-width;
 
+                display: flex;
+                /*实现垂直居中*/
+                align-items: center;
+                /*实现水平居中*/
+                justify-content: center;
+
                 cursor: pointer;
+                transition: transform 800ms;
+                user-select: none;
+
+                &.close {
+                    transform: rotate(45deg);
+                    margin-left: 5px;
+                }
             }
         }
     }

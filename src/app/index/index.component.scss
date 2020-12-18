@@ -2,7 +2,7 @@
     video {
         min-height: 100%;
         min-width: 100%;
-        outline: none;
+        user-select: none;
         z-index: -9;
     }
 }
