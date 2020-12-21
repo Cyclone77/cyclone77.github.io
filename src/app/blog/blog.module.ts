@@ -18,6 +18,6 @@ const routes: Routes = [
 
 @NgModule({
     declarations: [BlogComponent, ArticleComponent],
-    imports: [HttpClientModule, CommonModule, RouterModule.forChild(routes)],
+    imports: [CommonModule, RouterModule.forChild(routes)],
 })
 export class BlogModule {}
