@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import 'highlight.js/styles/github.css';
+@import 'assets/css/github-markdown.css';
+
 @font-face {
     font-family: 'Fira Code';
     src: url('assets/fonts/Fira_Code_v4/woff2/FiraCode-Light.woff2') format('woff2'),
@@ -11,7 +14,9 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: 'Fira Code';
+}
+pre code {
+    font-family: 'Fira Code' !important;
 }
 
 html {
