@@ -13,7 +13,6 @@
       },
       "status": "已发布",
       "categories": [
-        "前端开发",
         "CSS"
       ],
       "tags": [],
@@ -21,11 +20,11 @@
       "coverImage": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop",
       "readTime": "12 分钟阅读",
       "createdAt": "2026-01-06T06:19:24Z",
-      "updatedAt": "2026-01-06T07:26:47Z",
+      "updatedAt": "2026-01-06T07:28:42Z",
       "commentsCount": 0,
       "url": "https://github.com/Cyclone77/cyclone77.github.io/issues/1"
     }
   ],
   "total": 1,
-  "lastUpdate": "2026-01-06T07:26:56.857Z"
+  "lastUpdate": "2026-01-06T07:28:49.716Z"
 }
