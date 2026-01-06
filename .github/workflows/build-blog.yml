@@ -5,9 +5,7 @@ on:
         branches:
             - master
     issues:
-        types: [opened, edited, labeled, unlabeled]
-    issue_comment:
-        types: [created, edited, deleted]
+        types: [edited, labeled, unlabeled]
     workflow_dispatch:
         inputs:
             full_rebuild:
@@ -41,8 +39,35 @@ jobs:
             - name: Install dependencies
               run: npm ci
 
+            - name: Check if build is needed
+              id: check_build
+              if: github.event_name == 'issues'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const issueNumber = context.payload.issue?.number;
+                      if (!issueNumber) {
+                        core.setOutput('should_build', 'true');
+                        return;
+                      }
+
+                      const issue = await github.rest.issues.get({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: issueNumber
+                      });
+
+                      const labels = issue.data.labels.map(l => l.name);
+                      const hasPublishedLabel = labels.some(l => l === '状态:已发布');
+                      const hadPublishedLabel = context.payload.changes?.labels?.from?.some(l => l.name === '状态:已发布');
+
+                      // 只有当前是已发布，或者之前是已发布（需要删除）时才构建
+                      const shouldBuild = hasPublishedLabel || hadPublishedLabel;
+                      core.setOutput('should_build', shouldBuild ? 'true' : 'false');
+                      console.log(`Issue #${issueNumber} 构建检查: ${shouldBuild ? '需要构建' : '跳过构建（非已发布状态）'}`);
+
             - name: Restore articles cache
-              if: github.event_name != 'schedule' && github.event.inputs.full_rebuild != 'true'
+              if: (github.event_name != 'schedule' && github.event.inputs.full_rebuild != 'true') && (github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true')
               uses: actions/cache@v4
               with:
                   path: public/data
@@ -51,6 +76,7 @@ jobs:
                       articles-
 
             - name: Build articles data
+              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
               uses: actions/github-script@v7
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -141,6 +167,7 @@ jobs:
                       }
 
                       let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
+                      let shouldUpdateStats = isFullRebuild; // 标记是否需要更新标签和分类统计
 
                       if (isFullRebuild) {
                         console.log('执行全量构建...');
@@ -170,6 +197,10 @@ jobs:
                           articlesData = JSON.parse(fs.readFileSync(articlesFile, 'utf8'));
                         }
                         
+                        // 检测是否是标签变更（labeled/unlabeled 事件）
+                        const isLabelChange = context.eventName === 'issues' && 
+                          (context.payload.action === 'labeled' || context.payload.action === 'unlabeled');
+                        
                         // 获取触发事件的 Issue
                         const issueNumber = context.payload.issue?.number;
                         if (issueNumber) {
@@ -195,12 +226,20 @@ jobs:
                             } else {
                               articlesData.articles.push(article);
                               console.log(`新增文章 #${issueNumber}: ${article.title}`);
+                              shouldUpdateStats = true; // 新增文章需要更新统计
+                            }
+                            
+                            // 如果是标签变更，需要更新统计
+                            if (isLabelChange) {
+                              shouldUpdateStats = true;
+                              console.log('检测到标签变更，将更新标签和分类统计');
                             }
                           } else {
                             // 删除文章
                             if (existingIndex >= 0) {
                               articlesData.articles.splice(existingIndex, 1);
                               console.log(`删除文章 #${issueNumber}`);
+                              shouldUpdateStats = true; // 删除文章需要更新统计
                             }
                           }
                         }
@@ -221,52 +260,64 @@ jobs:
                       fs.writeFileSync(articlesFile, JSON.stringify(articlesData, null, 2));
                       console.log(`已保存 ${articlesData.total} 篇文章到 articles.json`);
 
-                      // 生成分类统计
-                      const categoriesMap = {};
-                      articlesData.articles.forEach(article => {
-                        article.categories.forEach(cat => {
-                          if (!categoriesMap[cat]) {
-                            categoriesMap[cat] = { name: cat, slug: cat, count: 0, color: 'text-primary' };
-                          }
-                          categoriesMap[cat].count++;
+                      // 只在需要时更新分类和标签统计
+                      if (shouldUpdateStats) {
+                        console.log('更新标签和分类统计...');
+                        
+                        // 生成分类统计
+                        const categoriesMap = {};
+                        articlesData.articles.forEach(article => {
+                          article.categories.forEach(cat => {
+                            if (!categoriesMap[cat]) {
+                              categoriesMap[cat] = { name: cat, slug: cat, count: 0, color: 'text-primary' };
+                            }
+                            categoriesMap[cat].count++;
+                          });
                         });
-                      });
 
-                      const categoriesData = {
-                        categories: Object.values(categoriesMap)
-                      };
-                      fs.writeFileSync(path.join(dataDir, 'categories.json'), JSON.stringify(categoriesData, null, 2));
-                      console.log(`已生成分类统计: ${categoriesData.categories.length} 个分类`);
+                        const categoriesData = {
+                          categories: Object.values(categoriesMap)
+                        };
+                        fs.writeFileSync(path.join(dataDir, 'categories.json'), JSON.stringify(categoriesData, null, 2));
+                        console.log(`已生成分类统计: ${categoriesData.categories.length} 个分类`);
 
-                      // 生成标签统计
-                      const tagsMap = {};
-                      articlesData.articles.forEach(article => {
-                        article.tags.forEach(tag => {
-                          tagsMap[tag] = (tagsMap[tag] || 0) + 1;
+                        // 生成标签统计
+                        const tagsMap = {};
+                        articlesData.articles.forEach(article => {
+                          article.tags.forEach(tag => {
+                            tagsMap[tag] = (tagsMap[tag] || 0) + 1;
+                          });
                         });
-                      });
 
-                      const tagsData = {
-                        tags: Object.entries(tagsMap).map(([name, count]) => ({ name, count }))
-                          .sort((a, b) => b.count - a.count)
-                      };
-                      fs.writeFileSync(path.join(dataDir, 'tags.json'), JSON.stringify(tagsData, null, 2));
-                      console.log(`已生成标签统计: ${tagsData.tags.length} 个标签`);
+                        const tagsData = {
+                          tags: Object.entries(tagsMap).map(([name, count]) => ({ name, count }))
+                            .sort((a, b) => b.count - a.count)
+                        };
+                        fs.writeFileSync(path.join(dataDir, 'tags.json'), JSON.stringify(tagsData, null, 2));
+                        console.log(`已生成标签统计: ${tagsData.tags.length} 个标签`);
+                      } else {
+                        console.log('跳过标签和分类统计更新（仅文章内容变更）');
+                      }
 
             - name: Build project
+              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
               run: npm run build
 
             - name: Add .nojekyll file
+              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
               run: touch ./dist/.nojekyll
 
             - name: Setup Pages
+              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
               uses: actions/configure-pages@v5
 
             - name: Upload artifact
+              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
               uses: actions/upload-pages-artifact@v3
               with:
                   path: ./dist
 
             - name: Deploy to GitHub Pages
+              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
               id: deployment
               uses: actions/deploy-pages@v4
