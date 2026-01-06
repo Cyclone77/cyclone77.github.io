@@ -1,6 +1,9 @@
 name: Build and Deploy Blog
 
 on:
+    push:
+        branches:
+            - main
     issues:
         types: [opened, edited, labeled, unlabeled]
     issue_comment:
