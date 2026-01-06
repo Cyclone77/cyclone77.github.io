@@ -3,7 +3,7 @@ name: Build and Deploy Blog
 on:
     push:
         branches:
-            - main
+            - master
     issues:
         types: [opened, edited, labeled, unlabeled]
     issue_comment:
