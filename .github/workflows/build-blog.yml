@@ -1,9 +1,6 @@
 name: Build and Deploy Blog
 
 on:
-    push:
-        branches:
-            - master
     issues:
         types: [edited, labeled, unlabeled]
     workflow_dispatch:
