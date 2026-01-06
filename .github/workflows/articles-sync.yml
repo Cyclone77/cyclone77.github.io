@@ -11,6 +11,11 @@ on:
                 type: boolean
                 default: false
 
+# 防止并发执行，避免 git push 冲突
+concurrency:
+    group: articles-sync
+    cancel-in-progress: false # 不取消正在运行的任务，而是排队等待
+
 jobs:
     sync-articles:
         runs-on: ubuntu-latest
