@@ -1,6 +1,27 @@
 {
   "tags": [
     {
+      "name": "CSS",
+      "count": 0,
+      "color": "#1A7F37",
+      "description": "",
+      "type": "category"
+    },
+    {
+      "name": "HTML",
+      "count": 0,
+      "color": "#1A7F37",
+      "description": "",
+      "type": "category"
+    },
+    {
+      "name": "Javascript",
+      "count": 0,
+      "color": "#1A7F37",
+      "description": "",
+      "type": "category"
+    },
+    {
       "name": "人工智能",
       "count": 0,
       "color": "#1A7F37",
@@ -38,23 +59,23 @@
     {
       "name": "热门",
       "count": 0,
-      "color": "#8250DF",
+      "color": "#fef2c0",
       "description": "热门文章显示",
-      "type": "feature"
+      "type": "display"
     },
     {
       "name": "精选",
       "count": 0,
-      "color": "#8250DF",
+      "color": "#fef2c0",
       "description": "精选文章",
-      "type": "feature"
+      "type": "display"
     },
     {
       "name": "置顶",
       "count": 0,
-      "color": "#8250DF",
+      "color": "#fef2c0",
       "description": "首页置顶显示",
-      "type": "feature"
+      "type": "display"
     }
   ]
 }
