@@ -4,31 +4,57 @@
       "name": "人工智能",
       "count": 0,
       "color": "#1A7F37",
-      "description": "AI/ML相关"
+      "description": "AI/ML相关",
+      "type": "category"
     },
     {
       "name": "前端开发",
       "count": 0,
       "color": "#1A7F37",
-      "description": "前端技术相关"
+      "description": "前端技术相关",
+      "type": "category"
     },
     {
       "name": "后端开发",
       "count": 0,
       "color": "#1A7F37",
-      "description": "后端技术相关"
+      "description": "后端技术相关",
+      "type": "category"
     },
     {
       "name": "系统设计",
       "count": 0,
       "color": "#1A7F37",
-      "description": "架构设计相关"
+      "description": "架构设计相关",
+      "type": "category"
     },
     {
       "name": "经验分享",
       "count": 0,
       "color": "#1A7F37",
-      "description": "经验总结类"
+      "description": "经验总结类",
+      "type": "category"
+    },
+    {
+      "name": "热门",
+      "count": 0,
+      "color": "#8250DF",
+      "description": "热门文章显示",
+      "type": "feature"
+    },
+    {
+      "name": "精选",
+      "count": 0,
+      "color": "#8250DF",
+      "description": "精选文章",
+      "type": "feature"
+    },
+    {
+      "name": "置顶",
+      "count": 0,
+      "color": "#8250DF",
+      "description": "首页置顶显示",
+      "type": "feature"
     }
   ]
 }
