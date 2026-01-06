@@ -8,13 +8,6 @@
       "type": "category"
     },
     {
-      "name": "前端开发",
-      "count": 1,
-      "color": "#1A7F37",
-      "description": "前端技术相关",
-      "type": "category"
-    },
-    {
       "name": "HTML",
       "count": 0,
       "color": "#1A7F37",
@@ -33,6 +26,13 @@
       "count": 0,
       "color": "#1A7F37",
       "description": "AI/ML相关",
+      "type": "category"
+    },
+    {
+      "name": "前端开发",
+      "count": 0,
+      "color": "#1A7F37",
+      "description": "前端技术相关",
       "type": "category"
     },
     {
