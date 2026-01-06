@@ -10,9 +10,6 @@ on:
                 required: false
                 type: boolean
                 default: true
-    schedule:
-        # 每天凌晨 3 点同步标签统计
-        - cron: '0 3 * * *'
 
 jobs:
     sync-labels:
@@ -84,7 +81,11 @@ jobs:
                       allLabels.forEach(label => {
                         if (label.name.startsWith('分类:')) {
                           const tagName = label.name.replace('分类:', '');
-                          tagsMap[tagName] = 0;
+                          tagsMap[tagName] = {
+                            count: 0,
+                            color: `#${label.color}`,
+                            description: label.description || ''
+                          };
                         }
                       });
 
@@ -92,15 +93,19 @@ jobs:
                       issues.forEach(issue => {
                         const parsed = parseLabels(issue.labels);
                         parsed.categories.forEach(cat => {
-                          if (tagsMap.hasOwnProperty(cat)) {
-                            tagsMap[cat]++;
+                          if (tagsMap[cat]) {
+                            tagsMap[cat].count++;
                           }
                         });
                       });
 
                       const tagsData = {
-                        tags: Object.entries(tagsMap).map(([name, count]) => ({ name, count }))
-                          .sort((a, b) => b.count - a.count)
+                        tags: Object.entries(tagsMap).map(([name, data]) => ({
+                          name,
+                          count: data.count,
+                          color: data.color,
+                          description: data.description
+                        })).sort((a, b) => b.count - a.count)
                       };
                       fs.writeFileSync(path.join(dataDir, 'tags.json'), JSON.stringify(tagsData, null, 2));
                       console.log(`✅ 已生成标签统计: ${tagsData.tags.length} 个标签`);
