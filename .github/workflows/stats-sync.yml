@@ -43,7 +43,6 @@ jobs:
                       const path = require('path');
 
                       const dataDir = path.join(process.cwd(), 'public', 'data');
-                      const articlesFile = path.join(dataDir, 'articles.json');
 
                       // 辅助函数：解析标签
                       function parseLabels(labels) {
@@ -56,21 +55,24 @@ jobs:
                         };
                       }
 
-                      // 读取现有文章数据
-                      let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
+                      // 直接从 GitHub Issues 获取所有已发布的文章
+                      console.log('正在从 GitHub Issues 获取所有已发布的文章...');
 
-                      if (fs.existsSync(articlesFile)) {
-                        articlesData = JSON.parse(fs.readFileSync(articlesFile, 'utf8'));
-                        console.log(`读取到 ${articlesData.articles.length} 篇文章`);
-                      } else {
-                        console.log('文章数据文件不存在，请先运行 Build and Deploy Blog 工作流');
-                        return;
-                      }
+                      const issues = await github.paginate(github.rest.issues.listForRepo, {
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        state: 'open',
+                        labels: '状态:已发布',
+                        per_page: 100
+                      });
+
+                      console.log(`找到 ${issues.length} 篇已发布文章`);
 
                       // 生成分类统计
                       const categoriesMap = {};
-                      articlesData.articles.forEach(article => {
-                        article.categories.forEach(cat => {
+                      issues.forEach(issue => {
+                        const parsed = parseLabels(issue.labels);
+                        parsed.categories.forEach(cat => {
                           if (!categoriesMap[cat]) {
                             categoriesMap[cat] = { name: cat, slug: cat, count: 0, color: 'text-primary' };
                           }
@@ -86,8 +88,9 @@ jobs:
 
                       // 生成标签统计
                       const tagsMap = {};
-                      articlesData.articles.forEach(article => {
-                        article.tags.forEach(tag => {
+                      issues.forEach(issue => {
+                        const parsed = parseLabels(issue.labels);
+                        parsed.tags.forEach(tag => {
                           tagsMap[tag] = (tagsMap[tag] || 0) + 1;
                         });
                       });
