@@ -2,7 +2,7 @@ name: Blog Deploy
 
 on:
     issues:
-        types: [edited, labeled, unlabeled]
+        types: [edited] # 只监听内容编辑，标签变更由 Articles Sync 和 Stats Sync 处理
     workflow_dispatch:
 
 jobs:
