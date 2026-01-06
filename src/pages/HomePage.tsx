@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { mockArticles, featuredArticle } from '../data/mockData';
+import { fetchTags } from '../services/api';
 
 export default function HomePage() {
-    const [selectedCategory, setSelectedCategory] = useState('全部');
-    const categories = ['全部', '前端开发', '后端开发', 'DevOps', 'AI/ML'];
+    const [tags, setTags] = useState<
+        Array<{ name: string; count: number; color: string; description: string; type: 'category' | 'feature' }>
+    >([]);
+
+    useEffect(() => {
+        fetchTags().then(data => {
+            setTags(data.tags);
+        });
+    }, []);
 
     return (
         <div className="w-full max-w-7xl px-4 sm:px-10 py-8 flex flex-col gap-10">
@@ -55,26 +63,10 @@ export default function HomePage() {
 
             <div className="flex flex-col lg:flex-row gap-10">
                 <div className="flex-1 flex flex-col">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-gray-200 dark:border-border-dark mb-6 gap-4">
+                    <div className="pb-6 border-b border-gray-200 dark:border-border-dark mb-6">
                         <h1 className="font-display text-text-primary-light dark:text-white text-2xl md:text-3xl font-bold leading-tight">
                             最新文章
                         </h1>
-
-                        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
-                            {categories.map(category => (
-                                <button
-                                    key={category}
-                                    onClick={() => setSelectedCategory(category)}
-                                    className={`whitespace-nowrap flex h-8 items-center px-4 rounded-full text-sm font-medium transition-colors ${
-                                        selectedCategory === category
-                                            ? 'bg-primary text-white'
-                                            : 'bg-gray-100 dark:bg-border-dark hover:bg-gray-200 dark:hover:bg-[#323b46] text-text-secondary-light dark:text-text-secondary-dark'
-                                    }`}
-                                >
-                                    {category}
-                                </button>
-                            ))}
-                        </div>
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -166,14 +158,26 @@ export default function HomePage() {
                         </h3>
 
                         <div className="flex flex-wrap gap-2">
-                            {['ReactJS', 'Python', '云原生', '安全', 'TypeScript', 'GraphQL'].map(tag => (
-                                <span
-                                    key={tag}
-                                    className="px-3 py-1.5 rounded-lg bg-background-light dark:bg-[#111418] border border-gray-200 dark:border-[#323b46] text-text-secondary-light dark:text-text-secondary-dark text-xs font-medium hover:text-primary dark:hover:text-primary hover:border-primary dark:hover:border-primary cursor-pointer transition-colors"
-                                >
-                                    #{tag}
-                                </span>
-                            ))}
+                            {tags.length > 0 ? (
+                                tags.map(tag => (
+                                    <button
+                                        key={tag.name}
+                                        title={tag.description}
+                                        className="group relative px-3 py-1.5 rounded-lg bg-background-light dark:bg-[#111418] border border-gray-200 dark:border-[#323b46] text-text-secondary-light dark:text-text-secondary-dark text-xs font-medium hover:border-primary dark:hover:border-primary cursor-pointer transition-all"
+                                    >
+                                        <span className="group-hover:text-primary transition-colors">#{tag.name}</span>
+                                        {tag.count > 0 && (
+                                            <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                                                {tag.count}
+                                            </span>
+                                        )}
+                                    </button>
+                                ))
+                            ) : (
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm">
+                                    暂无标签
+                                </p>
+                            )}
                         </div>
                     </div>
 

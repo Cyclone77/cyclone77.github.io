@@ -21,6 +21,9 @@ export interface TagsResponse {
     tags: Array<{
         name: string;
         count: number;
+        color: string;
+        description: string;
+        type: 'category' | 'feature';
     }>;
 }
 
