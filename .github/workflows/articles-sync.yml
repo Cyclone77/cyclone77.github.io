@@ -45,12 +45,14 @@ jobs:
 
                       const labels = issue.data.labels.map(l => l.name);
                       const hasPublishedLabel = labels.some(l => l === '状态:已发布');
-                      const hadPublishedLabel = context.payload.changes?.labels?.from?.some(l => l.name === '状态:已发布');
 
-                      // 只有当前是已发布，或者之前是已发布（需要删除）时才同步
-                      const shouldSync = hasPublishedLabel || hadPublishedLabel;
+                      // 如果是标签变更，需要同步（无论当前状态）
+                      // 如果是内容编辑，只有已发布状态才同步
+                      const isLabelChange = context.payload.action === 'labeled' || context.payload.action === 'unlabeled';
+                      const shouldSync = isLabelChange || hasPublishedLabel;
+
                       core.setOutput('should_sync', shouldSync ? 'true' : 'false');
-                      console.log(`Issue #${issueNumber} 同步检查: ${shouldSync ? '需要同步' : '跳过同步（非已发布状态）'}`);
+                      console.log(`Issue #${issueNumber} 同步检查: ${shouldSync ? '需要同步' : '跳过同步'} (action: ${context.payload.action}, 已发布: ${hasPublishedLabel})`);
 
             - name: Sync articles
               if: github.event_name != 'issues' || steps.check_sync.outputs.should_sync == 'true'
