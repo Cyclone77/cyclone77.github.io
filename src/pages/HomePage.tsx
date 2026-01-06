@@ -4,13 +4,17 @@ import { mockArticles, featuredArticle } from '../data/mockData';
 import { fetchTags } from '../services/api';
 
 export default function HomePage() {
+    const [selectedCategory, setSelectedCategory] = useState('全部');
+    const filterCategories = ['全部', '热门', '精选'];
     const [tags, setTags] = useState<
         Array<{ name: string; count: number; color: string; description: string; type: 'category' | 'feature' }>
     >([]);
 
     useEffect(() => {
         fetchTags().then(data => {
-            setTags(data.tags);
+            // 只保留分类标签
+            const categoryTags = data.tags.filter(tag => tag.type === 'category');
+            setTags(categoryTags);
         });
     }, []);
 
@@ -63,10 +67,26 @@ export default function HomePage() {
 
             <div className="flex flex-col lg:flex-row gap-10">
                 <div className="flex-1 flex flex-col">
-                    <div className="pb-6 border-b border-gray-200 dark:border-border-dark mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-gray-200 dark:border-border-dark mb-6 gap-4">
                         <h1 className="font-display text-text-primary-light dark:text-white text-2xl md:text-3xl font-bold leading-tight">
                             最新文章
                         </h1>
+
+                        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                            {filterCategories.map(category => (
+                                <button
+                                    key={category}
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`whitespace-nowrap flex h-8 items-center px-4 rounded-full text-sm font-medium transition-colors ${
+                                        selectedCategory === category
+                                            ? 'bg-primary text-white'
+                                            : 'bg-gray-100 dark:bg-border-dark hover:bg-gray-200 dark:hover:bg-[#323b46] text-text-secondary-light dark:text-text-secondary-dark'
+                                    }`}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-4">
