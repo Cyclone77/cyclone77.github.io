@@ -5,6 +5,9 @@ export default function ArticleDetailPage() {
     const { id } = useParams();
     const [comment, setComment] = useState('');
 
+    // TODO: 使用 id 从 API 获取文章数据
+    console.log('Article ID:', id);
+
     return (
         <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-10 py-8 lg:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
