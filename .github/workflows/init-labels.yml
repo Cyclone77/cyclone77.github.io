@@ -1,0 +1,76 @@
+name: Initialize Labels
+
+on:
+    workflow_dispatch: # 手动触发
+
+jobs:
+    init-labels:
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+
+        steps:
+            - name: Create or Update Labels
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const labels = [
+                        // 状态标签（蓝色 #0969DA）
+                        { name: '状态:草稿', color: '0969DA', description: '默认状态，博客不显示' },
+                        { name: '状态:已发布', color: '0969DA', description: '正式发布，博客可见' },
+                        { name: '状态:已归档', color: '0969DA', description: '归档页可见，首页不显示' },
+                        { name: '状态:已作废', color: '0969DA', description: '完全不显示' },
+                        
+                        // 分类标签（绿色 #1A7F37）
+                        { name: '分类:前端开发', color: '1A7F37', description: '前端技术相关' },
+                        { name: '分类:后端开发', color: '1A7F37', description: '后端技术相关' },
+                        { name: '分类:DevOps', color: '1A7F37', description: '运维部署相关' },
+                        { name: '分类:人工智能', color: '1A7F37', description: 'AI/ML相关' },
+                        { name: '分类:系统设计', color: '1A7F37', description: '架构设计相关' },
+                        { name: '分类:教程', color: '1A7F37', description: '教程类文章' },
+                        { name: '分类:经验分享', color: '1A7F37', description: '经验总结类' },
+                        
+                        // 功能标签（紫色 #8250DF）
+                        { name: '功能:置顶', color: '8250DF', description: '首页置顶显示' },
+                        { name: '功能:精选', color: '8250DF', description: 'Hero区域展示' },
+                        { name: '功能:热门', color: '8250DF', description: '热门推荐' },
+                      ];
+
+                      for (const label of labels) {
+                        try {
+                          // 尝试获取标签
+                          await github.rest.issues.getLabel({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            name: label.name
+                          });
+                          
+                          // 如果标签存在，更新它
+                          await github.rest.issues.updateLabel({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            name: label.name,
+                            color: label.color,
+                            description: label.description
+                          });
+                          
+                          console.log(`✅ 更新标签: ${label.name}`);
+                        } catch (error) {
+                          if (error.status === 404) {
+                            // 标签不存在，创建它
+                            await github.rest.issues.createLabel({
+                              owner: context.repo.owner,
+                              repo: context.repo.repo,
+                              name: label.name,
+                              color: label.color,
+                              description: label.description
+                            });
+                            
+                            console.log(`✨ 创建标签: ${label.name}`);
+                          } else {
+                            console.error(`❌ 处理标签 ${label.name} 时出错:`, error.message);
+                          }
+                        }
+                      }
+
+                      console.log('\n🎉 标签初始化完成！');

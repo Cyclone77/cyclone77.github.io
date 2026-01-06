@@ -6,7 +6,7 @@ export default function ArticleDetailPage() {
     const [comment, setComment] = useState('');
 
     return (
-        <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-10 py-8 lg:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <article className="lg:col-span-8 flex flex-col gap-8">
                     <nav className="flex flex-wrap gap-2 text-sm">
