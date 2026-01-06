@@ -1,4 +1,4 @@
-name: Sync Labels and Categories
+name: Stats Sync
 
 on:
     issues:

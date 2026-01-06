@@ -1,4 +1,4 @@
-name: Auto Label
+name: Issue Status Guard
 
 on:
     issues:
