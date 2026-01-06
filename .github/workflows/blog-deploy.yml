@@ -164,7 +164,6 @@ jobs:
                       }
 
                       let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
-                      let shouldUpdateStats = isFullRebuild; // 标记是否需要更新标签和分类统计
 
                       if (isFullRebuild) {
                         console.log('执行全量构建...');
@@ -194,10 +193,6 @@ jobs:
                           articlesData = JSON.parse(fs.readFileSync(articlesFile, 'utf8'));
                         }
                         
-                        // 检测是否是标签变更（labeled/unlabeled 事件）
-                        const isLabelChange = context.eventName === 'issues' && 
-                          (context.payload.action === 'labeled' || context.payload.action === 'unlabeled');
-                        
                         // 获取触发事件的 Issue
                         const issueNumber = context.payload.issue?.number;
                         if (issueNumber) {
@@ -223,20 +218,12 @@ jobs:
                             } else {
                               articlesData.articles.push(article);
                               console.log(`新增文章 #${issueNumber}: ${article.title}`);
-                              shouldUpdateStats = true; // 新增文章需要更新统计
-                            }
-                            
-                            // 如果是标签变更，需要更新统计
-                            if (isLabelChange) {
-                              shouldUpdateStats = true;
-                              console.log('检测到标签变更，将更新标签和分类统计');
                             }
                           } else {
                             // 删除文章
                             if (existingIndex >= 0) {
                               articlesData.articles.splice(existingIndex, 1);
                               console.log(`删除文章 #${issueNumber}`);
-                              shouldUpdateStats = true; // 删除文章需要更新统计
                             }
                           }
                         }
@@ -256,45 +243,7 @@ jobs:
                       // 保存文章数据
                       fs.writeFileSync(articlesFile, JSON.stringify(articlesData, null, 2));
                       console.log(`已保存 ${articlesData.total} 篇文章到 articles.json`);
-
-                      // 只在需要时更新分类和标签统计
-                      if (shouldUpdateStats) {
-                        console.log('更新标签和分类统计...');
-                        
-                        // 生成分类统计
-                        const categoriesMap = {};
-                        articlesData.articles.forEach(article => {
-                          article.categories.forEach(cat => {
-                            if (!categoriesMap[cat]) {
-                              categoriesMap[cat] = { name: cat, slug: cat, count: 0, color: 'text-primary' };
-                            }
-                            categoriesMap[cat].count++;
-                          });
-                        });
-
-                        const categoriesData = {
-                          categories: Object.values(categoriesMap)
-                        };
-                        fs.writeFileSync(path.join(dataDir, 'categories.json'), JSON.stringify(categoriesData, null, 2));
-                        console.log(`已生成分类统计: ${categoriesData.categories.length} 个分类`);
-
-                        // 生成标签统计
-                        const tagsMap = {};
-                        articlesData.articles.forEach(article => {
-                          article.tags.forEach(tag => {
-                            tagsMap[tag] = (tagsMap[tag] || 0) + 1;
-                          });
-                        });
-
-                        const tagsData = {
-                          tags: Object.entries(tagsMap).map(([name, count]) => ({ name, count }))
-                            .sort((a, b) => b.count - a.count)
-                        };
-                        fs.writeFileSync(path.join(dataDir, 'tags.json'), JSON.stringify(tagsData, null, 2));
-                        console.log(`已生成标签统计: ${tagsData.tags.length} 个标签`);
-                      } else {
-                        console.log('跳过标签和分类统计更新（仅文章内容变更）');
-                      }
+                      console.log('⚠️  标签和分类统计已移至 Sync Labels and Categories 工作流');
 
             - name: Build project
               if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
