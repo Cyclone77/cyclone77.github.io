@@ -7,7 +7,7 @@ export default function HomePage() {
     const [selectedCategory, setSelectedCategory] = useState('全部');
     const filterCategories = ['全部', '热门', '精选'];
     const [tags, setTags] = useState<
-        Array<{ name: string; count: number; color: string; description: string; type: 'category' | 'feature' }>
+        Array<{ name: string; count: number; color: string; description: string; type: 'category' | 'display' }>
     >([]);
 
     useEffect(() => {

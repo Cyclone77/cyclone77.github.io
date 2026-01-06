@@ -23,7 +23,7 @@ export interface TagsResponse {
         count: number;
         color: string;
         description: string;
-        type: 'category' | 'feature';
+        type: 'category' | 'display';
     }>;
 }
 

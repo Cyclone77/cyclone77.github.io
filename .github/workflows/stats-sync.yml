@@ -47,7 +47,7 @@ jobs:
                         return {
                           status: labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', ''),
                           categories: labelNames.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
-                          features: labelNames.filter(l => l.startsWith('功能:')).map(l => l.replace('功能:', '')),
+                          displays: labelNames.filter(l => l.startsWith('展示:')).map(l => l.replace('展示:', '')),
                           tags: labelNames.filter(l => !l.includes(':'))
                         };
                       }
@@ -74,10 +74,10 @@ jobs:
                                             
                       console.log(`找到 ${issues.length} 篇已发布文章`);
 
-                      // 生成标签统计（包含分类标签和功能标签，用于标签云显示）
+                      // 生成标签统计（包含分类标签和展示标签，用于标签云显示）
                       const tagsMap = {};
 
-                      // 从所有标签中提取分类标签和功能标签
+                      // 从所有标签中提取分类标签和展示标签
                       allLabels.forEach(label => {
                         if (label.name.startsWith('分类:')) {
                           const tagName = label.name.replace('分类:', '');
@@ -87,13 +87,13 @@ jobs:
                             description: label.description || '',
                             type: 'category'
                           };
-                        } else if (label.name.startsWith('功能:')) {
-                          const tagName = label.name.replace('功能:', '');
+                        } else if (label.name.startsWith('展示:')) {
+                          const tagName = label.name.replace('展示:', '');
                           tagsMap[tagName] = {
                             count: 0,
                             color: `#${label.color}`,
                             description: label.description || '',
-                            type: 'feature'
+                            type: 'display'
                           };
                         }
                       });
@@ -107,10 +107,10 @@ jobs:
                             tagsMap[cat].count++;
                           }
                         });
-                        // 统计功能标签
-                        parsed.features.forEach(feat => {
-                          if (tagsMap[feat]) {
-                            tagsMap[feat].count++;
+                        // 统计展示标签
+                        parsed.displays.forEach(disp => {
+                          if (tagsMap[disp]) {
+                            tagsMap[disp].count++;
                           }
                         });
                       });

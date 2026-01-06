@@ -10,9 +10,6 @@ on:
                 required: false
                 type: boolean
                 default: false
-    schedule:
-        # 每周日凌晨 2 点执行全量构建
-        - cron: '0 2 * * 0'
 
 jobs:
     build-deploy:
@@ -101,7 +98,7 @@ jobs:
                         return {
                           status: labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', ''),
                           categories: labelNames.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
-                          features: labelNames.filter(l => l.startsWith('功能:')).map(l => l.replace('功能:', '')),
+                          displays: labelNames.filter(l => l.startsWith('展示:')).map(l => l.replace('展示:', '')),
                           tags: labelNames.filter(l => !l.includes(':'))
                         };
                       }
@@ -153,7 +150,7 @@ jobs:
                           status: parsed.status || '草稿',
                           categories: parsed.categories,
                           tags: parsed.tags,
-                          features: parsed.features,
+                          displays: parsed.displays,
                           coverImage: extractCoverImage(issue.body),
                           readTime: calculateReadTime(issue.body),
                           createdAt: issue.created_at,
@@ -231,8 +228,8 @@ jobs:
 
                       // 按置顶和时间排序
                       articlesData.articles.sort((a, b) => {
-                        const aPinned = a.features.includes('置顶');
-                        const bPinned = b.features.includes('置顶');
+                        const aPinned = a.displays.includes('置顶');
+                        const bPinned = b.displays.includes('置顶');
                         if (aPinned !== bPinned) return bPinned ? 1 : -1;
                         return new Date(b.updatedAt) - new Date(a.updatedAt);
                       });
