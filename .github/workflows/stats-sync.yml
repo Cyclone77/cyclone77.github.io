@@ -55,9 +55,18 @@ jobs:
                         };
                       }
 
-                      // 直接从 GitHub Issues 获取所有已发布的文章
-                      console.log('正在从 GitHub Issues 获取所有已发布的文章...');
-
+                      // 直接从仓库获取所有标签定义
+                      console.log('正在获取仓库所有标签定义...');
+                                            
+                      const allLabels = await github.paginate(github.rest.issues.listLabelsForRepo, {
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        per_page: 100
+                      });
+                                            
+                      console.log(`找到 ${allLabels.length} 个标签定义`);
+                                            
+                      // 获取所有已发布的文章（用于统计使用次数）
                       const issues = await github.paginate(github.rest.issues.listForRepo, {
                         owner: context.repo.owner,
                         repo: context.repo.repo,
@@ -65,33 +74,27 @@ jobs:
                         labels: '状态:已发布',
                         per_page: 100
                       });
-
+                                            
                       console.log(`找到 ${issues.length} 篇已发布文章`);
 
-                      // 生成分类统计
-                      const categoriesMap = {};
+                      // 生成标签统计（只包含分类标签，用于标签云显示）
+                      const tagsMap = {};
+
+                      // 从所有标签中提取分类标签
+                      allLabels.forEach(label => {
+                        if (label.name.startsWith('分类:')) {
+                          const tagName = label.name.replace('分类:', '');
+                          tagsMap[tagName] = 0;
+                        }
+                      });
+
+                      // 统计每个分类标签的使用次数
                       issues.forEach(issue => {
                         const parsed = parseLabels(issue.labels);
                         parsed.categories.forEach(cat => {
-                          if (!categoriesMap[cat]) {
-                            categoriesMap[cat] = { name: cat, slug: cat, count: 0, color: 'text-primary' };
+                          if (tagsMap.hasOwnProperty(cat)) {
+                            tagsMap[cat]++;
                           }
-                          categoriesMap[cat].count++;
-                        });
-                      });
-
-                      const categoriesData = {
-                        categories: Object.values(categoriesMap)
-                      };
-                      fs.writeFileSync(path.join(dataDir, 'categories.json'), JSON.stringify(categoriesData, null, 2));
-                      console.log(`✅ 已生成分类统计: ${categoriesData.categories.length} 个分类`);
-
-                      // 生成标签统计
-                      const tagsMap = {};
-                      issues.forEach(issue => {
-                        const parsed = parseLabels(issue.labels);
-                        parsed.tags.forEach(tag => {
-                          tagsMap[tag] = (tagsMap[tag] || 0) + 1;
                         });
                       });
 
@@ -112,13 +115,9 @@ jobs:
                     git add public/data/tags.json
                   fi
 
-                  if [ -f public/data/categories.json ]; then
-                    git add public/data/categories.json
-                  fi
-
                   # 只有在有变更时才提交
                   if ! git diff --staged --quiet; then
-                    git commit -m "chore: 更新标签和分类统计 [skip ci]"
+                    git commit -m "chore: 更新标签统计 [skip ci]"
                     git push
                   else
                     echo "没有变更需要提交"
