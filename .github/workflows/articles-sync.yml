@@ -1,0 +1,226 @@
+name: Articles Sync
+
+on:
+    issues:
+        types: [edited, labeled, unlabeled]
+    workflow_dispatch:
+        inputs:
+            full_sync:
+                description: '执行全量文章同步'
+                required: false
+                type: boolean
+                default: false
+
+jobs:
+    sync-articles:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            issues: read
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Create data directory
+              run: mkdir -p public/data
+
+            - name: Check if sync is needed
+              id: check_sync
+              if: github.event_name == 'issues'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const issueNumber = context.payload.issue?.number;
+                      if (!issueNumber) {
+                        core.setOutput('should_sync', 'true');
+                        return;
+                      }
+
+                      const issue = await github.rest.issues.get({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: issueNumber
+                      });
+
+                      const labels = issue.data.labels.map(l => l.name);
+                      const hasPublishedLabel = labels.some(l => l === '状态:已发布');
+                      const hadPublishedLabel = context.payload.changes?.labels?.from?.some(l => l.name === '状态:已发布');
+
+                      // 只有当前是已发布，或者之前是已发布（需要删除）时才同步
+                      const shouldSync = hasPublishedLabel || hadPublishedLabel;
+                      core.setOutput('should_sync', shouldSync ? 'true' : 'false');
+                      console.log(`Issue #${issueNumber} 同步检查: ${shouldSync ? '需要同步' : '跳过同步（非已发布状态）'}`);
+
+            - name: Sync articles
+              if: github.event_name != 'issues' || steps.check_sync.outputs.should_sync == 'true'
+              uses: actions/github-script@v7
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  script: |
+                      const fs = require('fs');
+                      const path = require('path');
+
+                      const dataDir = path.join(process.cwd(), 'public', 'data');
+                      const articlesFile = path.join(dataDir, 'articles.json');
+
+                      // 判断是否为全量同步
+                      const isFullSync = context.payload.inputs?.full_sync === 'true' || !fs.existsSync(articlesFile);
+
+                      // 辅助函数：解析标签
+                      function parseLabels(labels) {
+                        const labelNames = labels.map(l => l.name);
+                        return {
+                          status: labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', ''),
+                          categories: labelNames.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
+                          displays: labelNames.filter(l => l.startsWith('展示:')).map(l => l.replace('展示:', '')),
+                          tags: labelNames.filter(l => !l.includes(':'))
+                        };
+                      }
+
+                      // 辅助函数：提取封面图
+                      function extractCoverImage(body) {
+                        const imageRegex = /!\[.*?\]\((https?:\/\/[^\)]+)\)/;
+                        const match = body?.match(imageRegex);
+                        return match ? match[1] : 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop';
+                      }
+
+                      // 辅助函数：提取摘要
+                      function extractDescription(body) {
+                        if (!body) return '';
+                        const text = body.replace(/[#*`\[\]]/g, '').trim();
+                        return text.substring(0, 200) + (text.length > 200 ? '...' : '');
+                      }
+
+                      // 辅助函数：计算阅读时间
+                      function calculateReadTime(body) {
+                        if (!body) return '1 分钟';
+                        const words = body.length;
+                        const minutes = Math.ceil(words / 300);
+                        return `${minutes} 分钟阅读`;
+                      }
+
+                      // 辅助函数：解析单个 Issue
+                      async function parseIssue(issue) {
+                        const parsed = parseLabels(issue.labels);
+                        
+                        const comments = await github.rest.issues.listComments({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: issue.number
+                        });
+                        
+                        return {
+                          id: issue.id,
+                          number: issue.number,
+                          title: issue.title,
+                          description: extractDescription(issue.body),
+                          content: issue.body || '',
+                          author: {
+                            name: issue.user.login,
+                            avatar: issue.user.avatar_url,
+                            url: issue.user.html_url
+                          },
+                          status: parsed.status || '草稿',
+                          categories: parsed.categories,
+                          tags: parsed.tags,
+                          displays: parsed.displays,
+                          coverImage: extractCoverImage(issue.body),
+                          readTime: calculateReadTime(issue.body),
+                          createdAt: issue.created_at,
+                          updatedAt: issue.updated_at,
+                          commentsCount: comments.data.length,
+                          url: issue.html_url
+                        };
+                      }
+
+                      let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
+
+                      if (isFullSync) {
+                        console.log('执行全量同步...');
+                        
+                        const issues = await github.paginate(github.rest.issues.listForRepo, {
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          state: 'open',
+                          labels: '状态:已发布',
+                          per_page: 100
+                        });
+                        
+                        console.log(`找到 ${issues.length} 篇已发布文章`);
+                        
+                        for (const issue of issues) {
+                          const article = await parseIssue(issue);
+                          articlesData.articles.push(article);
+                        }
+                        
+                      } else {
+                        console.log('执行增量同步...');
+                        
+                        if (fs.existsSync(articlesFile)) {
+                          articlesData = JSON.parse(fs.readFileSync(articlesFile, 'utf8'));
+                        }
+                        
+                        const issueNumber = context.payload.issue?.number;
+                        if (issueNumber) {
+                          const issue = await github.rest.issues.get({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            issue_number: issueNumber
+                          });
+                          
+                          const parsed = parseLabels(issue.data.labels);
+                          const isPublished = parsed.status === '已发布';
+                          
+                          const existingIndex = articlesData.articles.findIndex(a => a.number === issueNumber);
+                          
+                          if (isPublished) {
+                            const article = await parseIssue(issue.data);
+                            
+                            if (existingIndex >= 0) {
+                              articlesData.articles[existingIndex] = article;
+                              console.log(`更新文章 #${issueNumber}: ${article.title}`);
+                            } else {
+                              articlesData.articles.push(article);
+                              console.log(`新增文章 #${issueNumber}: ${article.title}`);
+                            }
+                          } else {
+                            if (existingIndex >= 0) {
+                              articlesData.articles.splice(existingIndex, 1);
+                              console.log(`删除文章 #${issueNumber}`);
+                            }
+                          }
+                        }
+                      }
+
+                      // 按置顶和时间排序
+                      articlesData.articles.sort((a, b) => {
+                        const aPinned = a.displays.includes('置顶');
+                        const bPinned = b.displays.includes('置顶');
+                        if (aPinned !== bPinned) return bPinned ? 1 : -1;
+                        return new Date(b.updatedAt) - new Date(a.updatedAt);
+                      });
+
+                      articlesData.total = articlesData.articles.length;
+                      articlesData.lastUpdate = new Date().toISOString();
+
+                      fs.writeFileSync(articlesFile, JSON.stringify(articlesData, null, 2));
+                      console.log(`✅ 已保存 ${articlesData.total} 篇文章到 articles.json`);
+
+            - name: Commit and push changes
+              if: github.event_name != 'issues' || steps.check_sync.outputs.should_sync == 'true'
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                  if [ -f public/data/articles.json ]; then
+                    git add public/data/articles.json
+                  fi
+
+                  if ! git diff --staged --quiet; then
+                    git commit -m "chore: 更新文章数据 [skip ci]"
+                    git push
+                  else
+                    echo "没有变更需要提交"
+                  fi

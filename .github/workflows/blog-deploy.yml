@@ -4,18 +4,12 @@ on:
     issues:
         types: [edited, labeled, unlabeled]
     workflow_dispatch:
-        inputs:
-            full_rebuild:
-                description: '执行全量构建'
-                required: false
-                type: boolean
-                default: false
 
 jobs:
     build-deploy:
         runs-on: ubuntu-latest
         permissions:
-            contents: read
+            contents: write
             pages: write
             id-token: write
             issues: read
@@ -61,186 +55,13 @@ jobs:
                       console.log(`Issue #${issueNumber} 构建检查: ${shouldBuild ? '需要构建' : '跳过构建（非已发布状态）'}`);
 
             - name: Restore articles cache
-              if: (github.event_name != 'schedule' && github.event.inputs.full_rebuild != 'true') && (github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true')
+              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
               uses: actions/cache@v4
               with:
                   path: public/data
                   key: articles-${{ github.run_id }}
                   restore-keys: |
                       articles-
-
-            - name: Build articles data
-              if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
-              uses: actions/github-script@v7
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  script: |
-                      const fs = require('fs');
-                      const path = require('path');
-
-                      // 确保数据目录存在
-                      const dataDir = path.join(process.cwd(), 'public', 'data');
-                      if (!fs.existsSync(dataDir)) {
-                        fs.mkdirSync(dataDir, { recursive: true });
-                      }
-
-                      const articlesFile = path.join(dataDir, 'articles.json');
-
-                      // 判断是否为全量构建
-                      const isFullRebuild = context.eventName === 'schedule' || 
-                                            context.payload.inputs?.full_rebuild === 'true' ||
-                                            !fs.existsSync(articlesFile);
-
-                      // 辅助函数：解析标签
-                      function parseLabels(labels) {
-                        const labelNames = labels.map(l => l.name);
-                        return {
-                          status: labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', ''),
-                          categories: labelNames.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
-                          displays: labelNames.filter(l => l.startsWith('展示:')).map(l => l.replace('展示:', '')),
-                          tags: labelNames.filter(l => !l.includes(':'))
-                        };
-                      }
-
-                      // 辅助函数：提取封面图
-                      function extractCoverImage(body) {
-                        const imageRegex = /!\[.*?\]\((https?:\/\/[^\)]+)\)/;
-                        const match = body?.match(imageRegex);
-                        return match ? match[1] : 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop';
-                      }
-
-                      // 辅助函数：提取摘要
-                      function extractDescription(body) {
-                        if (!body) return '';
-                        const text = body.replace(/[#*`\[\]]/g, '').trim();
-                        return text.substring(0, 200) + (text.length > 200 ? '...' : '');
-                      }
-
-                      // 辅助函数：计算阅读时间
-                      function calculateReadTime(body) {
-                        if (!body) return '1 分钟';
-                        const words = body.length;
-                        const minutes = Math.ceil(words / 300);
-                        return `${minutes} 分钟阅读`;
-                      }
-
-                      // 辅助函数：解析单个 Issue
-                      async function parseIssue(issue) {
-                        const parsed = parseLabels(issue.labels);
-                        
-                        // 获取评论数
-                        const comments = await github.rest.issues.listComments({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          issue_number: issue.number
-                        });
-                        
-                        return {
-                          id: issue.id,
-                          number: issue.number,
-                          title: issue.title,
-                          description: extractDescription(issue.body),
-                          content: issue.body || '',
-                          author: {
-                            name: issue.user.login,
-                            avatar: issue.user.avatar_url,
-                            url: issue.user.html_url
-                          },
-                          status: parsed.status || '草稿',
-                          categories: parsed.categories,
-                          tags: parsed.tags,
-                          displays: parsed.displays,
-                          coverImage: extractCoverImage(issue.body),
-                          readTime: calculateReadTime(issue.body),
-                          createdAt: issue.created_at,
-                          updatedAt: issue.updated_at,
-                          commentsCount: comments.data.length,
-                          url: issue.html_url
-                        };
-                      }
-
-                      let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
-
-                      if (isFullRebuild) {
-                        console.log('执行全量构建...');
-                        
-                        // 获取所有已发布的 Issues
-                        const issues = await github.paginate(github.rest.issues.listForRepo, {
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          state: 'open',
-                          labels: '状态:已发布',
-                          per_page: 100
-                        });
-                        
-                        console.log(`找到 ${issues.length} 篇已发布文章`);
-                        
-                        // 解析所有文章
-                        for (const issue of issues) {
-                          const article = await parseIssue(issue);
-                          articlesData.articles.push(article);
-                        }
-                        
-                      } else {
-                        console.log('执行增量构建...');
-                        
-                        // 读取现有数据
-                        if (fs.existsSync(articlesFile)) {
-                          articlesData = JSON.parse(fs.readFileSync(articlesFile, 'utf8'));
-                        }
-                        
-                        // 获取触发事件的 Issue
-                        const issueNumber = context.payload.issue?.number;
-                        if (issueNumber) {
-                          const issue = await github.rest.issues.get({
-                            owner: context.repo.owner,
-                            repo: context.repo.repo,
-                            issue_number: issueNumber
-                          });
-                          
-                          const parsed = parseLabels(issue.data.labels);
-                          const isPublished = parsed.status === '已发布';
-                          
-                          // 查找现有文章
-                          const existingIndex = articlesData.articles.findIndex(a => a.number === issueNumber);
-                          
-                          if (isPublished) {
-                            // 更新或新增文章
-                            const article = await parseIssue(issue.data);
-                            
-                            if (existingIndex >= 0) {
-                              articlesData.articles[existingIndex] = article;
-                              console.log(`更新文章 #${issueNumber}: ${article.title}`);
-                            } else {
-                              articlesData.articles.push(article);
-                              console.log(`新增文章 #${issueNumber}: ${article.title}`);
-                            }
-                          } else {
-                            // 删除文章
-                            if (existingIndex >= 0) {
-                              articlesData.articles.splice(existingIndex, 1);
-                              console.log(`删除文章 #${issueNumber}`);
-                            }
-                          }
-                        }
-                      }
-
-                      // 按置顶和时间排序
-                      articlesData.articles.sort((a, b) => {
-                        const aPinned = a.displays.includes('置顶');
-                        const bPinned = b.displays.includes('置顶');
-                        if (aPinned !== bPinned) return bPinned ? 1 : -1;
-                        return new Date(b.updatedAt) - new Date(a.updatedAt);
-                      });
-
-                      articlesData.total = articlesData.articles.length;
-                      articlesData.lastUpdate = new Date().toISOString();
-
-                      // 保存文章数据
-                      fs.writeFileSync(articlesFile, JSON.stringify(articlesData, null, 2));
-                      console.log(`已保存 ${articlesData.total} 篇文章到 articles.json`);
-                      console.log('⚠️  标签和分类统计已移至 Sync Labels and Categories 工作流');
 
             - name: Build project
               if: github.event_name != 'issues' || steps.check_build.outputs.should_build == 'true'
