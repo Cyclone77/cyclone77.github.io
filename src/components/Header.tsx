@@ -19,7 +19,7 @@ export default function Header() {
                                 <span className="material-symbols-outlined !text-[32px]">terminal</span>
                             </div>
                             <h2 className="font-display text-xl font-bold leading-tight tracking-[-0.015em]">
-                                TechInsights
+                                Cyclone77
                             </h2>
                         </Link>
 

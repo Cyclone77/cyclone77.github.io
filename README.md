@@ -1,4 +1,4 @@
-# TechInsights 博客
+# Cyclone77 博客
 
 基于 GitHub Issues 的现代技术博客，使用 React 19 + TypeScript 5 + Vite 6 构建。
 

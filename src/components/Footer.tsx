@@ -8,7 +8,7 @@ export default function Footer() {
                             <span className="material-symbols-outlined">terminal</span>
                         </div>
                         <span className="font-display text-lg font-bold text-text-primary-light dark:text-white">
-                            TechInsights
+                            Cyclone77
                         </span>
                     </div>
 
@@ -40,7 +40,7 @@ export default function Footer() {
                     </div>
 
                     <p className="text-text-secondary-light dark:text-[#586471] text-sm">
-                        © 2024 TechInsights. 保留所有权利。
+                        © 2024 Cyclone77. 保留所有权利。
                     </p>
                 </div>
             </div>
