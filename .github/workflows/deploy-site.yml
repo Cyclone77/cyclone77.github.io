@@ -11,6 +11,11 @@ on:
             - completed
     workflow_dispatch:
 
+# 同一时间只运行一个部署，后来的会取消前面排队的
+concurrency:
+    group: deploy-site
+    cancel-in-progress: true
+
 jobs:
     build-deploy:
         runs-on: ubuntu-latest
