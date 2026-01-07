@@ -11,7 +11,7 @@ function parseLabels(labels) {
     return {
         status: statusLabel ? '已发布' : labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', '') || '草稿',
         categories: labelNames.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
-        displays: labelNames.filter(l => l.startsWith('展示:')).map(l => l.replace('展示:', '')),
+        displays: labelNames.filter(l => l.startsWith('功能:')).map(l => l.replace('功能:', '')),
         tags: labelNames.filter(l => !l.includes(':')),
     };
 }
@@ -154,12 +154,15 @@ module.exports = async ({ github, context, core }) => {
     }
 
     // 判断是否为全量同步
-    const isFullSync = context.payload.inputs?.full_sync === 'true' || !fs.existsSync(articlesFile);
+    // 如果是 workflow_run 触发（没有 issue 信息），也执行全量同步
+    const issueNumber = context.payload.issue?.number;
+    const isFullSync = context.payload.inputs?.full_sync === 'true' || !fs.existsSync(articlesFile) || !issueNumber;
 
     let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
 
     if (isFullSync) {
         console.log('执行全量同步...');
+        console.log(`触发原因: inputs.full_sync=${context.payload.inputs?.full_sync}, 文件存在=${fs.existsSync(articlesFile)}, issueNumber=${issueNumber}`);
 
         const issues = await github.paginate(github.rest.issues.listForRepo, {
             owner: context.repo.owner,
@@ -182,7 +185,6 @@ module.exports = async ({ github, context, core }) => {
             articlesData = JSON.parse(fs.readFileSync(articlesFile, 'utf8'));
         }
 
-        const issueNumber = context.payload.issue?.number;
         if (issueNumber) {
             const issue = await github.rest.issues.get({
                 owner: context.repo.owner,

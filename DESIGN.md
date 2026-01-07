@@ -15,6 +15,8 @@
 - **Vite 6** - 构建工具
 - **Tailwind CSS 3** - 样式框架
 - **React Router 7** - 路由管理
+- **react-markdown** - Markdown 渲染
+- **react-syntax-highlighter** - 代码高亮
 
 ### 内容管理
 
@@ -59,7 +61,7 @@
 
 - 每篇文章只能有一个状态标签
 - 添加新状态时，自动移除其他状态标签
-- 新建 Issue 自动添加"草稿"状态
+- 新建 Issue 自动添加"状态:草稿"
 
 #### 2. 分类标签（`分类:` 前缀）
 
@@ -110,121 +112,127 @@
 
 ## 🔄 工作流设计
 
-### Workflow 1: 自动添加草稿标签
-
-**触发时机：** Issue 创建时
-
-**流程：**
+### 工作流架构图
 
 ```
-1. 检测新 Issue 是否有状态标签
-2. 如果没有 → 自动添加"状态:草稿"
-3. 如果有 → 跳过
+┌─────────────────┐
+│  Issue 事件     │
+│ (opened/labeled/│
+│  edited/unlabeled)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐     ┌─────────────────┐
+│ Issue Label     │────▶│ Sync Articles   │
+│ Manager         │     │ (文章同步)       │
+│ (标签管理)       │     └────────┬────────┘
+└─────────────────┘              │
+         │                       │
+         ▼                       ▼
+┌─────────────────┐     ┌─────────────────┐
+│ Sync Tags       │────▶│ Deploy Site     │
+│ (标签统计)       │     │ (网站部署)       │
+└─────────────────┘     └─────────────────┘
 ```
 
-**文件：** `.github/workflows/auto-label.yml`
+### Workflow 1: Issue Label Manager
 
----
-
-### Workflow 2: 增量构建和部署
+**文件：** `.github/workflows/issue-label-manager.yml`
 
 **触发时机：**
+- Issue 创建时（`opened`）
+- Issue 添加标签时（`labeled`）
 
-- Issues 标签变更
-- Issues 内容编辑
-- Issues 评论变更
-- 手动触发（全量构建）
+**功能：**
+- ✅ 自动添加草稿标签：新建 Issue 时，如果没有状态标签，自动添加 `状态:草稿`
+- ✅ 状态标签互斥：添加新的状态标签时，自动移除其他状态标签
 
-**增量构建流程：**
-
-```
-1. 获取触发事件的 Issue 信息
-   - Issue 编号
-   - 变更类型（编辑/标签）
-   - 当前状态
-
-2. 读取现有的 articles.json（如果存在）
-
-3. 判断操作类型：
-   a) 如果是「状态:已发布」→ 更新/新增文章
-      - 解析该 Issue 的完整信息
-      - 更新或添加到文章列表
-
-   b) 如果移除了「状态:已发布」→ 删除文章
-      - 从文章列表中移除该条目
-
-   c) 如果是「状态:已发布」文章的编辑 → 更新文章
-      - 只更新该篇文章的数据
-      - 保留其他文章不变
-
-4. 增量解析文章数据：
-   - 标题、内容（Markdown）
-   - 作者信息
-   - 创建/更新时间
-   - 所有标签
-   - 评论数量（通过 GitHub API 获取）
-
-5. 提取元数据：
-   - 封面图（第一张图片）
-   - 摘要（前 200 字）
-   - 阅读时间（字数 ÷ 300）
-
-6. 分类处理：
-   - 提取分类标签
-   - 提取功能标签
-   - 提取普通标签
-
-7. 更新数据文件：
-   - 合并更新 articles.json
-   - 重新统计 categories.json
-   - 重新统计 tags.json
-
-8. 构建前端项目（npm run build）
-
-9. 部署到 GitHub Pages
-```
-
-**全量构建流程：**
-
-```
-仅在以下情况触发全量构建：
-- 手动触发 workflow_dispatch
-- 数据文件损坏或丢失
-- 每周定时任务（同步所有数据）
-
-全量构建流程：
-1. 获取所有「状态:已发布」的 Issues
-2. 批量解析所有文章
-3. 重新生成所有数据文件
-4. 构建并部署
-```
-
-**缓存策略：**
-
-```
-- 使用 GitHub Actions Cache 缓存 articles.json
-- 缓存 key: articles-${{ hashFiles('data/articles.json') }}
-- 缓存有效期: 7 天
-- 减少重复的 API 请求
-```
-
-**文件：** `.github/workflows/build-blog.yml`
+**脚本：** `scripts/manage-labels.cjs`
 
 ---
 
-### Workflow 3: 状态标签互斥
+### Workflow 2: Sync Articles
 
-**触发时机：** 添加状态标签时
+**文件：** `.github/workflows/sync-articles.yml`
 
-**流程：**
+**触发时机：**
+- Issue 内容编辑（`edited`）
+- Issue 移除标签（`unlabeled`）
+- Issue Label Manager 完成后（`workflow_run`）
+- 手动触发（`workflow_dispatch`）
 
+**功能：**
+- 📝 增量同步：只更新变更的文章
+- 🔄 全量同步：手动触发或无 Issue 上下文时执行
+- 📊 生成 `public/data/articles.json`
+
+**同步逻辑：**
 ```
-1. 检测添加的标签是否为"状态:*"
-2. 如果是 → 移除其他所有"状态:*"标签
-3. 只保留最新添加的状态标签
+1. 检查是否需要同步（check-sync.cjs）
+2. 判断同步模式（增量/全量）
+3. 获取已发布文章（状态:已发布）
+4. 解析文章数据（标题、内容、标签等）
+5. 提交并推送 articles.json
 ```
 
-**文件：** `.github/workflows/auto-label.yml`（与 Workflow 1 合并）
+**脚本：**
+- `scripts/check-sync.cjs` - 判断是否需要同步
+- `scripts/sync-articles.cjs` - 执行文章同步
+
+**并发控制：**
+```yaml
+concurrency:
+    group: articles-sync
+    cancel-in-progress: false  # 排队等待，不取消
+```
+
+---
+
+### Workflow 3: Sync Tags
+
+**文件：** `.github/workflows/sync-tags.yml`
+
+**触发时机：**
+- Issue 移除标签（`unlabeled`）
+- Issue Label Manager 完成后（`workflow_run`）
+- 手动触发（`workflow_dispatch`）
+
+**功能：**
+- 📊 统计所有标签的使用次数
+- 🏷️ 区分分类标签和功能标签
+- 📝 生成 `public/data/tags.json`
+
+**脚本：** `scripts/sync-tags.cjs`
+
+**并发控制：**
+```yaml
+concurrency:
+    group: stats-sync
+    cancel-in-progress: false  # 排队等待，不取消
+```
+
+---
+
+### Workflow 4: Deploy Site
+
+**文件：** `.github/workflows/deploy-site.yml`
+
+**触发时机：**
+- 代码推送到 main/master 分支
+- Sync Articles 完成后（`workflow_run`）
+- Sync Tags 完成后（`workflow_run`）
+- 手动触发（`workflow_dispatch`）
+
+**功能：**
+- 🔨 构建前端项目（`npm run build`）
+- 🚀 部署到 GitHub Pages
+
+**并发控制：**
+```yaml
+concurrency:
+    group: deploy-site
+    cancel-in-progress: true  # 取消旧的，执行最新的
+```
 
 ---
 
@@ -236,51 +244,31 @@
 {
     "articles": [
         {
-            "id": 1,
-            "number": 1,
+            "id": 3784306353,
+            "number": 2,
             "title": "文章标题",
             "description": "文章摘要（前200字）",
             "content": "完整的 Markdown 内容",
             "author": {
-                "name": "作者名",
+                "name": "Cyclone77",
                 "avatar": "https://avatars.githubusercontent.com/...",
-                "url": "https://github.com/username"
+                "url": "https://github.com/Cyclone77"
             },
             "status": "已发布",
             "categories": ["前端开发", "教程"],
-            "tags": ["React", "TypeScript", "性能优化"],
-            "features": ["置顶", "精选"],
+            "tags": ["React", "TypeScript"],
+            "displays": ["置顶", "精选"],
             "coverImage": "https://...",
-            "readTime": "5 分钟",
-            "createdAt": "2024-01-05T10:00:00Z",
-            "updatedAt": "2024-01-05T15:00:00Z",
-            "commentsCount": 12,
-            "url": "https://github.com/user/repo/issues/1"
+            "readTime": "5 分钟阅读",
+            "date": "2026年1月6日",
+            "createdAt": "2026-01-06T08:55:01Z",
+            "updatedAt": "2026-01-07T01:39:32Z",
+            "commentsCount": 0,
+            "url": "https://github.com/user/repo/issues/2"
         }
     ],
-    "total": 100,
-    "lastUpdate": "2024-01-05T16:00:00Z"
-}
-```
-
-### categories.json
-
-```json
-{
-    "categories": [
-        {
-            "name": "前端开发",
-            "slug": "frontend",
-            "count": 25,
-            "color": "text-primary"
-        },
-        {
-            "name": "后端开发",
-            "slug": "backend",
-            "count": 18,
-            "color": "text-purple-500"
-        }
-    ]
+    "total": 2,
+    "lastUpdate": "2026-01-07T06:24:47.938Z"
 }
 ```
 
@@ -290,12 +278,18 @@
 {
     "tags": [
         {
-            "name": "React",
-            "count": 15
+            "name": "前端开发",
+            "count": 2,
+            "color": "#1A7F37",
+            "description": "前端技术相关",
+            "type": "category"
         },
         {
-            "name": "TypeScript",
-            "count": 12
+            "name": "置顶",
+            "count": 1,
+            "color": "#fef2c0",
+            "description": "首页置顶显示",
+            "type": "display"
         }
     ]
 }
@@ -322,7 +316,7 @@
 ### 主题切换
 
 - 深色/浅色模式
-- 使用 Context API 管理
+- 使用 Context API 管理（ThemeContext）
 - LocalStorage 持久化
 - 平滑过渡动画
 
@@ -372,9 +366,9 @@
 状态:已作废     → 完全不显示
 
 // 功能标签
-功能:置顶       → 始终排在列表最前
-功能:精选       → Hero 区域轮播展示
-功能:热门       → 侧边栏热门推荐
+功能:置顶       → 始终排在列表最前，作为 Banner 展示
+功能:精选       → 精选筛选可见
+功能:热门       → 热门筛选可见
 ```
 
 ### 分类和标签解析
@@ -385,7 +379,7 @@ const parseLabels = (labels: string[]) => {
     return {
         status: labels.find(l => l.startsWith('状态:'))?.replace('状态:', ''),
         categories: labels.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
-        features: labels.filter(l => l.startsWith('功能:')).map(l => l.replace('功能:', '')),
+        displays: labels.filter(l => l.startsWith('功能:')).map(l => l.replace('功能:', '')),
         tags: labels.filter(l => !l.includes(':')),
     };
 };
@@ -399,12 +393,11 @@ const parseLabels = (labels: string[]) => {
 
 1. **仓库设置**
     - 开启 GitHub Pages
-    - 源分支：`gh-pages`
     - 构建来源：GitHub Actions
 
 2. **自动部署**
-    - Actions 构建后自动推送到 `gh-pages` 分支
-    - GitHub Pages 自动更新网站
+    - Actions 构建后通过 `deploy-pages` action 部署
+    - 使用 `upload-pages-artifact` 上传构建产物
 
 3. **自定义域名**（可选）
     - 配置 CNAME 文件
@@ -412,14 +405,55 @@ const parseLabels = (labels: string[]) => {
 
 ---
 
+## 📁 项目结构
+
+```
+├── .github/
+│   └── workflows/
+│       ├── issue-label-manager.yml  # 标签管理
+│       ├── sync-articles.yml        # 文章同步
+│       ├── sync-tags.yml            # 标签统计
+│       └── deploy-site.yml          # 网站部署
+├── public/
+│   └── data/
+│       ├── articles.json            # 文章数据
+│       └── tags.json                # 标签数据
+├── scripts/
+│   ├── check-sync.cjs               # 同步检查
+│   ├── manage-labels.cjs            # 标签管理
+│   ├── sync-articles.cjs            # 文章同步
+│   └── sync-tags.cjs                # 标签同步
+├── src/
+│   ├── components/                  # 组件
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   └── Layout.tsx
+│   ├── contexts/                    # 上下文
+│   │   └── ThemeContext.tsx
+│   ├── pages/                       # 页面
+│   │   ├── HomePage.tsx
+│   │   └── ArticleDetailPage.tsx
+│   ├── services/                    # 服务
+│   │   └── api.ts
+│   ├── data/                        # 数据类型
+│   │   └── mockData.ts
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
+└── package.json
+```
+
+---
+
 ## 💡 扩展功能规划
 
 ### 即将实现
 
-- [ ] 搜索功能（基于 lunr.js）
+- [ ] 搜索功能
 - [ ] RSS 订阅支持
 - [ ] 文章阅读统计
-- [ ] 评论系统集成
+- [ ] 真实评论系统集成（GitHub Issues Comments）
+- [ ] 分页功能
 
 ### 未来计划
 
@@ -427,6 +461,7 @@ const parseLabels = (labels: string[]) => {
 - [ ] CDN 加速
 - [ ] PWA 支持
 - [ ] 多语言支持
+- [ ] 归档页面
 
 ---
 
@@ -441,14 +476,13 @@ const parseLabels = (labels: string[]) => {
 ### 构建优化
 
 - 增量构建（只更新变更的文章）
-- 数据缓存（避免重复请求）
-- 并行处理（提高构建速度）
+- 并发控制（避免 git push 冲突）
+- 部署去重（concurrency + cancel-in-progress）
 
 ### SEO 优化
 
 - 静态 HTML 生成
 - Meta 标签完善
-- Sitemap 自动生成
 - 结构化数据标记
 
 ---
@@ -476,5 +510,5 @@ const parseLabels = (labels: string[]) => {
 
 ---
 
-**最后更新：** 2024-01-05
-**设计版本：** v1.0
+**最后更新：** 2026-01-07
+**设计版本：** v2.0
