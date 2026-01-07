@@ -19,7 +19,7 @@ concurrency:
 jobs:
     build-deploy:
         runs-on: ubuntu-latest
-        # 如果是 workflow_run 触发，则要求 Articles Sync 必须成功
+        # 如果是 workflow_run 触发，则要求上游必须成功
         if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
         permissions:
             contents: write
@@ -30,6 +30,14 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+              with:
+                  # 确保获取最新的代码（包括 sync 任务提交的数据）
+                  ref: ${{ github.event.workflow_run.head_branch || github.ref }}
+                  fetch-depth: 0
+
+            - name: Pull latest changes
+              run: |
+                  git pull origin ${{ github.event.workflow_run.head_branch || github.ref_name }} || true
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -39,14 +47,6 @@ jobs:
 
             - name: Install dependencies
               run: npm ci
-
-            - name: Restore articles cache
-              uses: actions/cache@v4
-              with:
-                  path: public/data
-                  key: articles-${{ github.run_id }}
-                  restore-keys: |
-                      articles-
 
             - name: Build project
               run: npm run build
