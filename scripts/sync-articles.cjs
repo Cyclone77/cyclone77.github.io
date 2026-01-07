@@ -19,11 +19,25 @@ function parseLabels(labels) {
 /**
  * 辅助函数：通用区块提取
  * 提取 ## headerName 到下一个 ## 或 --- 之间的内容
+ * 特殊处理：文章内容区块提取到文档末尾
  */
 function extractSection(body, headerName) {
     if (!body) return '';
     
-    // 匹配 ## headerName 后面的内容，直到遇到下一个 ## 或 --- 或文档结束
+    // 文章内容区块特殊处理：提取到文档末尾
+    if (headerName === '文章内容') {
+        const pattern = new RegExp(
+            `(?:^|[\\r\\n])##\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*)`,
+            'i'
+        );
+        const match = body.match(pattern);
+        if (match && match[1]) {
+            return match[1].trim();
+        }
+        return '';
+    }
+    
+    // 其他区块：匹配到下一个 ## 或 --- 
     const pattern = new RegExp(
         `(?:^|[\\r\\n])##\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*?)(?=(?:[\\r\\n]##|[\\r\\n]---)|$)`,
         'i'
