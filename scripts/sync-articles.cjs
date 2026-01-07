@@ -45,15 +45,24 @@ function extractSection(body, headerName) {
 
 /**
  * 辅助函数：提取封面图
+ * 只从 ## 封面图片 区块提取，不从正文内容中提取
  */
 function extractCoverImage(body) {
     const section = extractSection(body, '封面图片');
-    const source = section || body;
+    
+    // 如果没有封面图片区块，返回空
+    if (!section) return '';
+    
+    // 过滤掉 HTML 注释
+    const cleanSection = section.replace(/<!--[\s\S]*?-->/g, '').trim();
+    if (!cleanSection) return '';
 
-    const mdImage = source.match(/!\[[^\]]*]\((https?:\/\/[^\)]+)\)/);
+    // 优先匹配 Markdown 图片语法 ![alt](url)
+    const mdImage = cleanSection.match(/!\[[^\]]*]\((https?:\/\/[^\)]+)\)/);
     if (mdImage) return mdImage[1];
 
-    const urlMatch = source.match(/https?:\/\/[^\s\)\"\'\]]+/);
+    // 其次匹配纯 URL
+    const urlMatch = cleanSection.match(/https?:\/\/[^\s\)\"\'\]]+/);
     if (urlMatch) return urlMatch[0];
 
     return '';
@@ -66,10 +75,16 @@ function extractDescription(body) {
     if (!body) return '';
 
     let source = extractSection(body, '摘要');
+    
+    // 过滤掉 HTML 注释，如果只剩注释则视为空
+    if (source) {
+        source = source.replace(/<!--[\s\S]*?-->/g, '').trim();
+    }
 
+    // 如果摘要区块为空，从文章内容取第一段
     if (!source) {
         const content = extractSection(body, '文章内容') || body;
-        source = content.split(/[\r\n]+/).find(p => p.trim() && !p.startsWith('#') && !p.startsWith('![')) || '';
+        source = content.split(/[\r\n]+/).find(p => p.trim() && !p.startsWith('#') && !p.startsWith('![') && !p.startsWith('<!--')) || '';
     }
 
     const text = source
