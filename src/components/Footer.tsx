@@ -40,7 +40,7 @@ export default function Footer() {
                     </div>
 
                     <p className="text-text-secondary-light dark:text-[#586471] text-sm">
-                        © 2024 Cyclone77. 保留所有权利。
+                        © {new Date().getFullYear()} Cyclone77. 保留所有权利。
                     </p>
                 </div>
             </div>
