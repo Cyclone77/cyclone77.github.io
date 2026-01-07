@@ -31,13 +31,14 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
               with:
-                  # 确保获取最新的代码（包括 sync 任务提交的数据）
-                  ref: ${{ github.event.workflow_run.head_branch || github.ref }}
+                  # 始终获取默认分支的最新代码
+                  ref: master
                   fetch-depth: 0
 
             - name: Pull latest changes
               run: |
-                  git pull origin ${{ github.event.workflow_run.head_branch || github.ref_name }} || true
+                  git fetch origin master
+                  git reset --hard origin/master
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
