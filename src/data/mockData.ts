@@ -18,6 +18,8 @@ export interface Article {
     tags: string[];
     content?: string;
     url?: string; // GitHub Issue URL
+    createdAt?: string; // 创建时间
+    updatedAt?: string; // 更新时间
 }
 
 export const mockArticles: Article[] = [

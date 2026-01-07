@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Article } from '../data/mockData';
 import { fetchArticleById, fetchArticles } from '../services/api';
-import { Calendar, Clock, Bookmark, Share2 } from 'lucide-react';
+import { Calendar, Clock, MessageCircle } from 'lucide-react';
 import Comments from '../components/Comments';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop';
@@ -46,6 +46,8 @@ export default function ArticleDetailPage() {
     const [loading, setLoading] = useState(true);
     const [activeHeading, setActiveHeading] = useState<string>('');
     const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
+    const [prevArticle, setPrevArticle] = useState<Article | null>(null);
+    const [nextArticle, setNextArticle] = useState<Article | null>(null);
 
     useEffect(() => {
         if (id) {
@@ -56,17 +58,41 @@ export default function ArticleDetailPage() {
         }
     }, [id]);
 
-    // 获取相关文章（分类相同的其他文章）
+    // 获取相关文章和上下篇
     useEffect(() => {
-        if (article?.categories && article.categories.length > 0) {
+        if (article) {
             fetchArticles().then(({ articles }) => {
-                const related = articles
-                    .filter(a => 
-                        a.id !== article.id && 
-                        a.categories?.some(cat => article.categories?.includes(cat))
-                    )
-                    .slice(0, 3);
-                setRelatedArticles(related);
+                // 按日期排序
+                const sortedArticles = [...articles].sort((a, b) => 
+                    new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime()
+                );
+                
+                const currentIndex = sortedArticles.findIndex(a => a.id === article.id);
+                
+                // 上一篇（更新的）
+                if (currentIndex > 0) {
+                    setPrevArticle(sortedArticles[currentIndex - 1]);
+                } else {
+                    setPrevArticle(null);
+                }
+                
+                // 下一篇（更旧的）
+                if (currentIndex < sortedArticles.length - 1) {
+                    setNextArticle(sortedArticles[currentIndex + 1]);
+                } else {
+                    setNextArticle(null);
+                }
+
+                // 相关文章
+                if (article.categories && article.categories.length > 0) {
+                    const related = articles
+                        .filter(a => 
+                            a.id !== article.id && 
+                            a.categories?.some(cat => article.categories?.includes(cat))
+                        )
+                        .slice(0, 3);
+                    setRelatedArticles(related);
+                }
             });
         }
     }, [article]);
@@ -173,11 +199,14 @@ export default function ArticleDetailPage() {
                             </div>
 
                             <div className="flex gap-3">
-                                <button className="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
-                                    <Bookmark size={20} />
-                                </button>
-                                <button className="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
-                                    <Share2 size={20} />
+                                <button 
+                                    onClick={() => {
+                                        document.getElementById('comments-section')?.scrollIntoView({ behavior: 'smooth' });
+                                    }}
+                                    className="flex items-center justify-center gap-2 h-10 px-4 rounded-full bg-gray-100 dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20 text-sm font-medium"
+                                >
+                                    <MessageCircle size={18} />
+                                    <span>评论</span>
                                 </button>
                             </div>
                         </div>
@@ -313,8 +342,48 @@ export default function ArticleDetailPage() {
                         </div>
                     )}
 
+                    {/* 上一篇/下一篇导航 */}
+                    {(prevArticle || nextArticle) && (
+                        <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-100 dark:border-border-dark">
+                            {prevArticle ? (
+                                <Link
+                                    to={`/article/${prevArticle.id}`}
+                                    className="flex-1 group p-4 rounded-xl bg-gray-50 dark:bg-surface-dark hover:bg-gray-100 dark:hover:bg-border-dark transition-colors"
+                                >
+                                    <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark flex items-center gap-1 mb-2">
+                                        <span className="material-symbols-outlined !text-[16px]">arrow_back</span>
+                                        上一篇
+                                    </span>
+                                    <p className="text-sm font-medium text-text-primary-light dark:text-white group-hover:text-primary transition-colors line-clamp-2">
+                                        {prevArticle.title}
+                                    </p>
+                                </Link>
+                            ) : (
+                                <div className="flex-1" />
+                            )}
+                            {nextArticle ? (
+                                <Link
+                                    to={`/article/${nextArticle.id}`}
+                                    className="flex-1 group p-4 rounded-xl bg-gray-50 dark:bg-surface-dark hover:bg-gray-100 dark:hover:bg-border-dark transition-colors text-right"
+                                >
+                                    <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark flex items-center justify-end gap-1 mb-2">
+                                        下一篇
+                                        <span className="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                                    </span>
+                                    <p className="text-sm font-medium text-text-primary-light dark:text-white group-hover:text-primary transition-colors line-clamp-2">
+                                        {nextArticle.title}
+                                    </p>
+                                </Link>
+                            ) : (
+                                <div className="flex-1" />
+                            )}
+                        </div>
+                    )}
+
                     {/* 评论区 - 使用 Utterances */}
-                    {article.number && <Comments issueNumber={article.number} issueUrl={article.url} />}
+                    <div id="comments-section">
+                        {article.number && <Comments issueNumber={article.number} issueUrl={article.url} />}
+                    </div>
                 </article>
 
                 <aside className="lg:col-span-4 flex flex-col gap-6">
