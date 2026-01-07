@@ -91,9 +91,25 @@ function extractDescription(body) {
 
     // 如果摘要区块为空，从文章内容取第一段
     if (!source) {
-        const content = extractSection(body, '文章内容') || body;
-        source = content.split(/[\r\n]+/).find(p => p.trim() && !p.startsWith('#') && !p.startsWith('![') && !p.startsWith('<!--')) || '';
+        const content = extractContent(body);
+        // 找到第一个有效段落（非空、非标题、非图片、非注释、非分隔符）
+        const lines = content.split(/[\r\n]+/);
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed && 
+                !trimmed.startsWith('#') && 
+                !trimmed.startsWith('![') && 
+                !trimmed.startsWith('<!--') &&
+                !trimmed.startsWith('---') &&
+                !trimmed.startsWith('```') &&
+                trimmed.length > 10) {
+                source = trimmed;
+                break;
+            }
+        }
     }
+
+    if (!source) return '';
 
     const text = source
         .replace(/!\[.*?\]\((https?:\/\/[^\)]+)\)/g, '')
