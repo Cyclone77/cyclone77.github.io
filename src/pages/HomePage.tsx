@@ -8,6 +8,7 @@ const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df
 export default function HomePage() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('全部');
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const filterCategories = ['全部', '热门', '精选'];
     const [tags, setTags] = useState<
         Array<{ name: string; count: number; color: string; description: string; type: 'category' | 'display' }>
@@ -33,10 +34,18 @@ export default function HomePage() {
 
     // 过滤文章列表
     const filteredArticles = articles.filter(article => {
-        // 1. 如果该文章已经是 Banner 显示的置顶文章，则从列表中排除
-        if (featuredArticle && article.id === featuredArticle.id) return false;
+        // 判断是否有过滤条件
+        const hasFilter = selectedTag || selectedCategory !== '全部';
 
-        // 2. 分类过滤
+        // 1. 如果没有过滤条件，且该文章是 Banner 显示的置顶文章，则从列表中排除
+        if (!hasFilter && featuredArticle && article.id === featuredArticle.id) return false;
+
+        // 2. 标签过滤（优先级高于分类过滤）
+        if (selectedTag) {
+            return article.categories?.includes(selectedTag);
+        }
+
+        // 3. 分类过滤
         if (selectedCategory === '全部') return true;
         if (selectedCategory === '精选') return article.displays?.includes('精选');
         if (selectedCategory === '热门') return article.displays?.includes('热门');
@@ -134,17 +143,35 @@ export default function HomePage() {
             <div className="flex flex-col lg:flex-row gap-10">
                 <div className="flex-1 flex flex-col">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-gray-200 dark:border-border-dark mb-6 gap-4">
-                        <h1 className="font-display text-text-primary-light dark:text-white text-2xl md:text-3xl font-bold leading-tight">
-                            最新文章
-                        </h1>
+                        <div className="flex items-center gap-3">
+                            <h1 className="font-display text-text-primary-light dark:text-white text-2xl md:text-3xl font-bold leading-tight">
+                                最新文章
+                            </h1>
+                            {selectedTag && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                                    #{selectedTag}
+                                    <button
+                                        onClick={() => setSelectedTag(null)}
+                                        className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
+                                    >
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </span>
+                            )}
+                        </div>
 
                         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
                             {filterCategories.map(category => (
                                 <button
                                     key={category}
-                                    onClick={() => setSelectedCategory(category)}
+                                    onClick={() => {
+                                        setSelectedCategory(category);
+                                        setSelectedTag(null);
+                                    }}
                                     className={`whitespace-nowrap flex h-8 items-center px-4 rounded-full text-sm font-medium transition-colors ${
-                                        selectedCategory === category
+                                        selectedCategory === category && !selectedTag
                                             ? 'bg-primary text-white'
                                             : 'bg-gray-100 dark:bg-border-dark hover:bg-gray-200 dark:hover:bg-[#323b46] text-text-secondary-light dark:text-text-secondary-dark'
                                     }`}
@@ -279,11 +306,27 @@ export default function HomePage() {
                                     <button
                                         key={tag.name}
                                         title={tag.description}
-                                        className="group relative px-3 py-1.5 rounded-lg bg-background-light dark:bg-[#111418] border border-gray-200 dark:border-[#323b46] text-text-secondary-light dark:text-text-secondary-dark text-xs font-medium hover:border-primary dark:hover:border-primary cursor-pointer transition-all"
+                                        onClick={() => {
+                                            if (selectedTag === tag.name) {
+                                                setSelectedTag(null);
+                                            } else {
+                                                setSelectedTag(tag.name);
+                                                setSelectedCategory('全部');
+                                            }
+                                        }}
+                                        className={`group relative px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-all ${
+                                            selectedTag === tag.name
+                                                ? 'bg-primary text-white border border-primary'
+                                                : 'bg-background-light dark:bg-[#111418] border border-gray-200 dark:border-[#323b46] text-text-secondary-light dark:text-text-secondary-dark hover:border-primary dark:hover:border-primary'
+                                        }`}
                                     >
-                                        <span className="group-hover:text-primary transition-colors">#{tag.name}</span>
+                                        <span className={selectedTag === tag.name ? '' : 'group-hover:text-primary transition-colors'}>#{tag.name}</span>
                                         {tag.count > 0 && (
-                                            <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                                            <span className={`ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold ${
+                                                selectedTag === tag.name
+                                                    ? 'bg-white/20 text-white'
+                                                    : 'bg-primary/10 text-primary'
+                                            }`}>
                                                 {tag.count}
                                             </span>
                                         )}

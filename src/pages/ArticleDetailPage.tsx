@@ -1,20 +1,51 @@
 import { useParams, Link } from 'react-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Article } from '../data/mockData';
-import { fetchArticleById } from '../services/api';
+import { fetchArticleById, fetchArticles } from '../services/api';
 import { Calendar, Clock, Bookmark, Share2 } from 'lucide-react';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop';
+
+// 生成 slug（用于 id）
+function generateSlug(text: string): string {
+    return text
+        .toLowerCase()
+        .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+// 从 Markdown 内容提取标题
+function extractHeadings(content: string): Array<{ id: string; text: string; level: number }> {
+    const headings: Array<{ id: string; text: string; level: number }> = [];
+    const lines = content.split('\n');
+    
+    for (const line of lines) {
+        const match = line.match(/^(#{2,3})\s+(.+)$/);
+        if (match) {
+            const level = match[1].length;
+            const text = match[2].replace(/[*_`#]/g, '').trim();
+            headings.push({
+                id: generateSlug(text),
+                text,
+                level,
+            });
+        }
+    }
+    
+    return headings;
+}
 
 export default function ArticleDetailPage() {
     const { id } = useParams();
     const [article, setArticle] = useState<Article | null>(null);
     const [loading, setLoading] = useState(true);
     const [comment, setComment] = useState('');
+    const [activeHeading, setActiveHeading] = useState<string>('');
+    const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
 
     useEffect(() => {
         if (id) {
@@ -24,6 +55,62 @@ export default function ArticleDetailPage() {
             });
         }
     }, [id]);
+
+    // 获取相关文章（分类相同的其他文章）
+    useEffect(() => {
+        if (article?.categories && article.categories.length > 0) {
+            fetchArticles().then(({ articles }) => {
+                const related = articles
+                    .filter(a => 
+                        a.id !== article.id && 
+                        a.categories?.some(cat => article.categories?.includes(cat))
+                    )
+                    .slice(0, 3);
+                setRelatedArticles(related);
+            });
+        }
+    }, [article]);
+
+    // 提取文章标题
+    const headings = useMemo(() => {
+        if (!article?.content) return [];
+        return extractHeadings(article.content);
+    }, [article?.content]);
+
+    // 监听滚动，更新当前激活的标题
+    useEffect(() => {
+        if (headings.length === 0) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        setActiveHeading(entry.target.id);
+                        break;
+                    }
+                }
+            },
+            { rootMargin: '-80px 0px -80% 0px' }
+        );
+
+        // 观察所有标题元素
+        headings.forEach(({ id }) => {
+            const element = document.getElementById(id);
+            if (element) observer.observe(element);
+        });
+
+        return () => observer.disconnect();
+    }, [headings]);
+
+    // 点击导航滚动到对应位置
+    const scrollToHeading = (headingId: string) => {
+        const element = document.getElementById(headingId);
+        if (element) {
+            const offset = 100;
+            const top = element.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
+    };
 
     if (loading) {
         return (
@@ -49,7 +136,7 @@ export default function ArticleDetailPage() {
     return (
         <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-10 py-8 lg:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <article className="lg:col-span-8 flex flex-col gap-8">
+                <article className="lg:col-span-8 flex flex-col gap-8 bg-surface-light dark:bg-surface-dark rounded-2xl p-6 md:p-10 border border-gray-100 dark:border-border-dark">
                     <div className="flex flex-col gap-6">
                         <h1 className="text-4xl md:text-5xl font-black leading-[1.1] tracking-[-0.02em] text-text-primary-light dark:text-white">
                             {article.title}
@@ -132,16 +219,24 @@ export default function ArticleDetailPage() {
                                     );
                                 },
                                 // 自定义渲染其他 Markdown 元素以匹配样式
-                                h2: ({ children }) => (
-                                    <h2 className="text-3xl font-bold text-text-primary-light dark:text-white mt-12 mb-6 pb-2 border-b border-gray-100 dark:border-border-dark">
-                                        {children}
-                                    </h2>
-                                ),
-                                h3: ({ children }) => (
-                                    <h3 className="text-2xl font-bold text-text-primary-light dark:text-white mt-8 mb-4">
-                                        {children}
-                                    </h3>
-                                ),
+                                h2: ({ children }) => {
+                                    const text = String(children).replace(/[*_`#]/g, '').trim();
+                                    const id = generateSlug(text);
+                                    return (
+                                        <h2 id={id} className="text-3xl font-bold text-text-primary-light dark:text-white mt-12 mb-6 pb-2 border-b border-gray-100 dark:border-border-dark scroll-mt-24">
+                                            {children}
+                                        </h2>
+                                    );
+                                },
+                                h3: ({ children }) => {
+                                    const text = String(children).replace(/[*_`#]/g, '').trim();
+                                    const id = generateSlug(text);
+                                    return (
+                                        <h3 id={id} className="text-2xl font-bold text-text-primary-light dark:text-white mt-8 mb-4 scroll-mt-24">
+                                            {children}
+                                        </h3>
+                                    );
+                                },
                                 p: ({ children }) => (
                                     <p className="text-lg leading-relaxed text-gray-700 dark:text-[#c4cfde] mb-6">
                                         {children}
@@ -162,27 +257,61 @@ export default function ArticleDetailPage() {
                                         {children}
                                     </ol>
                                 ),
+                                table: ({ children }) => (
+                                    <div className="overflow-x-auto my-6">
+                                        <table className="min-w-full border-collapse border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden">
+                                            {children}
+                                        </table>
+                                    </div>
+                                ),
+                                thead: ({ children }) => (
+                                    <thead className="bg-gray-100 dark:bg-surface-dark">
+                                        {children}
+                                    </thead>
+                                ),
+                                tbody: ({ children }) => (
+                                    <tbody className="divide-y divide-gray-200 dark:divide-border-dark">
+                                        {children}
+                                    </tbody>
+                                ),
+                                tr: ({ children }) => (
+                                    <tr className="hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors">
+                                        {children}
+                                    </tr>
+                                ),
+                                th: ({ children }) => (
+                                    <th className="px-4 py-3 text-left text-sm font-bold text-text-primary-light dark:text-white border-b border-gray-200 dark:border-border-dark">
+                                        {children}
+                                    </th>
+                                ),
+                                td: ({ children }) => (
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-[#c4cfde]">
+                                        {children}
+                                    </td>
+                                ),
                             }}
                         >
                             {article.content || ''}
                         </ReactMarkdown>
                     </div>
 
-                    <div className="flex flex-wrap gap-3 py-10 border-t border-gray-100 dark:border-border-dark mt-10">
-                        {article.tags?.map(tag => (
-                            <Link
-                                key={tag}
-                                to={`/tag/${tag}`}
-                                className="flex h-9 items-center justify-center rounded-full bg-gray-100 dark:bg-surface-dark px-5 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:bg-primary hover:text-white transition-all border border-transparent hover:border-primary/20"
-                            >
-                                #{tag}
-                            </Link>
-                        ))}
-                    </div>
+                    {/* 标签区域 - 只在有标签时显示 */}
+                    {article.tags && article.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-3 pt-6 border-t border-gray-100 dark:border-border-dark">
+                            {article.tags.map(tag => (
+                                <Link
+                                    key={tag}
+                                    to={`/tag/${tag}`}
+                                    className="flex h-9 items-center justify-center rounded-full bg-gray-100 dark:bg-surface-dark px-5 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:bg-primary hover:text-white transition-all border border-transparent hover:border-primary/20"
+                                >
+                                    #{tag}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
 
-                    <div className="h-px w-full bg-gray-200 dark:bg-border-dark my-4"></div>
-
-                    <section className="flex flex-col gap-8">
+                    {/* 评论区 */}
+                    <section className="flex flex-col gap-6 pt-6 border-t border-gray-100 dark:border-border-dark">
                         <h3 className="text-2xl font-bold text-text-primary-light dark:text-white">评论 (12)</h3>
 
                         <div className="flex gap-4">
@@ -253,44 +382,34 @@ export default function ArticleDetailPage() {
                     </section>
                 </article>
 
-                <aside className="lg:col-span-4 flex flex-col gap-8">
+                <aside className="lg:col-span-4 flex flex-col gap-6">
                     <div className="sticky top-24 flex flex-col gap-6">
-                        <div className="bg-white dark:bg-surface-dark rounded-2xl p-6 border border-gray-200 dark:border-border-dark shadow-sm">
-                            <h4 className="text-lg font-bold text-text-primary-light dark:text-white mb-4">本页内容</h4>
-                            <ul className="flex flex-col gap-3">
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="block text-primary font-medium pl-3 border-l-2 border-primary"
-                                    >
-                                        介绍
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="block text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white transition-colors pl-3 border-l-2 border-transparent"
-                                    >
-                                        为什么需要服务器组件？
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="block text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white transition-colors pl-3 border-l-2 border-transparent"
-                                    >
-                                        实现示例
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="block text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white transition-colors pl-3 border-l-2 border-transparent"
-                                    >
-                                        结论
-                                    </a>
-                                </li>
-                            </ul>
+                        <div className="bg-white dark:bg-surface-dark rounded-xl p-4 border border-gray-200 dark:border-border-dark shadow-sm">
+                            <h4 className="text-sm font-bold text-text-primary-light dark:text-white mb-3">本页内容</h4>
+                            {headings.length > 0 ? (
+                                <ul className="flex flex-col gap-1">
+                                    {headings.map(({ id, text, level }) => (
+                                        <li key={id}>
+                                            <button
+                                                onClick={() => scrollToHeading(id)}
+                                                className={`block text-left w-full text-xs leading-tight transition-colors ${
+                                                    level === 3 ? 'pl-4' : 'pl-2'
+                                                } border-l-2 py-0.5 ${
+                                                    activeHeading === id
+                                                        ? 'text-primary font-medium border-primary'
+                                                        : 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white border-transparent'
+                                                }`}
+                                            >
+                                                {text}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
+                                    暂无目录
+                                </p>
+                            )}
                         </div>
 
                         <div className="bg-gradient-to-br from-[#1e2329] to-[#10151a] rounded-2xl p-6 border border-border-dark relative overflow-hidden group">
@@ -313,28 +432,28 @@ export default function ArticleDetailPage() {
 
                         <div className="flex flex-col gap-4">
                             <h4 className="text-lg font-bold text-text-primary-light dark:text-white">相关文章</h4>
-                            {[
-                                { title: 'React 18 并发性解释', readTime: '5 分钟阅读' },
-                                { title: '精通 Next.js 中间件', readTime: '12 分钟阅读' },
-                                { title: 'CSS Grid vs Flexbox：何时使用？', readTime: '7 分钟阅读' },
-                            ].map((item, index) => (
-                                <a key={index} href="#" className="group flex gap-3 items-start">
-                                    <div
-                                        className="w-20 h-14 rounded-lg bg-cover bg-center shrink-0 group-hover:opacity-80 transition-opacity bg-gray-300 dark:bg-surface-dark"
-                                        style={{
-                                            backgroundImage: `url(https://images.unsplash.com/photo-${1633356122544 + index}?w=200&auto=format&fit=crop)`,
-                                        }}
-                                    ></div>
-                                    <div className="flex flex-col">
-                                        <h5 className="text-sm font-bold text-text-primary-light dark:text-white group-hover:text-primary transition-colors leading-snug">
-                                            {item.title}
-                                        </h5>
-                                        <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
-                                            {item.readTime}
-                                        </span>
-                                    </div>
-                                </a>
-                            ))}
+                            {relatedArticles.length > 0 ? (
+                                relatedArticles.map((item) => (
+                                    <Link key={item.id} to={`/article/${item.id}`} className="group flex gap-3 items-start">
+                                        <div
+                                            className="w-20 h-14 rounded-lg bg-cover bg-center shrink-0 group-hover:opacity-80 transition-opacity bg-gray-300 dark:bg-surface-dark"
+                                            style={{
+                                                backgroundImage: `url(${item.coverImage || DEFAULT_COVER})`,
+                                            }}
+                                        ></div>
+                                        <div className="flex flex-col">
+                                            <h5 className="text-sm font-bold text-text-primary-light dark:text-white group-hover:text-primary transition-colors leading-snug">
+                                                {item.title}
+                                            </h5>
+                                            <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
+                                                {item.readTime}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                ))
+                            ) : (
+                                <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">暂无相关文章</p>
+                            )}
                         </div>
                     </div>
                 </aside>
