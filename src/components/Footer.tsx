@@ -4,9 +4,7 @@ export default function Footer() {
             <div className="mx-auto max-w-7xl px-4 sm:px-10">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 py-6 px-4 sm:px-6 bg-surface-light dark:bg-surface-dark rounded-t-2xl shadow-md">
                     <div className="flex items-center gap-2">
-                        <div className="size-6 text-primary">
-                            <span className="material-symbols-outlined">terminal</span>
-                        </div>
+                        <img src="/logo.png" alt="Cyclone77" className="size-6" />
                         <span className="font-display text-lg font-bold text-text-primary-light dark:text-white">
                             Cyclone77
                         </span>

@@ -34,9 +34,7 @@ export default function Header() {
                                 to="/"
                                 className="flex items-center gap-3 text-text-primary-light dark:text-white hover:opacity-80 transition-opacity"
                             >
-                                <div className="size-8 text-primary">
-                                    <span className="material-symbols-outlined !text-[32px]">terminal</span>
-                                </div>
+                                <img src="/logo.png" alt="Cyclone77" className="size-8" />
                                 <h2 className="font-display text-xl font-bold leading-tight tracking-[-0.015em]">
                                     Cyclone77
                                 </h2>
