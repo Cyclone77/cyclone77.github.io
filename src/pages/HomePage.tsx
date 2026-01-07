@@ -94,13 +94,7 @@ export default function HomePage() {
                                     )}
 
                                     <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
-                                        {featuredArticle.createdAt
-                                            ? new Date(featuredArticle.createdAt).toLocaleDateString('zh-CN', {
-                                                  month: 'long',
-                                                  day: 'numeric',
-                                              })
-                                            : featuredArticle.date}{' '}
-                                        · {featuredArticle.readTime}
+                                        {featuredArticle.date} · {featuredArticle.readTime}
                                     </span>
                                 </div>
 
@@ -198,13 +192,7 @@ export default function HomePage() {
 
                                                 <span className="w-1 h-1 rounded-full bg-gray-400"></span>
                                                 <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
-                                                    {article.createdAt
-                                                        ? new Date(article.createdAt).toLocaleDateString('zh-CN', {
-                                                              month: 'long',
-                                                              day: 'numeric',
-                                                          })
-                                                        : article.date}{' '}
-                                                    · {article.readTime}
+                                                    {article.date} · {article.readTime}
                                                 </span>
                                             </div>
 

@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Article } from '../data/mockData';
 import { fetchArticleById } from '../services/api';
-import { Calendar, Clock, User, ArrowLeft, Bookmark, Share2 } from 'lucide-react';
+import { Calendar, Clock, Bookmark, Share2 } from 'lucide-react';
 
 export default function ArticleDetailPage() {
     const { id } = useParams();
@@ -42,9 +42,7 @@ export default function ArticleDetailPage() {
         );
     }
 
-    const publishDate = article.createdAt
-        ? new Date(article.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
-        : article.date;
+    const publishDate = article.date;
 
     return (
         <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-10 py-8 lg:py-12">

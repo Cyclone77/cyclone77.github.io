@@ -193,6 +193,7 @@ jobs:
                           displays: parsed.displays,
                           coverImage: extractCoverImage(issue.body),
                           readTime: calculateReadTime(extractContent(issue.body)),
+                          date: new Date(issue.created_at).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
                           createdAt: issue.created_at,
                           updatedAt: issue.updated_at,
                           commentsCount: comments.data.length,
