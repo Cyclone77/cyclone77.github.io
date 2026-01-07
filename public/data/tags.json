@@ -8,6 +8,13 @@
       "type": "category"
     },
     {
+      "name": "热门",
+      "count": 2,
+      "color": "#fef2c0",
+      "description": "热门文章显示",
+      "type": "display"
+    },
+    {
       "name": "CSS",
       "count": 1,
       "color": "#1A7F37",
@@ -36,10 +43,10 @@
       "type": "category"
     },
     {
-      "name": "热门",
+      "name": "精选",
       "count": 1,
       "color": "#fef2c0",
-      "description": "热门文章显示",
+      "description": "精选文章",
       "type": "display"
     },
     {
@@ -76,13 +83,6 @@
       "color": "#1A7F37",
       "description": "经验总结类",
       "type": "category"
-    },
-    {
-      "name": "精选",
-      "count": 0,
-      "color": "#fef2c0",
-      "description": "精选文章",
-      "type": "display"
     }
   ]
 }
