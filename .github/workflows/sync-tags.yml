@@ -1,6 +1,7 @@
 name: Sync Tags
 
 on:
+    workflow_dispatch: # 允许手动触发
     issues:
         types: [unlabeled] # labeled 交给 Guard 任务处理后触发
     workflow_run:
