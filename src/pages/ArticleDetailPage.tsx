@@ -199,12 +199,14 @@ export default function ArticleDetailPage() {
                             components={{
                                 code({ node, inline, className, children, ...props }: any) {
                                     const match = /language-(\w+)/.exec(className || '');
+                                    const monoFont = "'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', 'Source Code Pro', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace";
                                     return !inline && match ? (
                                         <SyntaxHighlighter
                                             style={vscDarkPlus}
                                             language={match[1]}
                                             PreTag="div"
                                             className="rounded-xl !my-6 shadow-2xl"
+                                            customStyle={{ fontFamily: monoFont }}
                                             {...props}
                                         >
                                             {String(children).replace(/\n$/, '')}
@@ -212,6 +214,7 @@ export default function ArticleDetailPage() {
                                     ) : (
                                         <code
                                             className={`${className} bg-gray-100 dark:bg-surface-dark px-1.5 py-0.5 rounded text-primary font-medium`}
+                                            style={{ fontFamily: monoFont }}
                                             {...props}
                                         >
                                             {children}
