@@ -1,6 +1,35 @@
 {
   "articles": [
     {
+      "id": 3784306353,
+      "number": 2,
+      "title": "学会图片懒加载",
+      "description": "在现代网页中，高清图片往往占据了流量的“大头”。如果用户打开页面时一次性加载所有图片，不仅会消耗大量带宽，还会导致首屏加载缓慢（LCP 指标变差）。",
+      "content": "在现代网页中，高清图片往往占据了流量的“大头”。如果用户打开页面时一次性加载所有图片，不仅会消耗大量带宽，还会导致首屏加载缓慢（LCP 指标变差）。\n\n**懒加载 (Lazy Loading)** 的核心思想很简单：**只有当图片进入（或即将进入）用户的视口区域时，才去加载它**。",
+      "author": {
+        "name": "Cyclone77",
+        "avatar": "https://avatars.githubusercontent.com/u/10395760?v=4",
+        "url": "https://github.com/Cyclone77"
+      },
+      "status": "已发布",
+      "categories": [
+        "前端开发",
+        "HTML",
+        "JAVASCRIPT"
+      ],
+      "tags": [],
+      "displays": [
+        "置顶"
+      ],
+      "coverImage": "",
+      "readTime": "1 分钟阅读",
+      "date": "2026年1月6日",
+      "createdAt": "2026-01-06T08:55:01Z",
+      "updatedAt": "2026-01-07T01:39:32Z",
+      "commentsCount": 0,
+      "url": "https://github.com/Cyclone77/cyclone77.github.io/issues/2"
+    },
+    {
       "id": 3783903379,
       "number": 1,
       "title": "利用 CSS 变量实现网站“暗黑模式”",
@@ -17,7 +46,9 @@
         "CSS"
       ],
       "tags": [],
-      "displays": [],
+      "displays": [
+        "热门"
+      ],
       "coverImage": "",
       "readTime": "1 分钟阅读",
       "date": "2026年1月6日",
@@ -51,35 +82,8 @@
       "updatedAt": "2026-01-07T06:24:02Z",
       "commentsCount": 0,
       "url": "https://github.com/Cyclone77/cyclone77.github.io/issues/3"
-    },
-    {
-      "id": 3784306353,
-      "number": 2,
-      "title": "学会图片懒加载",
-      "description": "在现代网页中，高清图片往往占据了流量的“大头”。如果用户打开页面时一次性加载所有图片，不仅会消耗大量带宽，还会导致首屏加载缓慢（LCP 指标变差）。",
-      "content": "在现代网页中，高清图片往往占据了流量的“大头”。如果用户打开页面时一次性加载所有图片，不仅会消耗大量带宽，还会导致首屏加载缓慢（LCP 指标变差）。\n\n**懒加载 (Lazy Loading)** 的核心思想很简单：**只有当图片进入（或即将进入）用户的视口区域时，才去加载它**。",
-      "author": {
-        "name": "Cyclone77",
-        "avatar": "https://avatars.githubusercontent.com/u/10395760?v=4",
-        "url": "https://github.com/Cyclone77"
-      },
-      "status": "已发布",
-      "categories": [
-        "前端开发",
-        "HTML",
-        "JAVASCRIPT"
-      ],
-      "tags": [],
-      "displays": [],
-      "coverImage": "",
-      "readTime": "1 分钟阅读",
-      "date": "2026年1月6日",
-      "createdAt": "2026-01-06T08:55:01Z",
-      "updatedAt": "2026-01-07T01:39:32Z",
-      "commentsCount": 0,
-      "url": "https://github.com/Cyclone77/cyclone77.github.io/issues/2"
     }
   ],
   "total": 3,
-  "lastUpdate": "2026-01-07T07:08:59.025Z"
+  "lastUpdate": "2026-01-07T07:27:21.328Z"
 }
