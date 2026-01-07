@@ -18,27 +18,20 @@ function parseLabels(labels) {
 
 /**
  * 辅助函数：通用区块提取
+ * 提取 ## headerName 到下一个 ## 或 --- 之间的内容
  */
 function extractSection(body, headerName) {
     if (!body) return '';
-    const patterns = [
-        headerName === '文章内容'
-            ? new RegExp(`(?:^|[\\r\\n])#+\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*)`, 'i')
-            : new RegExp(
-                  `(?:^|[\\r\\n])#+\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*?)(?=(?:[\\r\\n](?:#+|---|_+) [A-Z])|$)`,
-                  'i'
-              ),
-        new RegExp(
-            `(?:^|[\\r\\n])${headerName}\\s*[\\r\\n]+(?:[-_=]{3,}[\\r\\n]+)?([\\s\\S]*?)(?=(?:[\\r\\n](?:#+|---|_+) [A-Z])|$)`,
-            'i'
-        ),
-    ];
-
-    for (const pattern of patterns) {
-        const match = body.match(pattern);
-        if (match && match[1].trim()) {
-            return match[1].trim();
-        }
+    
+    // 匹配 ## headerName 后面的内容，直到遇到下一个 ## 或 --- 或文档结束
+    const pattern = new RegExp(
+        `(?:^|[\\r\\n])##\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*?)(?=(?:[\\r\\n]##|[\\r\\n]---)|$)`,
+        'i'
+    );
+    
+    const match = body.match(pattern);
+    if (match && match[1]) {
+        return match[1].trim();
     }
     return '';
 }
