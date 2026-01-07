@@ -18,11 +18,13 @@
         "Javascript"
       ],
       "tags": [],
-      "displays": [],
+      "displays": [
+        "置顶"
+      ],
       "coverImage": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop",
       "readTime": "1 分钟阅读",
       "createdAt": "2026-01-06T08:55:01Z",
-      "updatedAt": "2026-01-07T01:25:41Z",
+      "updatedAt": "2026-01-07T01:39:32Z",
       "commentsCount": 0,
       "url": "https://github.com/Cyclone77/cyclone77.github.io/issues/2"
     },
@@ -53,5 +55,5 @@
     }
   ],
   "total": 2,
-  "lastUpdate": "2026-01-07T01:36:39.220Z"
+  "lastUpdate": "2026-01-07T01:39:40.105Z"
 }
