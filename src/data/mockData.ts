@@ -17,6 +17,7 @@ export interface Article {
     coverImage: string;
     tags: string[];
     content?: string;
+    url?: string; // GitHub Issue URL
 }
 
 export const mockArticles: Article[] = [

@@ -314,7 +314,7 @@ export default function ArticleDetailPage() {
                     )}
 
                     {/* 评论区 - 使用 Utterances */}
-                    {article.number && <Comments issueNumber={article.number} />}
+                    {article.number && <Comments issueNumber={article.number} issueUrl={article.url} />}
                 </article>
 
                 <aside className="lg:col-span-4 flex flex-col gap-6">
