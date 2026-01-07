@@ -8,6 +8,7 @@ import { Article } from '../data/mockData';
 import { fetchArticleById, fetchArticles } from '../services/api';
 import { Calendar, Clock, MessageCircle } from 'lucide-react';
 import Comments from '../components/Comments';
+import LazyImage from '../components/LazyImage';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop';
 
@@ -213,12 +214,12 @@ export default function ArticleDetailPage() {
                     </div>
 
                     <div className="w-full aspect-[2/1] rounded-2xl overflow-hidden bg-gray-200 dark:bg-surface-dark shadow-xl">
-                        <div
-                            className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-1000"
-                            style={{
-                                backgroundImage: `url(${article.coverImage || DEFAULT_COVER})`,
-                            }}
-                        ></div>
+                        <LazyImage
+                            src={article.coverImage || DEFAULT_COVER}
+                            alt={article.title}
+                            fallback={DEFAULT_COVER}
+                            className="w-full h-full hover:scale-105 transition-transform duration-1000"
+                        />
                     </div>
 
                     {/* 使用 ReactMarkdown 解析内容并支持代码高亮 */}

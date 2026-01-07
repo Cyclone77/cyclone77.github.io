@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import { Article } from '../data/mockData';
 import { fetchTags, fetchArticles } from '../services/api';
+import LazyImage from '../components/LazyImage';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop';
 
@@ -81,10 +82,11 @@ export default function HomePage() {
                 <section className="@container">
                     <div className="flex flex-col gap-6 rounded-2xl bg-surface-light dark:bg-surface-dark p-6 shadow-sm border border-gray-100 dark:border-border-dark md:flex-row md:items-center md:gap-10 md:p-10">
                         <div className="w-full md:w-1/2 aspect-video rounded-xl bg-gray-100 dark:bg-border-dark shadow-md overflow-hidden relative group">
-                            <img
+                            <LazyImage
                                 src={featuredArticle.coverImage || DEFAULT_COVER}
                                 alt={featuredArticle.title}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                fallback={DEFAULT_COVER}
+                                className="w-full h-full transition-transform duration-500 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                         </div>
@@ -206,10 +208,11 @@ export default function HomePage() {
                                     className="group relative flex flex-col sm:flex-row gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-border-dark transition-all hover:shadow-md cursor-pointer"
                                 >
                                     <div className="sm:w-48 h-48 sm:h-auto shrink-0 rounded-lg bg-gray-100 dark:bg-border-dark overflow-hidden relative">
-                                        <img
+                                        <LazyImage
                                             src={article.coverImage || DEFAULT_COVER}
                                             alt={article.title}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            fallback={DEFAULT_COVER}
+                                            className="w-full h-full transition-transform duration-500 group-hover:scale-105"
                                         />
                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
                                     </div>
