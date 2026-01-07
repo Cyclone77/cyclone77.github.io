@@ -1,8 +1,12 @@
 name: Blog Deploy
 
 on:
+    push:
+        branches:
+            - master
+            - main
     issues:
-        types: [edited] # 只监听内容编辑，标签变更由 Articles Sync 和 Stats Sync 处理
+        types: [opened, edited, labeled, unlabeled] # 增加更多类型以确保同步
     workflow_dispatch:
 
 jobs:
