@@ -22,7 +22,7 @@
       "type": "category"
     },
     {
-      "name": "Javascript",
+      "name": "JAVASCRIPT",
       "count": 1,
       "color": "#1A7F37",
       "description": "",
@@ -34,6 +34,13 @@
       "color": "#fef2c0",
       "description": "首页置顶显示",
       "type": "display"
+    },
+    {
+      "name": "REACT",
+      "count": 0,
+      "color": "#1A7F37",
+      "description": "",
+      "type": "category"
     },
     {
       "name": "人工智能",
