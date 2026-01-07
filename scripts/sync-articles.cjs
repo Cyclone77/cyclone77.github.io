@@ -9,9 +9,7 @@ function parseLabels(labels) {
     console.log('解析标签列表:', labelNames.join(', '));
     const statusLabel = labelNames.find(l => l === '状态:已发布' || l === '已发布');
     return {
-        status: statusLabel
-            ? '已发布'
-            : labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', '') || '草稿',
+        status: statusLabel ? '已发布' : labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', '') || '草稿',
         categories: labelNames.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
         displays: labelNames.filter(l => l.startsWith('展示:')).map(l => l.replace('展示:', '')),
         tags: labelNames.filter(l => !l.includes(':')),
@@ -58,7 +56,7 @@ function extractCoverImage(body) {
     const urlMatch = source.match(/https?:\/\/[^\s\)\"\'\]]+/);
     if (urlMatch) return urlMatch[0];
 
-    return 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop';
+    return '';
 }
 
 /**
@@ -71,10 +69,7 @@ function extractDescription(body) {
 
     if (!source) {
         const content = extractSection(body, '文章内容') || body;
-        source =
-            content
-                .split(/[\r\n]+/)
-                .find(p => p.trim() && !p.startsWith('#') && !p.startsWith('![')) || '';
+        source = content.split(/[\r\n]+/).find(p => p.trim() && !p.startsWith('#') && !p.startsWith('![')) || '';
     }
 
     const text = source
@@ -159,8 +154,7 @@ module.exports = async ({ github, context, core }) => {
     }
 
     // 判断是否为全量同步
-    const isFullSync =
-        context.payload.inputs?.full_sync === 'true' || !fs.existsSync(articlesFile);
+    const isFullSync = context.payload.inputs?.full_sync === 'true' || !fs.existsSync(articlesFile);
 
     let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
 
