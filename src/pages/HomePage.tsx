@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import { Article } from '../data/mockData';
 import { fetchTags, fetchArticles } from '../services/api';
@@ -18,48 +18,49 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // 获取标签
-        fetchTags().then(data => {
-            const categoryTags = data.tags.filter(tag => tag.type === 'category');
+        // 并行获取标签和文章数据
+        Promise.all([fetchTags(), fetchArticles()]).then(([tagsData, articlesData]) => {
+            const categoryTags = tagsData.tags.filter(tag => tag.type === 'category');
             setTags(categoryTags);
-        });
-
-        // 获取文章数据
-        fetchArticles().then(data => {
-            setArticles(data.articles);
+            setArticles(articlesData.articles);
             setLoading(false);
         });
     }, []);
 
     // 找到置顶文章作为 featuredArticle，如果没有置顶则取第一篇
-    const featuredArticle = articles.find(a => a.displays?.includes('置顶')) || articles[0];
+    const featuredArticle = useMemo(() => {
+        return articles.find(a => a.displays?.includes('置顶')) || articles[0];
+    }, [articles]);
 
-    // 过滤文章列表
-    const filteredArticles = articles.filter(article => {
-        // 判断是否有过滤条件
-        const hasFilter = selectedTag || selectedCategory !== '全部';
+    // 过滤文章列表 - 使用 useMemo 缓存
+    const filteredArticles = useMemo(() => {
+        return articles.filter(article => {
+            const hasFilter = selectedTag || selectedCategory !== '全部';
+            if (!hasFilter && featuredArticle && article.id === featuredArticle.id) return false;
+            if (selectedTag) {
+                return article.categories?.includes(selectedTag);
+            }
+            if (selectedCategory === '全部') return true;
+            if (selectedCategory === '精选') return article.displays?.includes('精选');
+            if (selectedCategory === '热门') return article.displays?.includes('热门');
+            return true;
+        });
+    }, [articles, selectedCategory, selectedTag, featuredArticle]);
 
-        // 1. 如果没有过滤条件，且该文章是 Banner 显示的置顶文章，则从列表中排除
-        if (!hasFilter && featuredArticle && article.id === featuredArticle.id) return false;
+    // 分页计算 - 使用 useMemo 缓存
+    const { totalPages, paginatedArticles } = useMemo(() => {
+        const total = Math.ceil(filteredArticles.length / pageSize);
+        const paginated = filteredArticles.slice(
+            (currentPage - 1) * pageSize,
+            currentPage * pageSize
+        );
+        return { totalPages: total, paginatedArticles: paginated };
+    }, [filteredArticles, currentPage, pageSize]);
 
-        // 2. 标签过滤（优先级高于分类过滤）
-        if (selectedTag) {
-            return article.categories?.includes(selectedTag);
-        }
-
-        // 3. 分类过滤
-        if (selectedCategory === '全部') return true;
-        if (selectedCategory === '精选') return article.displays?.includes('精选');
-        if (selectedCategory === '热门') return article.displays?.includes('热门');
-        return true;
-    });
-
-    // 分页计算
-    const totalPages = Math.ceil(filteredArticles.length / pageSize);
-    const paginatedArticles = filteredArticles.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
-    );
+    // 热门文章 - 使用 useMemo 缓存
+    const hotArticles = useMemo(() => {
+        return articles.filter(a => a.displays?.includes('热门')).slice(0, 3);
+    }, [articles]);
 
     // 切换过滤条件时重置页码
     useEffect(() => {
@@ -410,10 +411,8 @@ export default function HomePage() {
                         </h3>
 
                         <div className="flex flex-col gap-4">
-                            {articles
-                                .filter(a => a.displays?.includes('热门'))
-                                .slice(0, 3)
-                                .map((article, index) => (
+                            {hotArticles.length > 0 ? (
+                                hotArticles.map((article, index) => (
                                     <Link key={article.id} to={`/article/${article.id}`} className="group flex gap-3 items-start">
                                         <span className="text-gray-300 dark:text-gray-600 font-display font-bold text-xl leading-none">
                                             {String(index + 1).padStart(2, '0')}
@@ -427,8 +426,8 @@ export default function HomePage() {
                                             </span>
                                         </div>
                                     </Link>
-                                ))}
-                            {articles.filter(a => a.displays?.includes('热门')).length === 0 && (
+                                ))
+                            ) : (
                                 <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm">
                                     暂无热门文章
                                 </p>

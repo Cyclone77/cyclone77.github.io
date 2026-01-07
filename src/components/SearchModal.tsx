@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import Fuse from 'fuse.js';
 import { Article } from '../data/mockData';
@@ -13,18 +13,23 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     const [query, setQuery] = useState('');
     const [articles, setArticles] = useState<Article[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [loaded, setLoaded] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
 
-    // 加载文章数据
+    // 只在首次打开时加载文章数据
     useEffect(() => {
-        fetchArticles().then(data => {
-            setArticles(data.articles);
-        });
-    }, []);
+        if (isOpen && !loaded) {
+            fetchArticles().then(data => {
+                setArticles(data.articles);
+                setLoaded(true);
+            });
+        }
+    }, [isOpen, loaded]);
 
     // 创建 Fuse 实例
     const fuse = useMemo(() => {
+        if (articles.length === 0) return null;
         return new Fuse(articles, {
             keys: [
                 { name: 'title', weight: 0.4 },
@@ -40,7 +45,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
     // 搜索结果
     const results = useMemo(() => {
-        if (!query.trim()) return [];
+        if (!query.trim() || !fuse) return [];
         return fuse.search(query).slice(0, 8);
     }, [fuse, query]);
 
@@ -52,6 +57,12 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             setTimeout(() => inputRef.current?.focus(), 100);
         }
     }, [isOpen]);
+
+    // 处理导航
+    const handleNavigate = useCallback((id: number) => {
+        navigate(`/article/${id}`);
+        onClose();
+    }, [navigate, onClose]);
 
     // 键盘导航
     useEffect(() => {
@@ -70,8 +81,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 case 'Enter':
                     e.preventDefault();
                     if (results[selectedIndex]) {
-                        navigate(`/article/${results[selectedIndex].item.id}`);
-                        onClose();
+                        handleNavigate(results[selectedIndex].item.id);
                     }
                     break;
                 case 'Escape':
@@ -82,7 +92,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, results, selectedIndex, navigate, onClose]);
+    }, [isOpen, results, selectedIndex, handleNavigate, onClose]);
 
     // 重置选中索引
     useEffect(() => {
