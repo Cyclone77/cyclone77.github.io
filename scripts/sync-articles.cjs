@@ -49,22 +49,37 @@ function extractSection(body, headerName) {
  */
 function extractCoverImage(body) {
     const section = extractSection(body, '封面图片');
+    console.log(`[extractCoverImage] 封面图片区块: "${section ? section.substring(0, 100) : '(空)'}"`);
     
     // 如果没有封面图片区块，返回空
-    if (!section) return '';
+    if (!section) {
+        console.log('[extractCoverImage] 没有封面图片区块，返回空字符串');
+        return '';
+    }
     
     // 过滤掉 HTML 注释
     const cleanSection = section.replace(/<!--[\s\S]*?-->/g, '').trim();
-    if (!cleanSection) return '';
+    console.log(`[extractCoverImage] 过滤注释后: "${cleanSection ? cleanSection.substring(0, 100) : '(空)'}"`);
+    if (!cleanSection) {
+        console.log('[extractCoverImage] 过滤后为空，返回空字符串');
+        return '';
+    }
 
     // 优先匹配 Markdown 图片语法 ![alt](url)
     const mdImage = cleanSection.match(/!\[[^\]]*]\((https?:\/\/[^\)]+)\)/);
-    if (mdImage) return mdImage[1];
+    if (mdImage) {
+        console.log(`[extractCoverImage] 匹配到 Markdown 图片: ${mdImage[1]}`);
+        return mdImage[1];
+    }
 
     // 其次匹配纯 URL
     const urlMatch = cleanSection.match(/https?:\/\/[^\s\)\"\'\]]+/);
-    if (urlMatch) return urlMatch[0];
+    if (urlMatch) {
+        console.log(`[extractCoverImage] 匹配到 URL: ${urlMatch[0]}`);
+        return urlMatch[0];
+    }
 
+    console.log('[extractCoverImage] 没有匹配到任何图片，返回空字符串');
     return '';
 }
 
