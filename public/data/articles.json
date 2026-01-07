@@ -1,11 +1,37 @@
 {
   "articles": [
     {
+      "id": 3784306353,
+      "number": 2,
+      "title": "学会图片懒加载",
+      "description": "在现代网页中，高清图片往往占据了流量的“大头”。如果用户打开页面时一次性加载所有图片，不仅会消耗大量带宽，还会导致首屏加载缓慢（LCP 指标变差）。",
+      "content": "在现代网页中，高清图片往往占据了流量的“大头”。如果用户打开页面时一次性加载所有图片，不仅会消耗大量带宽，还会导致首屏加载缓慢（LCP 指标变差）。\n\n**懒加载 (Lazy Loading)** 的核心思想很简单：**只有当图片进入（或即将进入）用户的视口区域时，才去加载它**。",
+      "author": {
+        "name": "Cyclone77",
+        "avatar": "https://avatars.githubusercontent.com/u/10395760?v=4",
+        "url": "https://github.com/Cyclone77"
+      },
+      "status": "已发布",
+      "categories": [
+        "前端开发",
+        "HTML",
+        "Javascript"
+      ],
+      "tags": [],
+      "displays": [],
+      "coverImage": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop",
+      "readTime": "1 分钟阅读",
+      "createdAt": "2026-01-06T08:55:01Z",
+      "updatedAt": "2026-01-07T01:25:41Z",
+      "commentsCount": 0,
+      "url": "https://github.com/Cyclone77/cyclone77.github.io/issues/2"
+    },
+    {
       "id": 3783903379,
       "number": 1,
       "title": "利用 CSS 变量实现网站“暗黑模式”",
-      "description": "封面图片\n\n<!-- 在下面上传图片，或者粘贴图片URL --\n\n---\n\n 文章内容\n\n在现代 Web 开发中，暗黑模式已不再是“锦上添花”的功能，而是提升用户体验的标配。它能有效减轻用户的视觉疲劳，尤其是在夜间浏览时。\n\n今天，我们将摒弃复杂的预处理器，仅使用原生 CSS 变量 (Custom Properties) 和少量的 JavaScript，构建一个轻量级且高性能的主题切换功能。\n\n-...",
-      "content": "在现代 Web 开发中，**暗黑模式**已不再是“锦上添花”的功能，而是提升用户体验的标配。它能有效减轻用户的视觉疲劳，尤其是在夜间浏览时。\n\n今天，我们将摒弃复杂的预处理器，仅使用原生 **CSS 变量 (Custom Properties)** 和少量的 **JavaScript**，构建一个轻量级且高性能的主题切换功能。\n\n---\n\n## 💡 1. 核心原理\n\n在开始写代码之前，我们需要理解核心思路。我们将不再硬编码颜色（如 `#ffffff` 或 `#000000`），而是使用 CSS 变量作为“占位符”。\n\n1. **定义变量**：在 `:root` 中定义一套默认（亮色）的语义化变量。\n2. **覆盖变量**：通过给 `<html>` 标签添加属性（如 `data-theme=\"dark\"`），在其中重新定义同一套变量的值。\n3. **一键切换**：JavaScript 只需要负责切换这个属性即可，样式会自动由浏览器重绘。\n\n---\n\n## 🛠️ 2. 开发步骤\n\n下面我们将通过三个步骤由浅入深地实现该功能。\n\n### 2.1 编写 HTML 结构\n\n我们需要一个简单的页面结构和一个用于触发切换的按钮。\n\n```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>暗黑模式示例</title>\n</head>\n<body>\n    <div class=\"container\">\n        <header>\n            <h1>前端技术博客</h1>\n            <button id=\"theme-toggle\" aria-label=\"切换主题\">🌞/🌜</button>\n        </header>\n\n        <main>\n            <div class=\"card\">\n                <h2>为什么选择 CSS 变量？</h2>\n                <p>CSS 变量具有动态性，可以在运行时修改，这是预处理器（Sass/Less）无法做到的。</p>\n            </div>\n        </main>\n    </div>\n</body>\n</html>\n\n```\n\n### 2.2 配置 CSS 变量体系\n\n这是最关键的一步。我们将使用语义化的命名（如 `--bg-primary` 而不是 `--white`），这样代码更具可维护性。\n\n```css\n/* 1. 定义默认主题（亮色模式） */\n:root {\n    --bg-primary: #ffffff;\n    --bg-secondary: #f4f4f5;\n    --text-primary: #18181b;\n    --text-secondary: #71717a;\n    --accent-color: #3b82f6;\n    --card-border: #e4e4e7;\n}\n\n/* 2. 定义暗黑模式（通过 data-theme 属性触发） */\n[data-theme=\"dark\"] {\n    --bg-primary: #18181b;\n    --bg-secondary: #000000;\n    --text-primary: #f4f4f5;\n    --text-secondary: #a1a1aa;\n    --accent-color: #60a5fa;\n    --card-border: #27272a;\n}\n\n/* 3. 应用变量到元素 */\nbody {\n    background-color: var(--bg-secondary);\n    color: var(--text-primary);\n    transition: background-color 0.3s, color 0.3s; /* 添加平滑过渡 */\n}\n\n.card {\n    background-color: var(--bg-primary);\n    border: 1px solid var(--card-border);\n    padding: 2rem;\n    border-radius: 8px;\n}\n\nbutton {\n    background-color: var(--accent-color);\n    color: white;\n    border: none;\n    padding: 0.5rem 1rem;\n    border-radius: 4px;\n    cursor: pointer;\n}\n\n```\n\n### 2.3 添加 JavaScript 交互逻辑\n\n最后，我们需要用 JS 来监听点击事件，并切换 `html` 标签上的属性。\n\n```javascript\nconst toggleBtn = document.getElementById('theme-toggle');\nconst html = document.documentElement;\n\ntoggleBtn.addEventListener('click', () => {\n    // 获取当前的主题属性\n    const currentTheme = html.getAttribute('data-theme');\n    \n    // 判断并切换\n    if (currentTheme === 'dark') {\n        html.setAttribute('data-theme', 'light');\n    } else {\n        html.setAttribute('data-theme', 'dark');\n    }\n});\n\n```\n\n---\n\n## 🚀 3. 进阶优化：记住用户的选择\n\n上面的代码虽然能工作，但刷新页面后会重置。为了提供最佳体验，我们需要将用户的偏好保存在 `localStorage` 中。\n\n1. **保存状态**：每次切换时写入 LocalStorage。\n2. **初始化检查**：页面加载时读取配置。\n\n优化后的 JavaScript 代码如下：\n\n```javascript\n// 1. 初始化逻辑：检查本地存储\nconst savedTheme = localStorage.getItem('theme');\n// 如果之前存过 'dark'，则直接应用\nif (savedTheme === 'dark') {\n    document.documentElement.setAttribute('data-theme', 'dark');\n}\n\n// 2. 切换逻辑\nconst toggleBtn = document.getElementById('theme-toggle');\n\ntoggleBtn.addEventListener('click', () => {\n    const html = document.documentElement;\n    const currentTheme = html.getAttribute('data-theme');\n    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';\n\n    // 更新 DOM\n    html.setAttribute('data-theme', newTheme);\n    \n    // 更新本地存储\n    localStorage.setItem('theme', newTheme);\n});\n\n```\n\n---\n\n## 🎉 4. 总结\n\n通过以上步骤，我们没有引入任何笨重的第三方库，仅用几十行代码就实现了高性能的暗黑模式。\n\n**这种方案的优势在于：**\n\n* **性能好**：浏览器原生渲染，无 JS 计算样式开销。\n* **维护方便**：只需要在一个地方（CSS）管理颜色。\n* **兼容性**：现代浏览器均完美支持 CSS 变量。",
+      "description": "在现代 Web 开发中，暗黑模式已不再是“锦上添花”的功能，而是提升用户体验的标配。它能有效减轻用户的视觉疲劳，尤其是在夜间浏览时。",
+      "content": "在现代 Web 开发中，**暗黑模式**已不再是“锦上添花”的功能，而是提升用户体验的标配。它能有效减轻用户的视觉疲劳，尤其是在夜间浏览时。\n\n今天，我们将摒弃复杂的预处理器，仅使用原生 **CSS 变量 (Custom Properties)** 和少量的 **JavaScript**，构建一个轻量级且高性能的主题切换功能。\n\n---",
       "author": {
         "name": "Cyclone77",
         "avatar": "https://avatars.githubusercontent.com/u/10395760?v=4",
@@ -19,13 +45,13 @@
       "tags": [],
       "displays": [],
       "coverImage": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop",
-      "readTime": "12 分钟阅读",
+      "readTime": "1 分钟阅读",
       "createdAt": "2026-01-06T06:19:24Z",
       "updatedAt": "2026-01-06T08:55:13Z",
       "commentsCount": 0,
       "url": "https://github.com/Cyclone77/cyclone77.github.io/issues/1"
     }
   ],
-  "total": 1,
-  "lastUpdate": "2026-01-07T01:35:39.310Z"
+  "total": 2,
+  "lastUpdate": "2026-01-07T01:36:39.220Z"
 }
