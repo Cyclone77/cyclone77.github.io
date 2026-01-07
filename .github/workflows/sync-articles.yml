@@ -32,9 +32,52 @@ jobs:
             - name: Create data directory
               run: mkdir -p public/data
 
+            - name: Get issue number from upstream workflow
+              id: get_issue
+              if: github.event_name == 'workflow_run'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      // 获取上游 workflow run 的详情
+                      const runId = context.payload.workflow_run.id;
+                      console.log(`上游 workflow run ID: ${runId}`);
+                      
+                      // 获取触发上游 workflow 的事件
+                      const { data: run } = await github.rest.actions.getWorkflowRun({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          run_id: runId
+                      });
+                      
+                      // 从 head_commit message 或其他方式获取 issue number
+                      // 上游是 issues 事件触发的，可以从 run 的 event payload 获取
+                      // 但 GitHub API 不直接暴露这个，需要从 artifacts 或其他方式传递
+                      
+                      // 替代方案：从上游 workflow 的 jobs 日志中解析，或者让上游传递
+                      // 最简单的方案：查询最近被修改的 issue
+                      const { data: issues } = await github.rest.issues.listForRepo({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          state: 'all',
+                          sort: 'updated',
+                          direction: 'desc',
+                          per_page: 1
+                      });
+                      
+                      if (issues.length > 0) {
+                          const issueNumber = issues[0].number;
+                          console.log(`最近更新的 Issue: #${issueNumber}`);
+                          core.setOutput('issue_number', issueNumber);
+                      } else {
+                          console.log('没有找到 Issue');
+                          core.setOutput('issue_number', '');
+                      }
+
             - name: Check if sync is needed
               id: check_sync
               uses: actions/github-script@v7
+              env:
+                  UPSTREAM_ISSUE_NUMBER: ${{ steps.get_issue.outputs.issue_number }}
               with:
                   script: |
                       const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/check-sync.cjs`);
@@ -45,6 +88,7 @@ jobs:
               uses: actions/github-script@v7
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  UPSTREAM_ISSUE_NUMBER: ${{ steps.get_issue.outputs.issue_number }}
               with:
                   script: |
                       const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/sync-articles.cjs`);

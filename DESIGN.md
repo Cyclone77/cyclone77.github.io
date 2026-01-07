@@ -2,11 +2,11 @@
 
 ## 📋 项目概述
 
-基于 GitHub Issues 的静态博客系统，使用 React 19 + TypeScript 5 + Vite 6 构建，通过 GitHub Actions 实现自动化发布。
+基于 GitHub Issues 的静态博客系统，使用 React 19 + TypeScript 5 + Vite 6 构建，通过 GitHub Actions 实现自动化发布�?
 
 ---
 
-## 🏗️ 技术架构
+## 🏗�?技术架�?
 
 ### 前端技术栈
 
@@ -20,166 +20,166 @@
 
 ### 内容管理
 
-- **GitHub Issues** - 内容编辑器
-- **GitHub Actions** - 自动化构建
-- **GitHub Pages** - 静态托管
+- **GitHub Issues** - 内容编辑�?
+- **GitHub Actions** - 自动化构�?
+- **GitHub Pages** - 静态托�?
 
 ---
 
 ## 🎯 核心设计理念
 
-### 内容即数据
+### 内容即数�?
 
 - Issues = 文章
-- Labels = 分类和状态
+- Labels = 分类和状�?
 - Comments = 评论系统
 - Markdown = 内容格式
 
-### 零维护成本
+### 零维护成�?
 
-- 无需数据库
-- 无需后端服务器
+- 无需数据�?
+- 无需后端服务�?
 - 完全静态化
-- GitHub 原生生态
+- GitHub 原生生�?
 
 ---
 
-## 🏷️ 标签系统设计
+## 🏷�?标签系统设计
 
 ### 标签前缀规范
 
-使用中文前缀区分标签类型，便于管理和解析：
+使用中文前缀区分标签类型，便于管理和解析�?
 
-#### 1. 状态标签（`状态:` 前缀）
+#### 1. 状态标签（`状�?` 前缀�?
 
-- `状态:草稿` - 默认状态，博客不显示
-- `状态:已发布` - 正式发布，博客可见
-- `状态:已归档` - 归档页可见，首页不显示
-- `状态:已作废` - 完全不显示
+- `状�?草稿` - 默认状态，博客不显�?
+- `状�?已发布` - 正式发布，博客可�?
+- `状�?已归档` - 归档页可见，首页不显�?
+- `状�?已作废` - 完全不显�?
 
-**规则：**
+**规则�?*
 
-- 每篇文章只能有一个状态标签
-- 添加新状态时，自动移除其他状态标签
-- 新建 Issue 自动添加"状态:草稿"
+- 每篇文章只能有一个状态标�?
+- 添加新状态时，自动移除其他状态标�?
+- 新建 Issue 自动添加"状�?草稿"
 
-#### 2. 分类标签（`分类:` 前缀）
+#### 2. 分类标签（`分类:` 前缀�?
 
-- `分类:前端开发` - 前端技术
-- `分类:后端开发` - 后端技术
+- `分类:前端开发` - 前端技�?
+- `分类:后端开发` - 后端技�?
 - `分类:DevOps` - 运维相关
 - `分类:人工智能` - AI/ML
 - `分类:系统设计` - 架构设计
 - `分类:教程` - 教程文章
 - `分类:经验分享` - 经验总结
 
-**规则：**
+**规则�?*
 
-- 可以有多个分类标签
+- 可以有多个分类标�?
 - 至少选择一个主分类
 
-#### 3. 功能标签（`功能:` 前缀）
+#### 3. 功能标签（`功能:` 前缀�?
 
 - `功能:置顶` - 首页置顶显示
 - `功能:精选` - Hero 区域展示
 - `功能:热门` - 热门推荐
 
-**规则：**
+**规则�?*
 
-- 可选功能标签
+- 可选功能标�?
 - 可以组合使用
 
-#### 4. 普通标签（无前缀）
+#### 4. 普通标签（无前缀�?
 
-- 技术标签：`React`、`Vue`、`TypeScript`、`Docker` 等
-- 主题标签：`性能优化`、`最佳实践`、`代码规范` 等
+- 技术标签：`React`、`Vue`、`TypeScript`、`Docker` �?
+- 主题标签：`性能优化`、`最佳实践`、`代码规范` �?
 
-**规则：**
+**规则�?*
 
 - 自由添加
-- 用于内容分组和搜索
+- 用于内容分组和搜�?
 
 ### 标签颜色规范
 
-| 前缀类型 | 颜色代码  | 用途   |
+| 前缀类型 | 颜色代码  | 用�?  |
 | -------- | --------- | ------ |
-| 状态:    | `#0969DA` | 蓝色系 |
-| 分类:    | `#1A7F37` | 绿色系 |
-| 功能:    | `#8250DF` | 紫色系 |
-| 无前缀   | `#656D76` | 灰色系 |
+| 状�?    | `#0969DA` | 蓝色�?|
+| 分类:    | `#1A7F37` | 绿色�?|
+| 功能:    | `#8250DF` | 紫色�?|
+| 无前缀   | `#656D76` | 灰色�?|
 
 ---
 
-## 🔄 工作流设计
+## 🔄 工作流设�?
 
 ### 工作流架构图
 
 ```
-┌─────────────────┐
-│  Issue 事件     │
-│ (opened/labeled/│
-│  edited/unlabeled)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐     ┌─────────────────┐
-│ Issue Label     │────▶│ Sync Articles   │
-│ Manager         │     │ (文章同步)       │
-│ (标签管理)       │     └────────┬────────┘
-└─────────────────┘              │
-         │                       │
-         ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐
-│ Sync Tags       │────▶│ Deploy Site     │
-│ (标签统计)       │     │ (网站部署)       │
-└─────────────────┘     └─────────────────┘
+┌─────────────────�?
+�? Issue 事件     �?
+�?(opened/labeled/�?
+�? edited/unlabeled)
+└────────┬────────�?
+         �?
+         �?
+┌─────────────────�?    ┌─────────────────�?
+�?Issue Label     │────▶│ Sync Articles   �?
+�?Manager         �?    �?(文章同步)       �?
+�?(标签管理)       �?    └────────┬────────�?
+└─────────────────�?             �?
+         �?                      �?
+         �?                      �?
+┌─────────────────�?    ┌─────────────────�?
+�?Sync Tags       │────▶│ Deploy Site     �?
+�?(标签统计)       �?    �?(网站部署)       �?
+└─────────────────�?    └─────────────────�?
 ```
 
 ### Workflow 1: Issue Label Manager
 
-**文件：** `.github/workflows/issue-label-manager.yml`
+**文件�?* `.github/workflows/issue-label-manager.yml`
 
-**触发时机：**
-- Issue 创建时（`opened`）
-- Issue 添加标签时（`labeled`）
+**触发时机�?*
+- Issue 创建时（`opened`�?
+- Issue 添加标签时（`labeled`�?
 
-**功能：**
-- ✅ 自动添加草稿标签：新建 Issue 时，如果没有状态标签，自动添加 `状态:草稿`
-- ✅ 状态标签互斥：添加新的状态标签时，自动移除其他状态标签
+**功能�?*
+- �?自动添加草稿标签：新�?Issue 时，如果没有状态标签，自动添加 `状�?草稿`
+- �?状态标签互斥：添加新的状态标签时，自动移除其他状态标�?
 
-**脚本：** `scripts/manage-labels.cjs`
+**脚本�?* `scripts/manage-labels.cjs`
 
 ---
 
 ### Workflow 2: Sync Articles
 
-**文件：** `.github/workflows/sync-articles.yml`
+**文件�?* `.github/workflows/sync-articles.yml`
 
-**触发时机：**
-- Issue 内容编辑（`edited`）
-- Issue 移除标签（`unlabeled`）
-- Issue Label Manager 完成后（`workflow_run`）
-- 手动触发（`workflow_dispatch`）
+**触发时机�?*
+- Issue 内容编辑（`edited`�?
+- Issue 移除标签（`unlabeled`�?
+- Issue Label Manager 完成后（`workflow_run`�?
+- 手动触发（`workflow_dispatch`�?
 
-**功能：**
-- 📝 增量同步：只更新变更的文章
-- 🔄 全量同步：手动触发或无 Issue 上下文时执行
+**功能�?*
+- 📝 增量同步：只更新变更的文�?
+- 🔄 全量同步：手动触发或�?Issue 上下文时执行
 - 📊 生成 `public/data/articles.json`
 
-**同步逻辑：**
+**同步逻辑�?*
 ```
-1. 检查是否需要同步（check-sync.cjs）
-2. 判断同步模式（增量/全量）
-3. 获取已发布文章（状态:已发布）
-4. 解析文章数据（标题、内容、标签等）
-5. 提交并推送 articles.json
+1. 检查是否需要同步（check-sync.cjs�?
+2. 判断同步模式（增�?全量�?
+3. 获取已发布文章（状�?已发布）
+4. 解析文章数据（标题、内容、标签等�?
+5. 提交并推�?articles.json
 ```
 
-**脚本：**
-- `scripts/check-sync.cjs` - 判断是否需要同步
+**脚本�?*
+- `scripts/check-sync.cjs` - 判断是否需要同�?
 - `scripts/sync-articles.cjs` - 执行文章同步
 
-**并发控制：**
+**并发控制�?*
 ```yaml
 concurrency:
     group: articles-sync
@@ -190,21 +190,21 @@ concurrency:
 
 ### Workflow 3: Sync Tags
 
-**文件：** `.github/workflows/sync-tags.yml`
+**文件�?* `.github/workflows/sync-tags.yml`
 
-**触发时机：**
-- Issue 移除标签（`unlabeled`）
-- Issue Label Manager 完成后（`workflow_run`）
-- 手动触发（`workflow_dispatch`）
+**触发时机�?*
+- Issue 移除标签（`unlabeled`�?
+- Issue Label Manager 完成后（`workflow_run`�?
+- 手动触发（`workflow_dispatch`�?
 
-**功能：**
+**功能�?*
 - 📊 统计所有标签的使用次数
-- 🏷️ 区分分类标签和功能标签
+- 🏷�?区分分类标签和功能标�?
 - 📝 生成 `public/data/tags.json`
 
-**脚本：** `scripts/sync-tags.cjs`
+**脚本�?* `scripts/sync-tags.cjs`
 
-**并发控制：**
+**并发控制�?*
 ```yaml
 concurrency:
     group: stats-sync
@@ -215,19 +215,19 @@ concurrency:
 
 ### Workflow 4: Deploy Site
 
-**文件：** `.github/workflows/deploy-site.yml`
+**文件�?* `.github/workflows/deploy-site.yml`
 
-**触发时机：**
+**触发时机�?*
 - 代码推送到 main/master 分支
-- Sync Articles 完成后（`workflow_run`）
-- Sync Tags 完成后（`workflow_run`）
-- 手动触发（`workflow_dispatch`）
+- Sync Articles 完成后（`workflow_run`�?
+- Sync Tags 完成后（`workflow_run`�?
+- 手动触发（`workflow_dispatch`�?
 
-**功能：**
-- 🔨 构建前端项目（`npm run build`）
-- 🚀 部署到 GitHub Pages
+**功能�?*
+- 🔨 构建前端项目（`npm run build`�?
+- 🚀 部署�?GitHub Pages
 
-**并发控制：**
+**并发控制�?*
 ```yaml
 concurrency:
     group: deploy-site
@@ -248,19 +248,19 @@ concurrency:
             "number": 2,
             "title": "文章标题",
             "description": "文章摘要（前200字）",
-            "content": "完整的 Markdown 内容",
+            "content": "完整�?Markdown 内容",
             "author": {
                 "name": "Cyclone77",
                 "avatar": "https://avatars.githubusercontent.com/...",
                 "url": "https://github.com/Cyclone77"
             },
-            "status": "已发布",
-            "categories": ["前端开发", "教程"],
+            "status": "已发�?,
+            "categories": ["前端开�?, "教程"],
             "tags": ["React", "TypeScript"],
-            "displays": ["置顶", "精选"],
+            "displays": ["置顶", "精�?],
             "coverImage": "https://...",
             "readTime": "5 分钟阅读",
-            "date": "2026年1月6日",
+            "date": "2026�?�?�?,
             "createdAt": "2026-01-06T08:55:01Z",
             "updatedAt": "2026-01-07T01:39:32Z",
             "commentsCount": 0,
@@ -278,10 +278,10 @@ concurrency:
 {
     "tags": [
         {
-            "name": "前端开发",
+            "name": "前端开�?,
             "count": 2,
             "color": "#1A7F37",
-            "description": "前端技术相关",
+            "description": "前端技术相�?,
             "type": "category"
         },
         {
@@ -301,28 +301,28 @@ concurrency:
 
 ### Header 设计
 
-- 倒置选项卡形状（底部圆角）
+- 倒置选项卡形状（底部圆角�?
 - 使用 `rounded-b-2xl` 实现
-- 阴影效果增加立体感
-- 内容限制在 `max-w-7xl` 宽度
+- 阴影效果增加立体�?
+- 内容限制�?`max-w-7xl` 宽度
 
 ### Footer 设计
 
-- 正向选项卡形状（顶部圆角）
+- 正向选项卡形状（顶部圆角�?
 - 使用 `rounded-t-2xl` 实现
-- 高度紧凑（py-6）
-- 与 Header 形成对称
+- 高度紧凑（py-6�?
+- �?Header 形成对称
 
 ### 主题切换
 
 - 深色/浅色模式
-- 使用 Context API 管理（ThemeContext）
-- LocalStorage 持久化
+- 使用 Context API 管理（ThemeContext�?
+- LocalStorage 持久�?
 - 平滑过渡动画
 
-### 响应式设计
+### 响应式设�?
 
-- 移动端优先
+- 移动端优�?
 - Tailwind 断点系统
 - 流式布局
 
@@ -330,54 +330,54 @@ concurrency:
 
 ## 📝 文章发布流程
 
-### 作者操作流程
+### 作者操作流�?
 
 1. **创建文章**
     - 新建 GitHub Issue
-    - 编写标题和内容（Markdown）
-    - 系统自动添加"状态:草稿"
+    - 编写标题和内容（Markdown�?
+    - 系统自动添加"状�?草稿"
 
-2. **编辑分类和标签**
+2. **编辑分类和标�?*
     - 添加分类：`分类:前端开发`
     - 添加标签：`React`、`TypeScript`
     - 可选功能：`功能:置顶`
 
 3. **发布文章**
-    - 添加标签：`状态:已发布`
-    - 系统自动移除"状态:草稿"
+    - 添加标签：`状�?已发布`
+    - 系统自动移除"状�?草稿"
     - 触发 GitHub Actions 构建
 
 4. **后续管理**
-    - 归档：添加"状态:已归档"
-    - 作废：添加"状态:已作废"
-    - 修改：编辑 Issue 内容后自动重新构建
+    - 归档：添�?状�?已归�?
+    - 作废：添�?状�?已作�?
+    - 修改：编�?Issue 内容后自动重新构�?
 
 ---
 
 ## 🔍 前端展示逻辑
 
-### 文章筛选规则
+### 文章筛选规�?
 
 ```typescript
 // 显示规则
-状态:草稿       → 不显示
-状态:已发布     → 正常显示
-状态:已归档     → 归档页显示，首页不显示
-状态:已作废     → 完全不显示
+状�?草稿       �?不显�?
+状�?已发�?    �?正常显示
+状�?已归�?    �?归档页显示，首页不显�?
+状�?已作�?    �?完全不显�?
 
 // 功能标签
-功能:置顶       → 始终排在列表最前，作为 Banner 展示
-功能:精选       → 精选筛选可见
-功能:热门       → 热门筛选可见
+功能:置顶       �?始终排在列表最前，作为 Banner 展示
+功能:精�?      �?精选筛选可�?
+功能:热门       �?热门筛选可�?
 ```
 
-### 分类和标签解析
+### 分类和标签解�?
 
 ```typescript
-// 从 Issue labels 中解析
+// �?Issue labels 中解�?
 const parseLabels = (labels: string[]) => {
     return {
-        status: labels.find(l => l.startsWith('状态:'))?.replace('状态:', ''),
+        status: labels.find(l => l.startsWith('状�?'))?.replace('状�?', ''),
         categories: labels.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
         displays: labels.filter(l => l.startsWith('功能:')).map(l => l.replace('功能:', '')),
         tags: labels.filter(l => !l.includes(':')),
@@ -392,16 +392,16 @@ const parseLabels = (labels: string[]) => {
 ### GitHub Pages 配置
 
 1. **仓库设置**
-    - 开启 GitHub Pages
+    - 开�?GitHub Pages
     - 构建来源：GitHub Actions
 
 2. **自动部署**
     - Actions 构建后通过 `deploy-pages` action 部署
     - 使用 `upload-pages-artifact` 上传构建产物
 
-3. **自定义域名**（可选）
+3. **自定义域�?*（可选）
     - 配置 CNAME 文件
-    - DNS 解析到 GitHub Pages
+    - DNS 解析�?GitHub Pages
 
 ---
 
@@ -409,37 +409,37 @@ const parseLabels = (labels: string[]) => {
 
 ```
 ├── .github/
-│   └── workflows/
-│       ├── issue-label-manager.yml  # 标签管理
-│       ├── sync-articles.yml        # 文章同步
-│       ├── sync-tags.yml            # 标签统计
-│       └── deploy-site.yml          # 网站部署
+�?  └── workflows/
+�?      ├── issue-label-manager.yml  # 标签管理
+�?      ├── sync-articles.yml        # 文章同步
+�?      ├── sync-tags.yml            # 标签统计
+�?      └── deploy-site.yml          # 网站部署
 ├── public/
-│   └── data/
-│       ├── articles.json            # 文章数据
-│       └── tags.json                # 标签数据
+�?  └── data/
+�?      ├── articles.json            # 文章数据
+�?      └── tags.json                # 标签数据
 ├── scripts/
-│   ├── check-sync.cjs               # 同步检查
-│   ├── manage-labels.cjs            # 标签管理
-│   ├── sync-articles.cjs            # 文章同步
-│   └── sync-tags.cjs                # 标签同步
+�?  ├── check-sync.cjs               # 同步检�?
+�?  ├── manage-labels.cjs            # 标签管理
+�?  ├── sync-articles.cjs            # 文章同步
+�?  └── sync-tags.cjs                # 标签同步
 ├── src/
-│   ├── components/                  # 组件
-│   │   ├── Header.tsx
-│   │   ├── Footer.tsx
-│   │   └── Layout.tsx
-│   ├── contexts/                    # 上下文
-│   │   └── ThemeContext.tsx
-│   ├── pages/                       # 页面
-│   │   ├── HomePage.tsx
-│   │   └── ArticleDetailPage.tsx
-│   ├── services/                    # 服务
-│   │   └── api.ts
-│   ├── data/                        # 数据类型
-│   │   └── mockData.ts
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css
+�?  ├── components/                  # 组件
+�?  �?  ├── Header.tsx
+�?  �?  ├── Footer.tsx
+�?  �?  └── Layout.tsx
+�?  ├── contexts/                    # 上下�?
+�?  �?  └── ThemeContext.tsx
+�?  ├── pages/                       # 页面
+�?  �?  ├── HomePage.tsx
+�?  �?  └── ArticleDetailPage.tsx
+�?  ├── services/                    # 服务
+�?  �?  └── api.ts
+�?  ├── data/                        # 数据类型
+�?  �?  └── mockData.ts
+�?  ├── App.tsx
+�?  ├── main.tsx
+�?  └── index.css
 └── package.json
 ```
 
@@ -452,13 +452,13 @@ const parseLabels = (labels: string[]) => {
 - [ ] 搜索功能
 - [ ] RSS 订阅支持
 - [ ] 文章阅读统计
-- [ ] 真实评论系统集成（GitHub Issues Comments）
+- [ ] 真实评论系统集成（GitHub Issues Comments�?
 - [ ] 分页功能
 
 ### 未来计划
 
 - [ ] 图片自动优化
-- [ ] CDN 加速
+- [ ] CDN 加�?
 - [ ] PWA 支持
 - [ ] 多语言支持
 - [ ] 归档页面
@@ -469,34 +469,34 @@ const parseLabels = (labels: string[]) => {
 
 ### GitHub API 限制
 
-- 未认证：60 次/小时
-- 认证后：5000 次/小时
-- 建议：使用 GitHub Token 并启用缓存
+- 未认证：60 �?小时
+- 认证后：5000 �?小时
+- 建议：使�?GitHub Token 并启用缓�?
 
 ### 构建优化
 
 - 增量构建（只更新变更的文章）
-- 并发控制（避免 git push 冲突）
-- 部署去重（concurrency + cancel-in-progress）
+- 并发控制（避�?git push 冲突�?
+- 部署去重（concurrency + cancel-in-progress�?
 
 ### SEO 优化
 
-- 静态 HTML 生成
+- 静�?HTML 生成
 - Meta 标签完善
-- 结构化数据标记
+- 结构化数据标�?
 
 ---
 
 ## 🎯 核心优势
 
-✅ **零成本** - 完全基于 GitHub 免费服务
-✅ **零维护** - 无需数据库和后端
-✅ **高性能** - 完全静态化，CDN 加速
-✅ **易用性** - GitHub Issues 熟悉的编辑体验
-✅ **协作性** - 原生支持多人协作
-✅ **版本控制** - 自动记录所有修改历史
-✅ **SEO 友好** - 静态 HTML + 语义化标签
-✅ **可扩展** - 基于开放的 GitHub API
+�?**零成�?* - 完全基于 GitHub 免费服务
+�?**零维�?* - 无需数据库和后端
+�?**高性能** - 完全静态化，CDN 加�?
+�?**易用�?* - GitHub Issues 熟悉的编辑体�?
+�?**协作�?* - 原生支持多人协作
+�?**版本控制** - 自动记录所有修改历�?
+�?**SEO 友好** - 静�?HTML + 语义化标�?
+�?**可扩�?* - 基于开放的 GitHub API
 
 ---
 
@@ -511,4 +511,4 @@ const parseLabels = (labels: string[]) => {
 ---
 
 **最后更新：** 2026-01-07
-**设计版本：** v2.0
+**设计版本�?* v2.0

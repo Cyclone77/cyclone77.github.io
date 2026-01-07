@@ -11,7 +11,7 @@ function parseLabels(labels) {
     return {
         status: statusLabel ? '已发布' : labelNames.find(l => l.startsWith('状态:'))?.replace('状态:', '') || '草稿',
         categories: labelNames.filter(l => l.startsWith('分类:')).map(l => l.replace('分类:', '')),
-        displays: labelNames.filter(l => l.startsWith('功能:')).map(l => l.replace('功能:', '')),
+        displays: labelNames.filter(l => l.startsWith('展示:')).map(l => l.replace('展示:', '')),
         tags: labelNames.filter(l => !l.includes(':')),
     };
 }
@@ -192,16 +192,22 @@ module.exports = async ({ github, context, core }) => {
         fs.mkdirSync(dataDir, { recursive: true });
     }
 
-    // 判断是否为全量同步
-    // 如果是 workflow_run 触发（没有 issue 信息），也执行全量同步
-    const issueNumber = context.payload.issue?.number;
-    const isFullSync = !fs.existsSync(articlesFile) || !issueNumber;
+    // 获取 issue number：优先从 context 获取，其次从环境变量获取（workflow_run 场景）
+    let issueNumber = context.payload.issue?.number;
+    if (!issueNumber && process.env.UPSTREAM_ISSUE_NUMBER) {
+        issueNumber = parseInt(process.env.UPSTREAM_ISSUE_NUMBER, 10);
+        console.log(`从上游 workflow 获取 Issue Number: #${issueNumber}`);
+    }
+
+    // 判断是否为全量同步：手动触发或文件不存在时全量同步
+    const isManualTrigger = context.eventName === 'workflow_dispatch' && !process.env.UPSTREAM_ISSUE_NUMBER;
+    const isFullSync = !fs.existsSync(articlesFile) || isManualTrigger || !issueNumber;
 
     let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
 
     if (isFullSync) {
         console.log('执行全量同步...');
-        console.log(`触发原因: 文件存在=${fs.existsSync(articlesFile)}, issueNumber=${issueNumber}`);
+        console.log(`触发原因: 文件存在=${fs.existsSync(articlesFile)}, 手动触发=${isManualTrigger}, issueNumber=${issueNumber}`);
 
         const issues = await github.paginate(github.rest.issues.listForRepo, {
             owner: context.repo.owner,

@@ -67,13 +67,25 @@ export default function HomePage() {
 
                         <div className="flex flex-col gap-6 md:w-1/2 justify-center">
                             <div className="flex flex-col gap-3 text-left">
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                    {/* 展示类标签：置顶、热门、精选 */}
                                     {featuredArticle.displays?.includes('置顶') && (
                                         <span className="px-2 py-1 rounded bg-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-wide">
                                             置顶
                                         </span>
                                     )}
-                                    {/* 显示所有分类 */}
+                                    {featuredArticle.displays?.includes('热门') && (
+                                        <span className="px-2 py-1 rounded bg-red-500/20 text-red-500 text-xs font-bold uppercase tracking-wide">
+                                            热门
+                                        </span>
+                                    )}
+                                    {featuredArticle.displays?.includes('精选') && (
+                                        <span className="px-2 py-1 rounded bg-purple-500/20 text-purple-500 text-xs font-bold uppercase tracking-wide">
+                                            精选
+                                        </span>
+                                    )}
+                                    
+                                    {/* 分类标签 */}
                                     {featuredArticle.categories?.map((cat: string) => (
                                         <span
                                             key={cat}
@@ -82,18 +94,9 @@ export default function HomePage() {
                                             {cat}
                                         </span>
                                     ))}
-                                    {/* 显示所有标签 */}
-                                    {featuredArticle.tags?.map(tag => (
-                                        <span
-                                            key={tag}
-                                            className="px-2 py-1 rounded bg-gray-100 dark:bg-border-dark text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide"
-                                        >
-                                            #{tag}
-                                        </span>
-                                    ))}
 
-                                    {/* 只有在有分类或标签时才显示圆点 */}
-                                    {(featuredArticle.categories?.length || featuredArticle.tags?.length) && (
+                                    {/* 只有在有分类时才显示圆点 */}
+                                    {featuredArticle.categories?.length && (
                                         <span className="w-1 h-1 rounded-full bg-gray-400 flex-shrink-0"></span>
                                     )}
 
@@ -172,27 +175,30 @@ export default function HomePage() {
                                     <div className="flex flex-1 flex-col justify-between py-1">
                                         <div className="flex flex-col gap-2">
                                             <div className="flex flex-wrap items-center gap-2">
+                                                {/* 展示类标签：置顶、热门、精选 */}
                                                 {article.displays?.includes('置顶') && (
                                                     <span className="px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-500 text-[10px] font-bold uppercase tracking-wider">
                                                         置顶
                                                     </span>
                                                 )}
+                                                {article.displays?.includes('热门') && (
+                                                    <span className="px-1.5 py-0.5 rounded bg-red-500/10 text-red-500 text-[10px] font-bold uppercase tracking-wider">
+                                                        热门
+                                                    </span>
+                                                )}
+                                                {article.displays?.includes('精选') && (
+                                                    <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-500 text-[10px] font-bold uppercase tracking-wider">
+                                                        精选
+                                                    </span>
+                                                )}
 
-                                                {/* 在标题上方显示所有分类和标签 */}
+                                                {/* 分类标签 */}
                                                 {article.categories?.map((cat: string) => (
                                                     <span
                                                         key={cat}
                                                         className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider"
                                                     >
                                                         {cat}
-                                                    </span>
-                                                ))}
-                                                {article.tags?.map(tag => (
-                                                    <span
-                                                        key={tag}
-                                                        className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-border-dark text-text-secondary-light dark:text-text-secondary-dark text-[10px] font-bold uppercase tracking-wider"
-                                                    >
-                                                        #{tag}
                                                     </span>
                                                 ))}
 
@@ -318,25 +324,29 @@ export default function HomePage() {
                         </h3>
 
                         <div className="flex flex-col gap-4">
-                            {[
-                                { title: '2024 年 WebAssembly 的未来', date: '1月12日', readTime: '4 分钟阅读' },
-                                { title: '从 AWS 迁移到 GCP：经验教训', date: '1月8日', readTime: '8 分钟阅读' },
-                                { title: '理解 Rust 所有权', date: '1月5日', readTime: '10 分钟阅读' },
-                            ].map((item, index) => (
-                                <a key={index} href="#" className="group flex gap-3 items-start">
-                                    <span className="text-gray-300 dark:text-gray-600 font-display font-bold text-xl leading-none">
-                                        {String(index + 1).padStart(2, '0')}
-                                    </span>
-                                    <div className="flex flex-col">
-                                        <p className="text-text-primary-light dark:text-white text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
-                                            {item.title}
-                                        </p>
-                                        <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
-                                            {item.date} • {item.readTime}
+                            {articles
+                                .filter(a => a.displays?.includes('热门'))
+                                .slice(0, 3)
+                                .map((article, index) => (
+                                    <Link key={article.id} to={`/article/${article.id}`} className="group flex gap-3 items-start">
+                                        <span className="text-gray-300 dark:text-gray-600 font-display font-bold text-xl leading-none">
+                                            {String(index + 1).padStart(2, '0')}
                                         </span>
-                                    </div>
-                                </a>
-                            ))}
+                                        <div className="flex flex-col">
+                                            <p className="text-text-primary-light dark:text-white text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
+                                                {article.title}
+                                            </p>
+                                            <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
+                                                {article.date} • {article.readTime}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                ))}
+                            {articles.filter(a => a.displays?.includes('热门')).length === 0 && (
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm">
+                                    暂无热门文章
+                                </p>
+                            )}
                         </div>
                     </div>
                 </aside>
