@@ -3,6 +3,8 @@ import { Link } from 'react-router';
 import { Article } from '../data/mockData';
 import { fetchTags, fetchArticles } from '../services/api';
 
+const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop';
+
 export default function HomePage() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('全部');
@@ -56,7 +58,7 @@ export default function HomePage() {
                     <div className="flex flex-col gap-6 rounded-2xl bg-surface-light dark:bg-surface-dark p-6 shadow-sm border border-gray-100 dark:border-border-dark md:flex-row md:items-center md:gap-10 md:p-10">
                         <div
                             className="w-full md:w-1/2 aspect-video rounded-xl bg-center bg-cover bg-no-repeat shadow-md overflow-hidden relative group"
-                            style={{ backgroundImage: `url(${featuredArticle.coverImage})` }}
+                            style={{ backgroundImage: `url(${featuredArticle.coverImage || DEFAULT_COVER})` }}
                         >
                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                         </div>
@@ -158,7 +160,7 @@ export default function HomePage() {
                                 >
                                     <div
                                         className="sm:w-48 h-48 sm:h-auto shrink-0 rounded-lg bg-cover bg-center overflow-hidden"
-                                        style={{ backgroundImage: `url(${article.coverImage})` }}
+                                        style={{ backgroundImage: `url(${article.coverImage || DEFAULT_COVER})` }}
                                     >
                                         <div className="w-full h-full bg-black/0 group-hover:bg-black/10 transition-colors"></div>
                                     </div>
