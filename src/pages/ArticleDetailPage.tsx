@@ -328,7 +328,7 @@ export default function ArticleDetailPage() {
                                             <button
                                                 onClick={() => scrollToHeading(id)}
                                                 className={`block text-left w-full text-xs leading-tight transition-colors ${
-                                                    level === 3 ? 'pl-4' : 'pl-2'
+                                                    level === 3 ? 'pl-6 ml-2' : 'pl-2'
                                                 } border-l-2 py-0.5 ${
                                                     activeHeading === id
                                                         ? 'text-primary font-medium border-primary'
