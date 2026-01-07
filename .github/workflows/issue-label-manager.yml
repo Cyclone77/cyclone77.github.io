@@ -1,4 +1,4 @@
-name: Issue Status Guard
+name: Issue Label Manager
 
 on:
     issues:

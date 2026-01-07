@@ -1,0 +1,62 @@
+name: Deploy Site
+
+on:
+    push:
+        branches:
+            - master
+            - main
+    workflow_run:
+        workflows: ['Sync Articles', 'Sync Tags']
+        types:
+            - completed
+    workflow_dispatch:
+
+jobs:
+    build-deploy:
+        runs-on: ubuntu-latest
+        # 如果是 workflow_run 触发，则要求 Articles Sync 必须成功
+        if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+        permissions:
+            contents: write
+            pages: write
+            id-token: write
+            issues: read
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Restore articles cache
+              uses: actions/cache@v4
+              with:
+                  path: public/data
+                  key: articles-${{ github.run_id }}
+                  restore-keys: |
+                      articles-
+
+            - name: Build project
+              run: npm run build
+
+            - name: Add .nojekyll file
+              run: touch ./dist/.nojekyll
+
+            - name: Setup Pages
+              uses: actions/configure-pages@v5
+
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: ./dist
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

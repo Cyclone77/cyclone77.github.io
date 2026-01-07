@@ -1,15 +1,12 @@
-name: Stats Sync
+name: Sync Tags
 
 on:
     issues:
-        types: [labeled, unlabeled]
-    workflow_dispatch:
-        inputs:
-            full_sync:
-                description: '执行全量标签统计'
-                required: false
-                type: boolean
-                default: true
+        types: [unlabeled] # labeled 交给 Guard 任务处理后触发
+    workflow_run:
+        workflows: ['Issue Label Manager']
+        types:
+            - completed
 
 # 防止并发执行，避免 git push 冲突
 concurrency:
@@ -19,6 +16,8 @@ concurrency:
 jobs:
     sync-labels:
         runs-on: ubuntu-latest
+        # 如果是 workflow_run 触发，要求上游必须成功
+        if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
         permissions:
             contents: write
             issues: read
