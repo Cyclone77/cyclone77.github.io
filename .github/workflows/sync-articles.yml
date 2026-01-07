@@ -32,6 +32,8 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.ref }}
 
             - name: Create data directory
               run: mkdir -p public/data
