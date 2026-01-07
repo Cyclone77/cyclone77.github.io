@@ -171,13 +171,13 @@ module.exports = async ({ github, context, core }) => {
     // 判断是否为全量同步
     // 如果是 workflow_run 触发（没有 issue 信息），也执行全量同步
     const issueNumber = context.payload.issue?.number;
-    const isFullSync = context.payload.inputs?.full_sync === 'true' || !fs.existsSync(articlesFile) || !issueNumber;
+    const isFullSync = !fs.existsSync(articlesFile) || !issueNumber;
 
     let articlesData = { articles: [], total: 0, lastUpdate: new Date().toISOString() };
 
     if (isFullSync) {
         console.log('执行全量同步...');
-        console.log(`触发原因: inputs.full_sync=${context.payload.inputs?.full_sync}, 文件存在=${fs.existsSync(articlesFile)}, issueNumber=${issueNumber}`);
+        console.log(`触发原因: 文件存在=${fs.existsSync(articlesFile)}, issueNumber=${issueNumber}`);
 
         const issues = await github.paginate(github.rest.issues.listForRepo, {
             owner: context.repo.owner,

@@ -8,12 +8,6 @@ on:
         types:
             - completed
     workflow_dispatch:
-        inputs:
-            full_sync:
-                description: '执行全量文章同步'
-                required: false
-                type: boolean
-                default: false
 
 # 防止并发执行，避免 git push 冲突
 concurrency:
