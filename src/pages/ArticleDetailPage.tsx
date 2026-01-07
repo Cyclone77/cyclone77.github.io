@@ -7,6 +7,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Article } from '../data/mockData';
 import { fetchArticleById, fetchArticles } from '../services/api';
 import { Calendar, Clock, Bookmark, Share2 } from 'lucide-react';
+import Comments from '../components/Comments';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop';
 
@@ -43,7 +44,6 @@ export default function ArticleDetailPage() {
     const { id } = useParams();
     const [article, setArticle] = useState<Article | null>(null);
     const [loading, setLoading] = useState(true);
-    const [comment, setComment] = useState('');
     const [activeHeading, setActiveHeading] = useState<string>('');
     const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
 
@@ -313,76 +313,8 @@ export default function ArticleDetailPage() {
                         </div>
                     )}
 
-                    {/* 评论区 */}
-                    <section className="flex flex-col gap-6 pt-6 border-t border-gray-100 dark:border-border-dark">
-                        <h3 className="text-2xl font-bold text-text-primary-light dark:text-white">评论 (12)</h3>
-
-                        <div className="flex gap-4">
-                            <div
-                                className="size-10 rounded-full bg-center bg-cover shrink-0"
-                                style={{ backgroundImage: 'url(https://api.dicebear.com/7.x/avataaars/svg?seed=User)' }}
-                            ></div>
-                            <div className="flex flex-col flex-1 gap-3">
-                                <textarea
-                                    value={comment}
-                                    onChange={e => setComment(e.target.value)}
-                                    className="w-full min-h-[100px] rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark p-4 text-text-primary-light dark:text-white placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark focus:border-primary focus:ring-0 resize-y"
-                                    placeholder="分享您的想法..."
-                                ></textarea>
-                                <div className="flex justify-end">
-                                    <button className="bg-primary hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">
-                                        发表评论
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-6 mt-4">
-                            {[
-                                {
-                                    name: 'Sarah Jenkins',
-                                    time: '2 小时前',
-                                    text: '很好的解释！我一直在努力理解客户端和服务器组件之间的界限。代码片段让我明白了。',
-                                    likes: 14,
-                                },
-                                {
-                                    name: 'Marcus Dev',
-                                    time: '5 小时前',
-                                    text: '一个问题 - 这如何处理身份验证？我们是向下传递会话还是直接在组件中访问它？',
-                                    likes: 5,
-                                },
-                            ].map((item, index) => (
-                                <div key={index} className="flex gap-4">
-                                    <div
-                                        className="size-10 rounded-full bg-center bg-cover shrink-0"
-                                        style={{
-                                            backgroundImage: `url(https://api.dicebear.com/7.x/avataaars/svg?seed=${item.name})`,
-                                        }}
-                                    ></div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-bold text-text-primary-light dark:text-white">
-                                                {item.name}
-                                            </span>
-                                            <span className="text-text-secondary-light dark:text-text-secondary-dark text-sm">
-                                                • {item.time}
-                                            </span>
-                                        </div>
-                                        <p className="text-gray-700 dark:text-[#c4cfde] leading-relaxed">{item.text}</p>
-                                        <div className="flex items-center gap-4 mt-1">
-                                            <button className="flex items-center gap-1 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary text-sm font-medium">
-                                                <span className="material-symbols-outlined text-[18px]">thumb_up</span>{' '}
-                                                {item.likes}
-                                            </button>
-                                            <button className="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary text-sm font-medium">
-                                                回复
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                    {/* 评论区 - 使用 Utterances */}
+                    {article.number && <Comments issueNumber={article.number} />}
                 </article>
 
                 <aside className="lg:col-span-4 flex flex-col gap-6">

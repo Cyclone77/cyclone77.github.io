@@ -9,6 +9,8 @@ export default function HomePage() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('全部');
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 30;
     const filterCategories = ['全部', '热门', '精选'];
     const [tags, setTags] = useState<
         Array<{ name: string; count: number; color: string; description: string; type: 'category' | 'display' }>
@@ -51,6 +53,18 @@ export default function HomePage() {
         if (selectedCategory === '热门') return article.displays?.includes('热门');
         return true;
     });
+
+    // 分页计算
+    const totalPages = Math.ceil(filteredArticles.length / pageSize);
+    const paginatedArticles = filteredArticles.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
+    );
+
+    // 切换过滤条件时重置页码
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedCategory, selectedTag]);
 
     if (loading) {
         return (
@@ -183,8 +197,8 @@ export default function HomePage() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        {filteredArticles.length > 0 ? (
-                            filteredArticles.map(article => (
+                        {paginatedArticles.length > 0 ? (
+                            paginatedArticles.map(article => (
                                 <Link
                                     key={article.id}
                                     to={`/article/${article.id}`}
@@ -272,26 +286,55 @@ export default function HomePage() {
                         )}
                     </div>
 
-                    <div className="mt-10 flex justify-center">
-                        <nav className="flex items-center gap-2">
-                            <button className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-border-dark disabled:opacity-50">
-                                <span className="material-symbols-outlined">chevron_left</span>
-                            </button>
-                            <button className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary text-white font-bold">
-                                1
-                            </button>
-                            <button className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 dark:border-border-dark text-text-primary-light dark:text-white hover:bg-gray-100 dark:hover:bg-border-dark">
-                                2
-                            </button>
-                            <button className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 dark:border-border-dark text-text-primary-light dark:text-white hover:bg-gray-100 dark:hover:bg-border-dark">
-                                3
-                            </button>
-                            <span className="text-text-secondary-light dark:text-text-secondary-dark px-2">...</span>
-                            <button className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-border-dark">
-                                <span className="material-symbols-outlined">chevron_right</span>
-                            </button>
-                        </nav>
-                    </div>
+                    {/* 分页 - 只在有多页时显示 */}
+                    {totalPages > 1 && (
+                        <div className="mt-10 flex justify-center">
+                            <nav className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                    className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-border-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <span className="material-symbols-outlined">chevron_left</span>
+                                </button>
+                                
+                                {/* 页码按钮 */}
+                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                    .filter(page => {
+                                        // 显示第一页、最后一页、当前页及其前后各1页
+                                        if (page === 1 || page === totalPages) return true;
+                                        if (Math.abs(page - currentPage) <= 1) return true;
+                                        return false;
+                                    })
+                                    .map((page, index, arr) => (
+                                        <span key={page} className="flex items-center">
+                                            {/* 显示省略号 */}
+                                            {index > 0 && arr[index - 1] !== page - 1 && (
+                                                <span className="text-text-secondary-light dark:text-text-secondary-dark px-2">...</span>
+                                            )}
+                                            <button
+                                                onClick={() => setCurrentPage(page)}
+                                                className={`flex items-center justify-center w-10 h-10 rounded-lg font-bold transition-colors ${
+                                                    currentPage === page
+                                                        ? 'bg-primary text-white'
+                                                        : 'border border-gray-200 dark:border-border-dark text-text-primary-light dark:text-white hover:bg-gray-100 dark:hover:bg-border-dark'
+                                                }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        </span>
+                                    ))}
+                                
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-border-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <span className="material-symbols-outlined">chevron_right</span>
+                                </button>
+                            </nav>
+                        </div>
+                    )}
                 </div>
 
                 <aside className="w-full lg:w-80 shrink-0 flex flex-col gap-8">

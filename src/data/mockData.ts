@@ -1,5 +1,6 @@
 export interface Article {
     id: number;
+    number?: number; // GitHub Issue number，用于评论
     title: string;
     description: string;
     category?: string; // 保留旧的以兼容，但标记为可选
