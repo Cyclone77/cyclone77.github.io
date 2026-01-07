@@ -88,16 +88,34 @@ jobs:
 
                       // 辅助函数：提取封面图
                       function extractCoverImage(body) {
-                        const imageRegex = /!\[.*?\]\((https?:\/\/[^\)]+)\)/;
-                        const match = body?.match(imageRegex);
-                        return match ? match[1] : 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop';
+                        if (!body) return 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop';
+                        const sec = body.match(/##\s*封面图片\s*\n([\s\S]*?)(?:\n---|\n##\s|$)/);
+                        const source = sec ? sec[1] : body;
+                        const mdImage = source.match(/!\[[^\]]*]\((https?:\/\/[^\)]+)\)/);
+                        if (mdImage) return mdImage[1];
+                        const urlMatch = source.match(/https?:\/\/\S+/);
+                        return urlMatch ? urlMatch[0] : 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop';
                       }
 
                       // 辅助函数：提取摘要
                       function extractDescription(body) {
                         if (!body) return '';
-                        const text = body.replace(/[#*`\[\]]/g, '').trim();
-                        return text.substring(0, 200) + (text.length > 200 ? '...' : '');
+                        const match = body.match(/##\s*摘要\s*\n([\s\S]*?)(?:\n---|\n##\s|$)/);
+                        const source = match ? match[1] : body;
+                        const text = source
+                          .replace(/!\[.*?\]\((https?:\/\/[^\)]+)\)/g, '')
+                          .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+                          .replace(/[#>*_`]/g, '')
+                          .replace(/\r/g, '')
+                          .trim();
+                        const sliced = text.substring(0, 200);
+                        return sliced + (text.length > 200 ? '...' : '');
+                      }
+
+                      function extractContent(body) {
+                        if (!body) return '';
+                        const match = body.match(/##\s*文章内容\s*\n([\s\S]*?)$/);
+                        return match ? match[1].trim() : body;
                       }
 
                       // 辅助函数：计算阅读时间
@@ -123,7 +141,7 @@ jobs:
                           number: issue.number,
                           title: issue.title,
                           description: extractDescription(issue.body),
-                          content: issue.body || '',
+                          content: extractContent(issue.body),
                           author: {
                             name: issue.user.login,
                             avatar: issue.user.avatar_url,
@@ -134,7 +152,7 @@ jobs:
                           tags: parsed.tags,
                           displays: parsed.displays,
                           coverImage: extractCoverImage(issue.body),
-                          readTime: calculateReadTime(issue.body),
+                          readTime: calculateReadTime(extractContent(issue.body)),
                           createdAt: issue.created_at,
                           updatedAt: issue.updated_at,
                           commentsCount: comments.data.length,
