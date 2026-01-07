@@ -36,6 +36,13 @@
       "type": "category"
     },
     {
+      "name": "热门",
+      "count": 1,
+      "color": "#fef2c0",
+      "description": "热门文章显示",
+      "type": "display"
+    },
+    {
       "name": "置顶",
       "count": 1,
       "color": "#fef2c0",
@@ -69,13 +76,6 @@
       "color": "#1A7F37",
       "description": "经验总结类",
       "type": "category"
-    },
-    {
-      "name": "热门",
-      "count": 0,
-      "color": "#fef2c0",
-      "description": "热门文章显示",
-      "type": "display"
     },
     {
       "name": "精选",
