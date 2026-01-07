@@ -2,7 +2,7 @@
   "tags": [
     {
       "name": "前端开发",
-      "count": 3,
+      "count": 2,
       "color": "#1A7F37",
       "description": "前端技术相关",
       "type": "category"
@@ -29,18 +29,18 @@
       "type": "category"
     },
     {
-      "name": "REACT",
-      "count": 1,
-      "color": "#1A7F37",
-      "description": "",
-      "type": "category"
-    },
-    {
       "name": "置顶",
       "count": 1,
       "color": "#fef2c0",
       "description": "首页置顶显示",
       "type": "display"
+    },
+    {
+      "name": "REACT",
+      "count": 0,
+      "color": "#1A7F37",
+      "description": "",
+      "type": "category"
     },
     {
       "name": "人工智能",
