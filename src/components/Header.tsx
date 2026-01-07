@@ -22,33 +22,6 @@ export default function Header() {
                                 Cyclone77
                             </h2>
                         </Link>
-
-                        <nav className="hidden md:flex items-center gap-6">
-                            <Link
-                                to="/"
-                                className="text-text-primary-light dark:text-white text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
-                            >
-                                文章
-                            </Link>
-                            <a
-                                href="#"
-                                className="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
-                            >
-                                教程
-                            </a>
-                            <a
-                                href="#"
-                                className="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
-                            >
-                                资源
-                            </a>
-                            <a
-                                href="#"
-                                className="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
-                            >
-                                关于
-                            </a>
-                        </nav>
                     </div>
 
                     <div className="flex flex-1 justify-end gap-4 sm:gap-8">
@@ -75,10 +48,6 @@ export default function Header() {
                             <span className="material-symbols-outlined">
                                 {theme === 'light' ? 'dark_mode' : 'light_mode'}
                             </span>
-                        </button>
-
-                        <button className="flex items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-primary/90 text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors shadow-lg shadow-primary/20">
-                            <span className="truncate">订阅</span>
                         </button>
 
                         <div className="sm:hidden flex items-center text-text-primary-light dark:text-white cursor-pointer">
