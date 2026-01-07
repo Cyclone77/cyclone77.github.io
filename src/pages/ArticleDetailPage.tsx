@@ -243,7 +243,7 @@ export default function ArticleDetailPage() {
                                     </p>
                                 ),
                                 blockquote: ({ children }) => (
-                                    <blockquote className="border-l-4 border-primary bg-primary/5 p-8 rounded-r-2xl my-8 not-italic italic font-medium text-text-primary-light dark:text-white">
+                                    <blockquote className="border-l-4 border-primary bg-primary/5 px-4 py-3 rounded-r-lg my-6 not-italic text-text-primary-light dark:text-white [&>p]:mb-0">
                                         {children}
                                     </blockquote>
                                 ),
