@@ -2,7 +2,7 @@
   "tags": [
     {
       "name": "前端开发",
-      "count": 2,
+      "count": 3,
       "color": "#1A7F37",
       "description": "前端技术相关",
       "type": "category"
@@ -22,7 +22,14 @@
       "type": "category"
     },
     {
-      "name": "Javascript",
+      "name": "JAVASCRIPT",
+      "count": 1,
+      "color": "#1A7F37",
+      "description": "",
+      "type": "category"
+    },
+    {
+      "name": "REACT",
       "count": 1,
       "color": "#1A7F37",
       "description": "",
