@@ -29,6 +29,13 @@
       "type": "category"
     },
     {
+      "name": "置顶",
+      "count": 1,
+      "color": "#fef2c0",
+      "description": "首页置顶显示",
+      "type": "display"
+    },
+    {
       "name": "人工智能",
       "count": 0,
       "color": "#1A7F37",
@@ -68,13 +75,6 @@
       "count": 0,
       "color": "#fef2c0",
       "description": "精选文章",
-      "type": "display"
-    },
-    {
-      "name": "置顶",
-      "count": 0,
-      "color": "#fef2c0",
-      "description": "首页置顶显示",
       "type": "display"
     }
   ]
