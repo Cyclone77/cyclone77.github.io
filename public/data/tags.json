@@ -1,6 +1,13 @@
 {
   "tags": [
     {
+      "name": "前端开发",
+      "count": 2,
+      "color": "#1A7F37",
+      "description": "前端技术相关",
+      "type": "category"
+    },
+    {
       "name": "CSS",
       "count": 1,
       "color": "#1A7F37",
@@ -8,22 +15,15 @@
       "type": "category"
     },
     {
-      "name": "前端开发",
-      "count": 1,
-      "color": "#1A7F37",
-      "description": "前端技术相关",
-      "type": "category"
-    },
-    {
       "name": "HTML",
-      "count": 0,
+      "count": 1,
       "color": "#1A7F37",
       "description": "",
       "type": "category"
     },
     {
       "name": "Javascript",
-      "count": 0,
+      "count": 1,
       "color": "#1A7F37",
       "description": "",
       "type": "category"
