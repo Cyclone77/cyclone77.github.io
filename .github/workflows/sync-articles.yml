@@ -41,7 +41,7 @@ jobs:
               uses: actions/github-script@v7
               with:
                   script: |
-                      const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/check-sync.js`);
+                      const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/check-sync.cjs`);
                       await script({ github, context, core });
 
             - name: Sync articles
@@ -51,7 +51,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   script: |
-                      const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/sync-articles.js`);
+                      const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/sync-articles.cjs`);
                       await script({ github, context, core });
 
             - name: Commit and push changes

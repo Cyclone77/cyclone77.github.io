@@ -15,5 +15,5 @@ jobs:
               uses: actions/github-script@v7
               with:
                   script: |
-                      const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/manage-labels.js`);
+                      const script = require(`${process.env.GITHUB_WORKSPACE}/scripts/manage-labels.cjs`);
                       await script({ github, context, core });
