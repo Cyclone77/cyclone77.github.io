@@ -1,181 +1,182 @@
-import { useParams } from 'react-router';
-import { useState } from 'react';
+import { useParams, Link } from 'react-router';
+import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Article } from '../data/mockData';
+import { fetchArticleById } from '../services/api';
+import { Calendar, Clock, User, ArrowLeft, Bookmark, Share2 } from 'lucide-react';
 
 export default function ArticleDetailPage() {
     const { id } = useParams();
+    const [article, setArticle] = useState<Article | null>(null);
+    const [loading, setLoading] = useState(true);
     const [comment, setComment] = useState('');
 
-    // TODO: 使用 id 从 API 获取文章数据
-    console.log('Article ID:', id);
+    useEffect(() => {
+        if (id) {
+            fetchArticleById(Number(id)).then(data => {
+                setArticle(data);
+                setLoading(false);
+            });
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="w-full max-w-7xl px-4 sm:px-10 py-20 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (!article) {
+        return (
+            <div className="w-full max-w-7xl px-4 sm:px-10 py-20 text-center">
+                <h2 className="text-2xl font-bold">文章不存在</h2>
+                <Link to="/" className="text-primary hover:underline mt-4 inline-block">
+                    返回首页
+                </Link>
+            </div>
+        );
+    }
+
+    const publishDate = article.createdAt
+        ? new Date(article.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
+        : article.date;
 
     return (
         <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-10 py-8 lg:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <article className="lg:col-span-8 flex flex-col gap-8">
-                    <nav className="flex flex-wrap gap-2 text-sm">
-                        <a
-                            href="/"
-                            className="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors"
-                        >
-                            首页
-                        </a>
-                        <span className="text-text-secondary-light dark:text-text-secondary-dark">/</span>
-                        <a
-                            href="#"
-                            className="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors"
-                        >
-                            工程
-                        </a>
-                        <span className="text-text-secondary-light dark:text-text-secondary-dark">/</span>
-                        <span className="text-text-primary-light dark:text-white font-medium">Web 开发</span>
-                    </nav>
-
                     <div className="flex flex-col gap-6">
                         <h1 className="text-4xl md:text-5xl font-black leading-[1.1] tracking-[-0.02em] text-text-primary-light dark:text-white">
-                            理解 React 服务器组件：综合指南
+                            {article.title}
                         </h1>
 
                         <p className="text-lg md:text-xl text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
-                            深入了解正在改变我们构建 React 应用程序的架构，提高性能和开发人员体验。
+                            {article.description}
                         </p>
 
                         <div className="flex items-center justify-between border-y border-gray-200 dark:border-border-dark py-6">
                             <div className="flex items-center gap-4">
                                 <div
-                                    className="size-12 rounded-full bg-center bg-cover shadow-sm"
+                                    className="size-12 rounded-full bg-center bg-cover shadow-sm ring-2 ring-gray-100 dark:ring-border-dark"
                                     style={{
-                                        backgroundImage: 'url(https://api.dicebear.com/7.x/avataaars/svg?seed=Alex)',
+                                        backgroundImage: `url(${article.author.avatar})`,
                                     }}
                                 ></div>
                                 <div className="flex flex-col">
                                     <span className="text-text-primary-light dark:text-white font-bold text-base hover:text-primary cursor-pointer transition-colors">
-                                        Alex Chen
+                                        {article.author.name}
                                     </span>
-                                    <span className="text-text-secondary-light dark:text-text-secondary-dark text-sm">
-                                        2023年10月24日 · 8 分钟阅读
-                                    </span>
+                                    <div className="flex items-center gap-3 text-text-secondary-light dark:text-text-secondary-dark text-sm">
+                                        <span className="flex items-center gap-1">
+                                            <Calendar size={14} />
+                                            {publishDate}
+                                        </span>
+                                        <span className="opacity-30">|</span>
+                                        <span className="flex items-center gap-1">
+                                            <Clock size={14} />
+                                            {article.readTime}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="flex gap-3">
-                                <button className="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark hover:text-primary hover:bg-primary/10 transition-all">
-                                    <span className="material-symbols-outlined text-[20px]">bookmark</span>
+                                <button className="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
+                                    <Bookmark size={20} />
                                 </button>
-                                <button className="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark hover:text-primary hover:bg-primary/10 transition-all">
-                                    <span className="material-symbols-outlined text-[20px]">share</span>
+                                <button className="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
+                                    <Share2 size={20} />
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full aspect-[2/1] rounded-2xl overflow-hidden bg-gray-200 dark:bg-surface-dark">
+                    <div className="w-full aspect-[2/1] rounded-2xl overflow-hidden bg-gray-200 dark:bg-surface-dark shadow-xl">
                         <div
-                            className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-700"
+                            className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-1000"
                             style={{
-                                backgroundImage:
-                                    'url(https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&auto=format&fit=crop)',
+                                backgroundImage: `url(${article.coverImage})`,
                             }}
                         ></div>
                     </div>
 
-                    <div className="flex flex-col gap-6 text-lg leading-relaxed text-gray-700 dark:text-[#c4cfde]">
-                        <p>
-                            React 服务器组件（RSC）代表了我们思考构建 React
-                            应用程序方式的范式转变。与传统的服务器端渲染（SSR）不同，后者专注于初始 HTML 生成，RSC
-                            允许组件专门在服务器上运行，仅将必要的输出发送到客户端。
-                        </p>
-
-                        <h2 className="text-2xl font-bold text-text-primary-light dark:text-white mt-8 mb-2">
-                            为什么需要服务器组件？
-                        </h2>
-
-                        <p>
-                            RSC 的主要目标是减少发送到客户端的包大小。通过在服务器上渲染组件，我们可以将大型依赖项（如
-                            markdown 解析器或日期格式化库）保留在后端，向用户的浏览器发送零 KB 的代码。
-                        </p>
-
-                        <blockquote className="border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg my-6">
-                            <p className="text-base italic font-medium text-text-primary-light dark:text-white m-0">
-                                "零包大小的 React
-                                服务器组件。这是一个实验性功能......允许您编写仅在服务器上运行的组件。"
-                            </p>
-                            <footer className="mt-3 text-sm font-bold text-primary">— React 团队</footer>
-                        </blockquote>
-
-                        <p>
-                            这种方法还解决了数据获取中的"瀑布"问题。客户端组件不是获取数据，然后渲染一个获取更多数据的子组件，服务器组件可以直接访问数据库并更接近数据源进行异步/等待。
-                        </p>
-
-                        <h3 className="text-xl font-bold text-text-primary-light dark:text-white mt-6 mb-2">
-                            实现示例
-                        </h3>
-
-                        <p>
-                            下面是一个简单的示例，展示了服务器组件在不使用中间 API
-                            层的情况下直接从数据库获取数据的样子。
-                        </p>
-
-                        <div className="rounded-xl overflow-hidden bg-[#0d1117] border border-border-dark my-6 shadow-lg">
-                            <div className="flex justify-between items-center px-4 py-2 bg-[#161b22] border-b border-border-dark">
-                                <span className="text-xs font-mono text-text-secondary-dark">NoteList.server.jsx</span>
-                                <div className="flex gap-2">
-                                    <span className="size-3 rounded-full bg-[#ff5f56]"></span>
-                                    <span className="size-3 rounded-full bg-[#ffbd2e]"></span>
-                                    <span className="size-3 rounded-full bg-[#27c93f]"></span>
-                                </div>
-                            </div>
-                            <div className="p-6 overflow-x-auto code-scroll">
-                                <pre className="font-mono text-sm leading-6 text-[#c9d1d9]">
-                                    <code>{`import { db } from './db';
-
-// 此组件*仅*在服务器上运行
-export default async function NoteList({ searchText }) {
-  // 直接访问数据库！
-  const notes = await db.findAll({
-    where: { title: { contains: searchText } }
-  });
-
-  return (
-    <ul>
-      {notes.map((note) => (
-        <li key={note.id} className="p-4 border-b">
-          {note.title}
-        </li>
-      ))}
-    </ul>
-  );
-}`}</code>
-                                </pre>
-                            </div>
-                        </div>
-
-                        <p>
-                            注意没有{' '}
-                            <code className="px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-sm">
-                                useEffect
-                            </code>{' '}
-                            或{' '}
-                            <code className="px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-sm">useState</code>{' '}
-                            钩子。数据被简单地等待和渲染。这段代码永远不会发送到客户端。
-                        </p>
-
-                        <h2 className="text-2xl font-bold text-text-primary-light dark:text-white mt-8 mb-2">结论</h2>
-
-                        <p>
-                            虽然仍在成熟，但 RSC 准备成为我们在 Next.js
-                            生态系统及其他地方构建复杂应用程序的默认方式。它需要转变思维模式，但性能优势是不可否认的。
-                        </p>
+                    {/* 使用 ReactMarkdown 解析内容并支持代码高亮 */}
+                    <div className="article-content prose prose-lg dark:prose-invert max-w-none prose-pre:bg-transparent prose-pre:p-0">
+                        <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                code({ node, inline, className, children, ...props }: any) {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline && match ? (
+                                        <SyntaxHighlighter
+                                            style={vscDarkPlus}
+                                            language={match[1]}
+                                            PreTag="div"
+                                            className="rounded-xl !my-6 shadow-2xl"
+                                            {...props}
+                                        >
+                                            {String(children).replace(/\n$/, '')}
+                                        </SyntaxHighlighter>
+                                    ) : (
+                                        <code
+                                            className={`${className} bg-gray-100 dark:bg-surface-dark px-1.5 py-0.5 rounded text-primary font-medium`}
+                                            {...props}
+                                        >
+                                            {children}
+                                        </code>
+                                    );
+                                },
+                                // 自定义渲染其他 Markdown 元素以匹配样式
+                                h2: ({ children }) => (
+                                    <h2 className="text-3xl font-bold text-text-primary-light dark:text-white mt-12 mb-6 pb-2 border-b border-gray-100 dark:border-border-dark">
+                                        {children}
+                                    </h2>
+                                ),
+                                h3: ({ children }) => (
+                                    <h3 className="text-2xl font-bold text-text-primary-light dark:text-white mt-8 mb-4">
+                                        {children}
+                                    </h3>
+                                ),
+                                p: ({ children }) => (
+                                    <p className="text-lg leading-relaxed text-gray-700 dark:text-[#c4cfde] mb-6">
+                                        {children}
+                                    </p>
+                                ),
+                                blockquote: ({ children }) => (
+                                    <blockquote className="border-l-4 border-primary bg-primary/5 p-8 rounded-r-2xl my-8 not-italic italic font-medium text-text-primary-light dark:text-white">
+                                        {children}
+                                    </blockquote>
+                                ),
+                                ul: ({ children }) => (
+                                    <ul className="list-disc list-inside space-y-3 mb-6 text-gray-700 dark:text-[#c4cfde]">
+                                        {children}
+                                    </ul>
+                                ),
+                                ol: ({ children }) => (
+                                    <ol className="list-decimal list-inside space-y-3 mb-6 text-gray-700 dark:text-[#c4cfde]">
+                                        {children}
+                                    </ol>
+                                ),
+                            }}
+                        >
+                            {article.content || ''}
+                        </ReactMarkdown>
                     </div>
 
-                    <div className="flex flex-wrap gap-3 py-6">
-                        {['React', 'JavaScript', '性能', '架构'].map(tag => (
-                            <a
+                    <div className="flex flex-wrap gap-3 py-10 border-t border-gray-100 dark:border-border-dark mt-10">
+                        {article.tags?.map(tag => (
+                            <Link
                                 key={tag}
-                                href="#"
-                                className="flex h-8 items-center justify-center rounded-lg bg-gray-200 dark:bg-surface-dark px-4 text-sm font-medium text-text-primary-light dark:text-white hover:bg-primary hover:text-white transition-colors"
+                                to={`/tag/${tag}`}
+                                className="flex h-9 items-center justify-center rounded-full bg-gray-100 dark:bg-surface-dark px-5 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:bg-primary hover:text-white transition-all border border-transparent hover:border-primary/20"
                             >
-                                {tag}
-                            </a>
+                                #{tag}
+                            </Link>
                         ))}
                     </div>
 

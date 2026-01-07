@@ -2,13 +2,16 @@ export interface Article {
     id: number;
     title: string;
     description: string;
-    category: string;
-    categoryColor: string;
+    category?: string; // 保留旧的以兼容，但标记为可选
+    categories?: string[]; // 新的分类数组
+    displays?: string[]; // 显示类型（置顶、精选等）
+    categoryColor?: string;
     date: string;
     readTime: string;
     author: {
         name: string;
         avatar: string;
+        url?: string;
     };
     coverImage: string;
     tags: string[];

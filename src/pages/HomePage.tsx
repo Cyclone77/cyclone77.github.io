@@ -1,69 +1,134 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { mockArticles, featuredArticle } from '../data/mockData';
-import { fetchTags } from '../services/api';
+import { Article } from '../data/mockData';
+import { fetchTags, fetchArticles } from '../services/api';
 
 export default function HomePage() {
+    const [articles, setArticles] = useState<Article[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('全部');
     const filterCategories = ['全部', '热门', '精选'];
     const [tags, setTags] = useState<
         Array<{ name: string; count: number; color: string; description: string; type: 'category' | 'display' }>
     >([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // 获取标签
         fetchTags().then(data => {
-            // 只保留分类标签
             const categoryTags = data.tags.filter(tag => tag.type === 'category');
             setTags(categoryTags);
         });
+
+        // 获取文章数据
+        fetchArticles().then(data => {
+            setArticles(data.articles);
+            setLoading(false);
+        });
     }, []);
+
+    // 找到置顶文章作为 featuredArticle，如果没有置顶则取第一篇
+    const featuredArticle = articles.find(a => a.displays?.includes('置顶')) || articles[0];
+
+    // 过滤文章列表
+    const filteredArticles = articles.filter(article => {
+        // 1. 如果该文章已经是 Banner 显示的置顶文章，则从列表中排除
+        if (featuredArticle && article.id === featuredArticle.id) return false;
+
+        // 2. 分类过滤
+        if (selectedCategory === '全部') return true;
+        if (selectedCategory === '精选') return article.displays?.includes('精选');
+        if (selectedCategory === '热门') return article.displays?.includes('热门');
+        return true;
+    });
+
+    if (loading) {
+        return (
+            <div className="w-full max-w-7xl px-4 sm:px-10 py-20 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full max-w-7xl px-4 sm:px-10 py-8 flex flex-col gap-10">
-            <section className="@container">
-                <div className="flex flex-col gap-6 rounded-2xl bg-surface-light dark:bg-surface-dark p-6 shadow-sm border border-gray-100 dark:border-border-dark md:flex-row md:items-center md:gap-10 md:p-10">
-                    <div
-                        className="w-full md:w-1/2 aspect-video rounded-xl bg-center bg-cover bg-no-repeat shadow-md overflow-hidden relative group"
-                        style={{ backgroundImage: `url(${featuredArticle.coverImage})` }}
-                    >
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
-                    </div>
+            {featuredArticle && (
+                <section className="@container">
+                    <div className="flex flex-col gap-6 rounded-2xl bg-surface-light dark:bg-surface-dark p-6 shadow-sm border border-gray-100 dark:border-border-dark md:flex-row md:items-center md:gap-10 md:p-10">
+                        <div
+                            className="w-full md:w-1/2 aspect-video rounded-xl bg-center bg-cover bg-no-repeat shadow-md overflow-hidden relative group"
+                            style={{ backgroundImage: `url(${featuredArticle.coverImage})` }}
+                        >
+                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                        </div>
 
-                    <div className="flex flex-col gap-6 md:w-1/2 justify-center">
-                        <div className="flex flex-col gap-3 text-left">
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="px-2 py-1 rounded bg-primary/20 text-primary text-xs font-bold uppercase tracking-wide">
-                                    精选
-                                </span>
-                                <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
-                                    {featuredArticle.readTime}
-                                </span>
+                        <div className="flex flex-col gap-6 md:w-1/2 justify-center">
+                            <div className="flex flex-col gap-3 text-left">
+                                <div className="flex items-center gap-2 mb-1">
+                                    {featuredArticle.displays?.includes('置顶') && (
+                                        <span className="px-2 py-1 rounded bg-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-wide">
+                                            置顶
+                                        </span>
+                                    )}
+                                    {/* 显示所有分类 */}
+                                    {featuredArticle.categories?.map((cat: string) => (
+                                        <span
+                                            key={cat}
+                                            className="px-2 py-1 rounded bg-primary/20 text-primary text-xs font-bold uppercase tracking-wide"
+                                        >
+                                            {cat}
+                                        </span>
+                                    ))}
+                                    {/* 显示所有标签 */}
+                                    {featuredArticle.tags?.map(tag => (
+                                        <span
+                                            key={tag}
+                                            className="px-2 py-1 rounded bg-gray-100 dark:bg-border-dark text-text-secondary-light dark:text-text-secondary-dark text-xs font-bold uppercase tracking-wide"
+                                        >
+                                            #{tag}
+                                        </span>
+                                    ))}
+
+                                    {/* 只有在有分类或标签时才显示圆点 */}
+                                    {(featuredArticle.categories?.length || featuredArticle.tags?.length) && (
+                                        <span className="w-1 h-1 rounded-full bg-gray-400 flex-shrink-0"></span>
+                                    )}
+
+                                    <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
+                                        {featuredArticle.createdAt
+                                            ? new Date(featuredArticle.createdAt).toLocaleDateString('zh-CN', {
+                                                  month: 'long',
+                                                  day: 'numeric',
+                                              })
+                                            : featuredArticle.date}{' '}
+                                        · {featuredArticle.readTime}
+                                    </span>
+                                </div>
+
+                                <h1 className="font-display text-text-primary-light dark:text-white text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
+                                    {featuredArticle.title}
+                                </h1>
+
+                                <h2 className="text-text-secondary-light dark:text-text-secondary-dark text-base md:text-lg font-normal leading-relaxed">
+                                    {featuredArticle.description}
+                                </h2>
                             </div>
 
-                            <h1 className="font-display text-text-primary-light dark:text-white text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
-                                {featuredArticle.title}
-                            </h1>
+                            <div className="flex gap-4 pt-2">
+                                <Link
+                                    to={`/article/${featuredArticle.id}`}
+                                    className="flex items-center justify-center rounded-lg h-11 px-6 bg-primary hover:bg-primary/90 text-white text-base font-bold transition-all shadow-lg shadow-primary/25"
+                                >
+                                    <span>阅读文章</span>
+                                </Link>
 
-                            <h2 className="text-text-secondary-light dark:text-text-secondary-dark text-base md:text-lg font-normal leading-relaxed">
-                                {featuredArticle.description}
-                            </h2>
-                        </div>
-
-                        <div className="flex gap-4 pt-2">
-                            <Link
-                                to={`/article/${featuredArticle.id}`}
-                                className="flex items-center justify-center rounded-lg h-11 px-6 bg-primary hover:bg-primary/90 text-white text-base font-bold transition-all shadow-lg shadow-primary/25"
-                            >
-                                <span>阅读文章</span>
-                            </Link>
-
-                            <button className="flex items-center justify-center rounded-lg h-11 px-6 bg-transparent border border-gray-300 dark:border-[#3e4851] hover:bg-gray-100 dark:hover:bg-border-dark text-text-primary-light dark:text-white text-base font-medium transition-all">
-                                <span>收藏</span>
-                            </button>
+                                <button className="flex items-center justify-center rounded-lg h-11 px-6 bg-transparent border border-gray-300 dark:border-[#3e4851] hover:bg-gray-100 dark:hover:bg-border-dark text-text-primary-light dark:text-white text-base font-medium transition-all">
+                                    <span>收藏</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             <div className="flex flex-col lg:flex-row gap-10">
                 <div className="flex-1 flex flex-col">
@@ -90,63 +155,94 @@ export default function HomePage() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        {mockArticles.map(article => (
-                            <Link
-                                key={article.id}
-                                to={`/article/${article.id}`}
-                                className="group relative flex flex-col sm:flex-row gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-border-dark transition-all hover:shadow-md cursor-pointer"
-                            >
-                                <div
-                                    className="sm:w-48 h-48 sm:h-auto shrink-0 rounded-lg bg-cover bg-center overflow-hidden"
-                                    style={{ backgroundImage: `url(${article.coverImage})` }}
+                        {filteredArticles.length > 0 ? (
+                            filteredArticles.map(article => (
+                                <Link
+                                    key={article.id}
+                                    to={`/article/${article.id}`}
+                                    className="group relative flex flex-col sm:flex-row gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-border-dark transition-all hover:shadow-md cursor-pointer"
                                 >
-                                    <div className="w-full h-full bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-                                </div>
-
-                                <div className="flex flex-1 flex-col justify-between py-1">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2">
-                                            <span
-                                                className={`${article.categoryColor} text-xs font-bold uppercase tracking-wider`}
-                                            >
-                                                {article.category}
-                                            </span>
-                                            <span className="w-1 h-1 rounded-full bg-gray-400"></span>
-                                            <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
-                                                {article.date}
-                                            </span>
-                                        </div>
-
-                                        <h3 className="font-display text-text-primary-light dark:text-white text-xl font-bold leading-tight group-hover:text-primary transition-colors">
-                                            {article.title}
-                                        </h3>
-
-                                        <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm line-clamp-2">
-                                            {article.description}
-                                        </p>
+                                    <div
+                                        className="sm:w-48 h-48 sm:h-auto shrink-0 rounded-lg bg-cover bg-center overflow-hidden"
+                                        style={{ backgroundImage: `url(${article.coverImage})` }}
+                                    >
+                                        <div className="w-full h-full bg-black/0 group-hover:bg-black/10 transition-colors"></div>
                                     </div>
 
-                                    <div className="flex items-center justify-between mt-4">
-                                        <div className="flex items-center gap-2">
-                                            <div
-                                                className="w-6 h-6 rounded-full bg-gray-600 bg-center bg-cover"
-                                                style={{ backgroundImage: `url(${article.author.avatar})` }}
-                                            ></div>
-                                            <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs font-medium">
-                                                {article.author.name}
-                                            </span>
+                                    <div className="flex flex-1 flex-col justify-between py-1">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {article.displays?.includes('置顶') && (
+                                                    <span className="px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-500 text-[10px] font-bold uppercase tracking-wider">
+                                                        置顶
+                                                    </span>
+                                                )}
+
+                                                {/* 在标题上方显示所有分类和标签 */}
+                                                {article.categories?.map((cat: string) => (
+                                                    <span
+                                                        key={cat}
+                                                        className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider"
+                                                    >
+                                                        {cat}
+                                                    </span>
+                                                ))}
+                                                {article.tags?.map(tag => (
+                                                    <span
+                                                        key={tag}
+                                                        className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-border-dark text-text-secondary-light dark:text-text-secondary-dark text-[10px] font-bold uppercase tracking-wider"
+                                                    >
+                                                        #{tag}
+                                                    </span>
+                                                ))}
+
+                                                <span className="w-1 h-1 rounded-full bg-gray-400"></span>
+                                                <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs">
+                                                    {article.createdAt
+                                                        ? new Date(article.createdAt).toLocaleDateString('zh-CN', {
+                                                              month: 'long',
+                                                              day: 'numeric',
+                                                          })
+                                                        : article.date}{' '}
+                                                    · {article.readTime}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="font-display text-text-primary-light dark:text-white text-xl font-bold leading-tight group-hover:text-primary transition-colors">
+                                                {article.title}
+                                            </h3>
+
+                                            <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm line-clamp-2">
+                                                {article.description}
+                                            </p>
                                         </div>
 
-                                        <span className="flex items-center text-primary text-xs font-bold group-hover:translate-x-1 transition-transform">
-                                            阅读更多{' '}
-                                            <span className="material-symbols-outlined !text-[16px] ml-1">
-                                                arrow_forward
+                                        <div className="flex items-center justify-between mt-4">
+                                            <div className="flex items-center gap-2">
+                                                <div
+                                                    className="w-6 h-6 rounded-full bg-gray-600 bg-center bg-cover"
+                                                    style={{ backgroundImage: `url(${article.author.avatar})` }}
+                                                ></div>
+                                                <span className="text-text-secondary-light dark:text-text-secondary-dark text-xs font-medium">
+                                                    {article.author.name}
+                                                </span>
+                                            </div>
+
+                                            <span className="flex items-center text-primary text-xs font-bold group-hover:translate-x-1 transition-transform">
+                                                阅读更多{' '}
+                                                <span className="material-symbols-outlined !text-[16px] ml-1">
+                                                    arrow_forward
+                                                </span>
                                             </span>
-                                        </span>
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            ))
+                        ) : (
+                            <div className="py-20 text-center text-text-secondary-light dark:text-text-secondary-dark">
+                                暂无文章
+                            </div>
+                        )}
                     </div>
 
                     <div className="mt-10 flex justify-center">

@@ -92,8 +92,11 @@ jobs:
                       function extractSection(body, headerName) {
                         if (!body) return '';
                         const patterns = [
-                          new RegExp(`(?:^|[\\r\\n])#+\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*?)(?=(?:[\\r\\n](?:#+|---|_+) |$))`, 'i'),
-                          new RegExp(`(?:^|[\\r\\n])${headerName}\\s*[\\r\\n]+(?:[-_=]{3,}[\\r\\n]+)?([\\s\\S]*?)(?=(?:[\\r\\n](?:#+|---|_+) |$))`, 'i')
+                          // 增加对“文章内容”区块的特殊处理，允许其内部包含 --- 或 # 标题
+                          headerName === '文章内容' 
+                            ? new RegExp(`(?:^|[\\r\\n])#+\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*)`, 'i')
+                            : new RegExp(`(?:^|[\\r\\n])#+\\s*${headerName}\\s*[\\r\\n]+([\\s\\S]*?)(?=(?:[\\r\\n](?:#+|---|_+) [A-Z])|$)`, 'i'),
+                          new RegExp(`(?:^|[\\r\\n])${headerName}\\s*[\\r\\n]+(?:[-_=]{3,}[\\r\\n]+)?([\\s\\S]*?)(?=(?:[\\r\\n](?:#+|---|_+) [A-Z])|$)`, 'i')
                         ];
 
                         for (const pattern of patterns) {

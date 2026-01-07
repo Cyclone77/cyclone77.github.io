@@ -100,7 +100,7 @@ export async function fetchArticlesByCategory(category: string): Promise<Article
     try {
         const { articles } = await fetchArticles();
         if (category === '全部') return articles;
-        return articles.filter(article => article.category === category);
+        return articles.filter(article => article.categories?.includes(category));
     } catch (error) {
         console.error('Error fetching articles by category:', error);
         return [];
