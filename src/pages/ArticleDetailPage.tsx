@@ -11,7 +11,7 @@ import Comments from '../components/Comments';
 import LazyImage from '../components/LazyImage';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop';
-const MONO_FONT = "'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', 'Source Code Pro', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace";
+const MONO_FONT = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
 
 // ============ 工具函数 ============
 

@@ -17,8 +17,20 @@ export default {
                 'border-dark': '#283039',
             },
             fontFamily: {
-                display: ['Space Grotesk', 'sans-serif'],
-                body: ['Noto Sans', 'sans-serif'],
+                display: [
+                    '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+                    'Helvetica Neue', 'Arial', 'PingFang SC', 'Hiragino Sans GB',
+                    'Microsoft YaHei', 'sans-serif'
+                ],
+                body: [
+                    '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+                    'Helvetica Neue', 'Arial', 'PingFang SC', 'Hiragino Sans GB',
+                    'Microsoft YaHei', 'sans-serif'
+                ],
+                mono: [
+                    'ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo',
+                    'Consolas', 'Liberation Mono', 'monospace'
+                ],
             },
             borderRadius: {
                 DEFAULT: '0.25rem',
