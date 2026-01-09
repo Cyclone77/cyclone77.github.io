@@ -41,29 +41,24 @@ describe('BrutalistHeader Component', () => {
 
     it('should render logo with Matrix Green background', () => {
         renderWithProviders(<BrutalistHeader />);
-        const logo = screen.getByText('CY-77_LAB');
+        const logo = screen.getByText('Cyclone77');
         expect(logo).toHaveClass('bg-primary');
-    });
-
-    it('should render system status text', () => {
-        renderWithProviders(<BrutalistHeader />);
-        expect(screen.getByText('System Status: Operational')).toBeInTheDocument();
-    });
-
-    it('should render search icon', () => {
-        renderWithProviders(<BrutalistHeader />);
-        expect(screen.getByLabelText('Search')).toBeInTheDocument();
-    });
-
-    it('should render theme toggle button', () => {
-        renderWithProviders(<BrutalistHeader />);
-        expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument();
     });
 
     it('should render navigation links on desktop', () => {
         renderWithProviders(<BrutalistHeader />);
-        expect(screen.getByText('Log_Archive')).toBeInTheDocument();
-        expect(screen.getByText('Subroutines')).toBeInTheDocument();
-        expect(screen.getByText('Terminal')).toBeInTheDocument();
+        expect(screen.getByText('文章归档')).toBeInTheDocument();
+        expect(screen.getByText('技术专题')).toBeInTheDocument();
+        expect(screen.getByText('关于我')).toBeInTheDocument();
+    });
+
+    it('should render search icon', () => {
+        renderWithProviders(<BrutalistHeader />);
+        expect(screen.getByLabelText('搜索')).toBeInTheDocument();
+    });
+
+    it('should render theme toggle button', () => {
+        renderWithProviders(<BrutalistHeader />);
+        expect(screen.getByLabelText('切换主题')).toBeInTheDocument();
     });
 });

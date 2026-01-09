@@ -1,5 +1,4 @@
 import { Link } from 'react-router';
-import { useState } from 'react';
 
 interface ArticleCardProps {
     article: {
@@ -40,7 +39,7 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
     const primaryCategory = article.categories?.[0] || 'default';
     const colors = categoryColors[primaryCategory] || categoryColors.default;
     const isFeatured = article.displays?.includes('置顶') || article.displays?.includes('精选');
-    const idLabel = `ID: ${String(index + 1).padStart(3, '0')}${isFeatured ? ' // FEATURED' : ''}`;
+    const idLabel = `编号: ${String(index + 1).padStart(3, '0')}${isFeatured ? ' // 精选' : ''}`;
 
     // Format date: 2026.01.06
     const formatDate = (dateStr: string) => {
@@ -49,17 +48,17 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
         return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
     };
 
-    // Format read time: 11_MIN_READ
+    // Format read time: 11分钟阅读
     const formatReadTime = (readTime: string) => {
         const match = readTime.match(/(\d+)/);
-        return match ? `${match[1]}_MIN_READ` : readTime.toUpperCase().replace(/\s+/g, '_');
+        return match ? `${match[1]}分钟阅读` : readTime;
     };
 
     return (
         <article className="article-card group" data-testid="article-card">
             <div className="grid grid-cols-1 lg:grid-cols-2 bg-white dark:bg-zinc-900 border-4 border-black dark:border-white shadow-brutal dark:shadow-brutal-white h-full overflow-hidden">
                 {/* Image Section - use padding-bottom trick for aspect ratio */}
-                <div className="relative overflow-hidden border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-white bg-primary/30" style={{ paddingBottom: '75%' }}>
+                <div className="relative overflow-hidden border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-white bg-primary/30" style={{ paddingBottom: '65%' }}>
                     <img
                         src={article.coverImage || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop'}
                         alt={article.title}
@@ -72,10 +71,10 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
                 </div>
 
                 {/* Content Section */}
-                <div className="p-8 lg:p-12 flex flex-col justify-between">
+                <div className="p-6 lg:p-10 flex flex-col justify-between">
                     <div>
                         {/* Tags */}
-                        <div className="flex flex-wrap gap-2 mb-6">
+                        <div className="flex flex-wrap gap-2 mb-4">
                             {article.categories?.slice(0, 1).map(cat => (
                                 <span
                                     key={cat}
@@ -95,13 +94,13 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-4xl lg:text-6xl font-black leading-none mb-6 uppercase font-mono">
+                        <h2 className="text-3xl lg:text-5xl font-black leading-none mb-4 uppercase font-mono">
                             {article.title}
                         </h2>
 
                         {/* Description */}
                         <p
-                            className="text-lg opacity-80 mb-8 border-l-4 pl-4"
+                            className="text-base opacity-80 mb-6 border-l-4 pl-4"
                             style={{ borderColor: accentColor || (colors.bg === 'bg-primary' ? '#00FF41' : undefined) }}
                         >
                             {article.description}
@@ -112,12 +111,12 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <Link
                             to={`/article/${article.id}`}
-                            className={`${colors.bg} ${colors.text} px-6 py-3 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter font-mono`}
+                            className={`${colors.bg} ${colors.text} px-6 py-3 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all tracking-tighter font-mono`}
                         >
-                            Execute_Read()
+                            阅读文章
                         </Link>
                         <span className="text-xs font-mono opacity-50">
-                            STAMP: {formatDate(article.date)} // {formatReadTime(article.readTime)}
+                            发布: {formatDate(article.date)} // {formatReadTime(article.readTime)}
                         </span>
                     </div>
                 </div>

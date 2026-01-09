@@ -52,16 +52,16 @@ describe('Tailwind Config - Brutalist Design Tokens', () => {
     });
 
     describe('Font Family Configuration', () => {
-        it('should configure JetBrains Mono as display font', () => {
-            expect(fontFamily?.display).toContain("'JetBrains Mono'");
+        it('should configure system monospace font stack as display font', () => {
+            expect(fontFamily?.display).toContain('ui-monospace');
         });
 
-        it('should configure JetBrains Mono as mono font', () => {
-            expect(fontFamily?.mono).toContain("'JetBrains Mono'");
+        it('should configure system monospace font stack as mono font', () => {
+            expect(fontFamily?.mono).toContain('ui-monospace');
         });
 
-        it('should configure Inter as body font', () => {
-            expect(fontFamily?.body).toContain("'Inter'");
+        it('should configure system sans-serif font stack as body font', () => {
+            expect(fontFamily?.body).toContain('-apple-system');
         });
     });
 });

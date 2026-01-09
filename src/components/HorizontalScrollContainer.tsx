@@ -23,20 +23,21 @@ export default function HorizontalScrollContainer({ children, className = '' }: 
         if (!container) return;
 
         const handleWheel = (e: WheelEvent) => {
-            // Get the scroll delta - use deltaX if shift is held or if there's horizontal scroll
-            // Otherwise convert deltaY to horizontal scroll
-            const delta = e.shiftKey ? e.deltaY : (e.deltaX !== 0 ? e.deltaX : e.deltaY);
-            
-            if (delta === 0) return;
-            
-            // Prevent default scroll behavior
+            // Prevent default vertical scroll
             e.preventDefault();
             
-            // Scroll horizontally
-            container.scrollLeft += delta;
+            // Get scroll amount - prioritize deltaX, fallback to deltaY
+            // Shift+wheel also uses deltaY but we want horizontal scroll
+            const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+            
+            // Apply smooth horizontal scroll
+            container.scrollBy({
+                left: delta,
+                behavior: 'auto'
+            });
         };
 
-        // Attach directly to container element
+        // Use passive: false to allow preventDefault
         container.addEventListener('wheel', handleWheel, { passive: false });
         
         return () => {
