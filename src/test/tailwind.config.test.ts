@@ -52,12 +52,12 @@ describe('Tailwind Config - Brutalist Design Tokens', () => {
     });
 
     describe('Font Family Configuration', () => {
-        it('should configure system monospace font stack as display font', () => {
-            expect(fontFamily?.display).toContain('ui-monospace');
+        it('should configure Apple-style font stack as display font', () => {
+            expect(fontFamily?.display).toContain('-apple-system');
         });
 
-        it('should configure system monospace font stack as mono font', () => {
-            expect(fontFamily?.mono).toContain('ui-monospace');
+        it('should configure SF Mono font stack as mono font', () => {
+            expect(fontFamily?.mono).toContain('"SF Mono"');
         });
 
         it('should configure system sans-serif font stack as body font', () => {

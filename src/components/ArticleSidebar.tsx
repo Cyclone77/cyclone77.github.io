@@ -28,11 +28,6 @@ export default function ArticleSidebar({ article }: ArticleSidebarProps) {
         return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
     };
 
-    // Format author ID
-    const formatAuthorId = (name: string) => {
-        return name.toUpperCase().replace(/\s+/g, '_');
-    };
-
     const allTags = [...(article.categories || []), ...(article.tags || [])];
 
     return (
