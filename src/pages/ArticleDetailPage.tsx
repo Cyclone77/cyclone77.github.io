@@ -63,7 +63,7 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
         sectionCounter.current++;
         const sectionNum = String(sectionCounter.current).padStart(2, '0');
         const id = `section-${sectionNum}`;
-        const text = String(children).replace(/[*_`#]/g, '').trim().toUpperCase().replace(/\s+/g, '_');
+        const text = String(children).replace(/[*_`#]/g, '').trim();
         
         return (
             <h2
@@ -156,10 +156,10 @@ function BackButton() {
     return (
         <Link
             to="/"
-            className="fixed top-[120px] right-10 z-[60] font-mono bg-primary text-black font-extrabold px-4 py-2 text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2"
+            className="fixed top-[120px] right-10 z-[60] w-10 h-10 font-mono bg-primary text-black font-extrabold text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            title="返回首页"
         >
-            <span className="material-symbols-outlined font-black text-sm">arrow_back</span>
-            返回首页
+            <span className="material-symbols-outlined font-black text-lg">arrow_back</span>
         </Link>
     );
 }
@@ -168,15 +168,12 @@ function MindMapToggle({ onClick }: { onClick: () => void }) {
     return (
         <button
             onClick={onClick}
-            className="fixed top-[120px] z-[60] cursor-pointer hidden lg:block"
-            style={{ right: '160px' }}
+            className="fixed top-[120px] right-[90px] z-[60] w-10 h-10 cursor-pointer hidden lg:flex font-mono bg-white text-black font-extrabold text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all items-center justify-center group"
+            title="思维导图"
         >
-            <div className="font-mono bg-white text-black font-extrabold px-4 py-2 text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-2 group">
-                <span className="material-symbols-outlined font-black text-sm group-hover:text-blue-500 transition-colors">
-                    hub
-                </span>
-                思维导图
-            </div>
+            <span className="material-symbols-outlined font-black text-lg group-hover:text-blue-500 transition-colors">
+                hub
+            </span>
         </button>
     );
 }
@@ -253,12 +250,7 @@ export default function ArticleDetailPage() {
                     >
                         <ArticleHeader article={article} />
                         <ArticleIntro description={article.description} />
-                        <ArticleContent content={article.content || ''} />
-                        
-                        {/* Footer */}
-                        <p className="text-lg text-zinc-800 mt-12 mb-20">
-                            继续探索我们的文章库，了解更多关于性能优化和现代前端开发的技术文章。
-                        </p>
+                        <ArticleContent content={article.content || ''} />                        
                     </article>
                 }
             />

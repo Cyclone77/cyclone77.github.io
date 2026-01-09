@@ -46,43 +46,37 @@ export default function ArticleSidebar({ article }: ArticleSidebarProps) {
                 />
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
-                {/* Decorative text */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
-                    <span className="font-mono text-white text-6xl lg:text-9xl font-black select-none">
-                        LOG_001
-                    </span>
-                </div>
             </div>
 
             {/* Metadata Section */}
             <div className="p-6 lg:p-10 flex-1 flex flex-col justify-end">
                 <div className="font-mono text-primary mb-6">
                     <div className="text-xs uppercase tracking-[0.2em] mb-2 opacity-60">
-                        // METADATA
+                        // 元数据
                     </div>
                     <div className="grid grid-cols-2 gap-y-4" data-testid="sidebar-metadata">
                         <div>
-                            <span className="block text-[10px] opacity-50">STAMP_DATE</span>
+                            <span className="block text-[10px] opacity-50">发布日期</span>
                             <span className="text-sm font-bold">{formatDate(article.date)}</span>
                         </div>
                         <div>
-                            <span className="block text-[10px] opacity-50">AUTHOR_ID</span>
-                            <span className="text-sm font-bold">{formatAuthorId(article.author.name)}</span>
+                            <span className="block text-[10px] opacity-50">作者</span>
+                            <span className="text-sm font-bold">{article.author.name}</span>
                         </div>
                         <div className="col-span-2">
-                            <span className="block text-[10px] opacity-50">TAG_DIRECTORY</span>
+                            <span className="block text-[10px] opacity-50">标签分类</span>
                             <div className="flex flex-wrap gap-2 mt-1">
                                 {allTags.length > 0 ? (
                                     allTags.slice(0, 5).map(tag => (
                                         <span
                                             key={tag}
-                                            className="text-[10px] border border-primary px-2 py-0.5 uppercase"
+                                            className="text-[10px] border border-primary px-2 py-0.5"
                                         >
                                             #{tag}
                                         </span>
                                     ))
                                 ) : (
-                                    <span className="text-[10px] opacity-50">NO_TAGS</span>
+                                    <span className="text-[10px] opacity-50">暂无标签</span>
                                 )}
                             </div>
                         </div>
@@ -90,8 +84,8 @@ export default function ArticleSidebar({ article }: ArticleSidebarProps) {
                 </div>
 
                 {/* Security Status Footer */}
-                <div className="font-mono text-[10px] text-white/30 border-t border-white/10 pt-4 uppercase">
-                    Connection_Secure: TLS_1.3_AES_256
+                <div className="font-mono text-[10px] text-white/30 border-t border-white/10 pt-4">
+                    安全连接: TLS_1.3_AES_256
                 </div>
             </div>
         </>
