@@ -17,15 +17,16 @@ import Comments from '../components/Comments';
 function extractHeadings(content: string): Array<{ id: string; text: string; level: number }> {
     const headings: Array<{ id: string; text: string; level: number }> = [];
     const lines = content.split('\n');
-    let sectionNumber = 0;
+    let h2Counter = 0;
 
     for (const line of lines) {
+        // 只提取 h2 用于思维导图导航
         const match = line.match(/^(#{2})\s+(.+)$/);
         if (match) {
-            sectionNumber++;
+            h2Counter++;
             const text = match[2].replace(/[*_`#]/g, '').trim();
             headings.push({
-                id: `section-${String(sectionNumber).padStart(2, '0')}`,
+                id: `section-${String(h2Counter).padStart(2, '0')}`,
                 text,
                 level: 2,
             });
@@ -35,7 +36,7 @@ function extractHeadings(content: string): Array<{ id: string; text: string; lev
     return headings;
 }
 
-// ============ Markdown Components ============
+// ============ Markdown Components (GitHub Style) ============
 
 const createMarkdownComponents = (sectionCounter: { current: number }) => ({
     code({ inline, className, children, ...props }: any) {
@@ -51,80 +52,90 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
             );
         }
         
+        // GitHub 风格的行内代码
         return (
             <code
-                className="font-mono bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-200 px-1.5 py-0.5 text-sm border border-black/20 dark:border-white/20"
+                className="font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.5 text-[85%] rounded-md"
                 {...props}
             >
                 {children}
             </code>
         );
     },
+    h1: ({ children }: any) => (
+        <h1 className="text-[2em] font-semibold mt-6 mb-4 pb-[0.3em] border-b border-zinc-300 dark:border-zinc-700 text-black dark:text-white leading-[1.25]">
+            {children}
+        </h1>
+    ),
     h2: ({ children }: any) => {
         sectionCounter.current++;
         const sectionNum = String(sectionCounter.current).padStart(2, '0');
         const id = `section-${sectionNum}`;
-        const text = String(children).replace(/[*_`#]/g, '').trim();
         
         return (
             <h2
                 id={id}
-                className="font-mono font-black text-2xl mt-8 mb-4 tracking-tight flex items-center scroll-mt-16 text-black dark:text-white"
+                className="text-[1.5em] font-semibold mt-6 mb-4 pb-[0.3em] border-b border-zinc-300 dark:border-zinc-700 scroll-mt-16 text-black dark:text-white leading-[1.25]"
             >
-                <span className="mr-3">{sectionNum}.</span>
-                {text}
+                {children}
             </h2>
         );
     },
     h3: ({ children }: any) => (
-        <h3 className="font-mono font-bold text-lg mt-6 mb-3 text-zinc-900 dark:text-zinc-100">{children}</h3>
+        <h3 className="text-[1.25em] font-semibold mt-6 mb-4 text-black dark:text-white leading-[1.25]">{children}</h3>
     ),
     h4: ({ children }: any) => (
-        <h4 className="font-mono font-bold text-base mt-4 mb-2 text-zinc-800 dark:text-zinc-200">{children}</h4>
+        <h4 className="text-[1em] font-semibold mt-6 mb-4 text-black dark:text-white leading-[1.25]">{children}</h4>
+    ),
+    h5: ({ children }: any) => (
+        <h5 className="text-[0.875em] font-semibold mt-6 mb-4 text-black dark:text-white leading-[1.25]">{children}</h5>
+    ),
+    h6: ({ children }: any) => (
+        <h6 className="text-[0.85em] font-semibold mt-6 mb-4 text-zinc-600 dark:text-zinc-400 leading-[1.25]">{children}</h6>
     ),
     p: ({ children }: any) => (
-        <p className="text-base text-zinc-800 dark:text-zinc-200 mb-2 leading-normal">{children}</p>
+        <p className="text-base text-zinc-800 dark:text-zinc-200 mb-4 mt-0 leading-[1.6]">{children}</p>
     ),
     blockquote: ({ children }: any) => (
-        <blockquote className="border-l-4 border-black dark:border-primary bg-zinc-100 dark:bg-zinc-800 px-5 py-3 my-4 italic text-zinc-800 dark:text-zinc-200 [&>p]:mb-0 [&>p:last-child]:mb-0">
+        <blockquote className="border-l-[0.25em] border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 px-4 my-4 [&>p]:mb-0 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
             {children}
         </blockquote>
     ),
     ul: ({ children }: any) => (
-        <ul className="list-disc list-inside space-y-1 mb-4 text-zinc-800 dark:text-zinc-200 pl-4">{children}</ul>
+        <ul className="list-disc pl-[2em] mb-4 mt-0 text-zinc-800 dark:text-zinc-200">{children}</ul>
     ),
     ol: ({ children }: any) => (
-        <ol className="list-decimal list-inside space-y-1 mb-4 text-zinc-800 dark:text-zinc-200 pl-4">{children}</ol>
+        <ol className="list-decimal pl-[2em] mb-4 mt-0 text-zinc-800 dark:text-zinc-200">{children}</ol>
     ),
     li: ({ children }: any) => (
-        <li className="text-base leading-normal text-zinc-800 dark:text-zinc-200">{children}</li>
+        <li className="text-base leading-[1.6] text-zinc-800 dark:text-zinc-200 mt-1">{children}</li>
     ),
     table: ({ children }: any) => (
-        <div className="overflow-x-auto my-5">
-            <table className="w-full border-collapse border-2 border-black dark:border-white font-mono text-sm">
+        <div className="overflow-x-auto my-4">
+            <table className="border-collapse border-spacing-0 w-full text-sm">
                 {children}
             </table>
         </div>
     ),
     thead: ({ children }: any) => (
-        <thead className="bg-black dark:bg-white text-white dark:text-black">{children}</thead>
+        <thead className="text-zinc-800 dark:text-zinc-200">{children}</thead>
     ),
     tbody: ({ children }: any) => (
         <tbody className="text-zinc-800 dark:text-zinc-200">{children}</tbody>
     ),
     tr: ({ children }: any) => (
-        <tr className="border-b border-black dark:border-white/30 even:bg-zinc-100 dark:even:bg-zinc-800">{children}</tr>
+        <tr className="border-t border-zinc-300 dark:border-zinc-700 even:bg-zinc-50 dark:even:bg-zinc-800/50">{children}</tr>
     ),
     th: ({ children }: any) => (
-        <th className="px-3 py-2 text-left font-bold uppercase border-r border-white/20 dark:border-black/20 last:border-r-0">{children}</th>
+        <th className="px-3 py-2 text-left font-semibold border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800">{children}</th>
     ),
     td: ({ children }: any) => (
-        <td className="px-3 py-2 border-r border-black/20 dark:border-white/20 last:border-r-0">{children}</td>
+        <td className="px-3 py-2 border border-zinc-300 dark:border-zinc-700">{children}</td>
     ),
     a: ({ href, children }: any) => (
         <a 
             href={href} 
-            className="text-primary underline decoration-2 underline-offset-2 hover:bg-primary hover:text-black transition-colors"
+            className="text-[#0969da] dark:text-[#58a6ff] no-underline hover:underline"
             target={href?.startsWith('http') ? '_blank' : undefined}
             rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
         >
@@ -132,27 +143,40 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
         </a>
     ),
     hr: () => (
-        <hr className="my-8 border-t-4 border-black dark:border-white" />
+        <hr className="my-6 h-[0.25em] p-0 bg-zinc-300 dark:bg-zinc-700 border-0" />
     ),
     img: ({ src, alt }: any) => (
-        <figure className="my-5">
-            <img 
-                src={src} 
-                alt={alt} 
-                className="w-full border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]" 
-            />
-            {alt && <figcaption className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 font-mono text-center">{alt}</figcaption>}
-        </figure>
+        <img 
+            src={src} 
+            alt={alt || ''} 
+            className="max-w-full box-border bg-white dark:bg-zinc-900" 
+            style={{ maxWidth: '100%' }}
+        />
     ),
     strong: ({ children }: any) => (
-        <strong className="font-bold text-black dark:text-white">{children}</strong>
+        <strong className="font-semibold text-black dark:text-white">{children}</strong>
     ),
     em: ({ children }: any) => (
         <em className="italic">{children}</em>
     ),
     del: ({ children }: any) => (
-        <del className="line-through text-zinc-500">{children}</del>
+        <del className="line-through">{children}</del>
     ),
+    // GitHub 风格的任务列表
+    input: ({ type, checked, ...props }: any) => {
+        if (type === 'checkbox') {
+            return (
+                <input 
+                    type="checkbox" 
+                    checked={checked} 
+                    disabled 
+                    className="mr-2 align-middle"
+                    {...props}
+                />
+            );
+        }
+        return <input type={type} {...props} />;
+    },
 });
 
 // ============ Sub Components ============

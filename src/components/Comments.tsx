@@ -12,22 +12,10 @@ export default function Comments({ issueNumber, issueUrl }: CommentsProps) {
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const loadedRef = useRef(false);
 
+    // 初始化加载 utterances
     useEffect(() => {
         const container = containerRef.current;
-        if (!container) return;
-
-        // 如果已经加载成功过，只更新主题
-        if (loadedRef.current) {
-            const iframe = container.querySelector('.utterances-frame') as HTMLIFrameElement;
-            if (iframe?.contentWindow) {
-                const message = {
-                    type: 'set-theme',
-                    theme: theme === 'dark' ? 'github-dark' : 'github-light'
-                };
-                iframe.contentWindow.postMessage(message, 'https://utteranc.es');
-            }
-            return;
-        }
+        if (!container || loadedRef.current) return;
 
         setStatus('loading');
         container.innerHTML = '';
@@ -64,7 +52,24 @@ export default function Comments({ issueNumber, issueUrl }: CommentsProps) {
         return () => {
             clearInterval(checkLoaded);
         };
-    }, [issueNumber, theme]);
+    }, [issueNumber]); // 只依赖 issueNumber
+
+    // 主题切换时更新 utterances 主题（不重新加载）
+    useEffect(() => {
+        if (!loadedRef.current) return;
+        
+        const container = containerRef.current;
+        if (!container) return;
+
+        const iframe = container.querySelector('.utterances-frame') as HTMLIFrameElement;
+        if (iframe?.contentWindow) {
+            const message = {
+                type: 'set-theme',
+                theme: theme === 'dark' ? 'github-dark' : 'github-light'
+            };
+            iframe.contentWindow.postMessage(message, 'https://utteranc.es');
+        }
+    }, [theme]); // 只依赖 theme
 
     const githubUrl = issueUrl || `https://github.com/Cyclone77/cyclone77.github.io/issues/${issueNumber}`;
 
