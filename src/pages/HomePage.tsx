@@ -3,14 +3,12 @@ import { Article } from '../data/mockData';
 import { fetchArticles } from '../services/api';
 import HorizontalScrollContainer from '../components/HorizontalScrollContainer';
 import ArticleCard from '../components/ArticleCard';
-import RadialMenu from '../components/RadialMenu';
 
 /**
  * HomePage - Brutalist horizontal scroll layout
  * Features:
  * - Full viewport horizontal scroll
  * - Article cards with duotone images
- * - Fixed radial menu
  * Requirements: 3.1, 4.4
  */
 export default function HomePage() {
@@ -24,12 +22,6 @@ export default function HomePage() {
         });
     }, []);
 
-    const radialMenuItems = [
-        { icon: 'home', label: 'Home', onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-        { icon: 'terminal', label: 'Terminal', onClick: () => console.log('Terminal') },
-        { icon: 'settings', label: 'Settings', onClick: () => console.log('Settings') },
-    ];
-
     if (loading) {
         return (
             <div className="h-screen flex items-center justify-center">
@@ -39,21 +31,16 @@ export default function HomePage() {
     }
 
     return (
-        <>
-            <main className="h-screen flex items-center pt-20">
-                <HorizontalScrollContainer>
-                    {articles.map((article, index) => (
-                        <ArticleCard
-                            key={article.id}
-                            article={article}
-                            index={index}
-                        />
-                    ))}
-                </HorizontalScrollContainer>
-            </main>
-
-            {/* Fixed widgets */}
-            <RadialMenu items={radialMenuItems} />
-        </>
+        <main className="h-screen flex items-center pt-20">
+            <HorizontalScrollContainer>
+                {articles.map((article, index) => (
+                    <ArticleCard
+                        key={article.id}
+                        article={article}
+                        index={index}
+                    />
+                ))}
+            </HorizontalScrollContainer>
+        </main>
     );
 }

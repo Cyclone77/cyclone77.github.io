@@ -16,11 +16,11 @@ const POSITION_STYLES = {
     'bottom-left': 'bottom-10 left-10',
 };
 
-// Radial positions for up to 3 items
+// Radial positions for up to 3 items - arc layout above-left of main button
 const ITEM_TRANSFORMS = [
-    'translate(-80px, -20px)',
-    'translate(-60px, -70px)',
-    'translate(-10px, -80px)',
+    'translate(-70px, 0px)',     // 首页 - 正左
+    'translate(-55px, -55px)',   // 评论 - 左上45度
+    'translate(0px, -70px)',     // 回到顶部 - 正上
 ];
 
 export default function RadialMenu({ items, position = 'bottom-right' }: RadialMenuProps) {
@@ -28,12 +28,24 @@ export default function RadialMenu({ items, position = 'bottom-right' }: RadialM
 
     return (
         <div
-            className={`fixed ${POSITION_STYLES[position]} z-[60] flex flex-col items-end group`}
+            className={`fixed ${POSITION_STYLES[position]} z-[60]`}
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
+            {/* Invisible hover area to keep menu open */}
+            <div 
+                className="absolute"
+                style={{
+                    width: '150px',
+                    height: '150px',
+                    bottom: '0',
+                    right: '0',
+                    pointerEvents: isExpanded ? 'auto' : 'none',
+                }}
+            />
+
             {/* Expandable menu items */}
-            <div className="absolute bottom-full right-full">
+            <div className="absolute bottom-0 right-0">
                 {items.map((item, index) => (
                     <button
                         key={item.label}
@@ -63,7 +75,7 @@ export default function RadialMenu({ items, position = 'bottom-right' }: RadialM
             {/* Main FAB button */}
             <button
                 className={`
-                    w-16 h-16 rounded-full
+                    relative w-16 h-16 rounded-full
                     bg-primary text-black
                     border-4 border-black dark:border-white
                     shadow-brutal dark:shadow-brutal-white

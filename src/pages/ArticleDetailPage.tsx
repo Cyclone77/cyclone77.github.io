@@ -280,10 +280,32 @@ export default function ArticleDetailPage() {
         }
     };
 
+    const scrollToTop = () => {
+        // 滚动内容区域到顶部
+        const mainContent = document.querySelector('main.overflow-y-auto');
+        if (mainContent) {
+            mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    const scrollToComments = () => {
+        const commentsSection = document.getElementById('comments-section');
+        const mainContent = document.querySelector('main.overflow-y-auto');
+        if (commentsSection && mainContent) {
+            // 计算评论区相对于滚动容器的位置
+            const offsetTop = commentsSection.offsetTop - 100;
+            mainContent.scrollTo({ top: offsetTop, behavior: 'smooth' });
+        } else if (commentsSection) {
+            commentsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     const radialMenuItems = [
-        { icon: 'home', label: 'Home', onClick: () => window.location.href = '/' },
-        { icon: 'terminal', label: 'Terminal', onClick: () => console.log('Terminal') },
-        { icon: 'settings', label: 'Settings', onClick: () => console.log('Settings') },
+        { icon: 'home', label: '返回首页', onClick: () => window.location.href = '/' },
+        { icon: 'chat', label: '跳转评论', onClick: scrollToComments },
+        { icon: 'arrow_upward', label: '回到顶部', onClick: scrollToTop },
     ];
 
     if (loading) return <LoadingState />;
@@ -313,7 +335,13 @@ export default function ArticleDetailPage() {
                     >
                         <ArticleHeader article={article} />
                         <ArticleIntro description={article.description} />
-                        <ArticleContent content={article.content || ''} />                        
+                        <ArticleContent content={article.content || ''} />
+                        
+                        {/* Comments Section */}
+                        <section id="comments-section" className="mt-16 pt-8 border-t-4 border-black dark:border-white">
+                            <h3 className="font-mono font-bold text-xl mb-6 text-black dark:text-white">评论区</h3>
+                            <p className="text-zinc-600 dark:text-zinc-400">评论功能开发中...</p>
+                        </section>
                     </article>
                 }
             />
