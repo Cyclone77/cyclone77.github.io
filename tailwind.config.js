@@ -5,39 +5,38 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: '#137fec',
-                'background-light': '#f6f7f8',
-                'background-dark': '#101922',
-                'surface-light': '#ffffff',
-                'surface-dark': '#1c242d',
-                'text-primary-light': '#111418',
-                'text-primary-dark': '#ffffff',
-                'text-secondary-light': '#637588',
-                'text-secondary-dark': '#9dabb9',
-                'border-dark': '#283039',
+                // Brutalist Matrix Green
+                primary: '#00FF41',
+                // Brutalist backgrounds
+                'background-light': '#F0F0F0',
+                'background-dark': '#0A0A0A',
+                // Surface colors
+                'surface-light': '#FFFFFF',
+                'surface-dark': '#18181B',
+                // Text colors
+                'text-primary-light': '#000000',
+                'text-primary-dark': '#FFFFFF',
+                'text-secondary-light': 'rgba(0,0,0,0.6)',
+                'text-secondary-dark': 'rgba(255,255,255,0.6)',
+                // Border colors
+                'border-light': '#000000',
+                'border-dark': '#FFFFFF',
             },
             fontFamily: {
-                display: [
-                    '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-                    'Helvetica Neue', 'Arial', 'PingFang SC', 'Hiragino Sans GB',
-                    'Microsoft YaHei', 'sans-serif'
-                ],
-                body: [
-                    '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-                    'Helvetica Neue', 'Arial', 'PingFang SC', 'Hiragino Sans GB',
-                    'Microsoft YaHei', 'sans-serif'
-                ],
-                mono: [
-                    'ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo',
-                    'Consolas', 'Liberation Mono', 'monospace'
-                ],
+                display: ["'JetBrains Mono'", 'monospace'],
+                mono: ["'JetBrains Mono'", 'monospace'],
+                body: ["'Inter'", 'sans-serif'],
             },
             borderRadius: {
-                DEFAULT: '0.25rem',
-                lg: '0.5rem',
-                xl: '0.75rem',
-                '2xl': '1rem',
+                DEFAULT: '0px',
+                none: '0px',
                 full: '9999px',
+            },
+            boxShadow: {
+                brutal: '4px 4px 0px 0px rgba(0,0,0,1)',
+                'brutal-hover': '8px 8px 0px 0px rgba(0,0,0,1)',
+                'brutal-white': '4px 4px 0px 0px rgba(255,255,255,1)',
+                'brutal-white-hover': '8px 8px 0px 0px rgba(255,255,255,1)',
             },
             animation: {
                 shimmer: 'shimmer 1.5s ease-in-out infinite',

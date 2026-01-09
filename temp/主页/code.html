@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EXPERIMENTAL_TECH_LOG // V2.0</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#00FF41", // Matrix Green
+                        "background-light": "#F0F0F0",
+                        "background-dark": "#0A0A0A",
+                    },
+                    fontFamily: {
+                        display: ["'JetBrains Mono'", "monospace"],
+                        mono: ["'JetBrains Mono'", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px", // Brutalist style often uses sharp corners
+                    },
+                    boxShadow: {
+                        'brutal': '4px 4px 0px 0px rgba(0,0,0,1)',
+                        'brutal-hover': '8px 8px 0px 0px rgba(0,0,0,1)',
+                        'brutal-white': '4px 4px 0px 0px rgba(255,255,255,1)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: hidden;
+        }
+        .horizontal-scroll-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;-ms-overflow-style: none;}
+        .horizontal-scroll-container::-webkit-scrollbar {
+            display: none;}
+        .article-card {
+            scroll-snap-align: center;
+            flex: 0 0 85vw;
+            margin-right: 5vw;
+        }
+        .duotone-img {
+            filter: grayscale(100%) contrast(120%) brightness(80%) sepia(50%) hue-rotate(80deg);
+        }
+        .radial-menu {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .radial-item {
+            transition: transform 0.3s ease;
+        }
+        .radial-container:hover .radial-item:nth-child(1) { transform: translate(-80px, -20px); }
+        .radial-container:hover .radial-item:nth-child(2) { transform: translate(-60px, -70px); }
+        .radial-container:hover .radial-item:nth-child(3) { transform: translate(-10px, -80px); }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-black dark:text-white transition-colors duration-500">
+<nav class="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b-4 border-black dark:border-white">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-extrabold bg-primary text-black px-3 py-1 border-2 border-black">CY-77_LAB</span>
+<span class="hidden md:inline-block text-xs uppercase tracking-widest opacity-60">System Status: Operational</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="hover:text-primary transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-icons">contrast</span>
+</button>
+<div class="hidden md:flex gap-8 font-bold text-sm uppercase">
+<a class="hover:underline decoration-primary decoration-4" href="#">Log_Archive</a>
+<a class="hover:underline decoration-primary decoration-4" href="#">Subroutines</a>
+<a class="hover:underline decoration-primary decoration-4" href="#">Terminal</a>
+</div>
+<span class="material-icons cursor-pointer">search</span>
+</div>
+</nav>
+<main class="h-screen flex items-center pt-20">
+<div class="horizontal-scroll-container px-[7.5vw] py-10">
+<article class="article-card group">
+<div class="grid grid-cols-1 lg:grid-cols-2 bg-white dark:bg-zinc-900 border-4 border-black dark:border-white shadow-brutal dark:shadow-brutal-white h-full overflow-hidden">
+<div class="relative overflow-hidden border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-white">
+<img alt="Cyber tech visual" class="w-full h-full object-cover duotone-img group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyexV4o7uQLD2ZFGjZhKiOLs6LCYaAplfGclS6W59SAIxrOeOy4a73LiUUK9A4da1oaDQ4YVNbWluJEAmL6NYsETxEt9TAQdgVgjsBvSVbmJhugkRa6Fd_UWVtV5ImFJ6c5DmhJ5GVcIwUcr0yXuovgO-9_BPdzldMmYZ022WtcOLc04yZIv8IyZp71Vx9Zk0uDsx4CBQKBvkm4FI2-c2pI0Ffc466ZrYqoRbSugFjH3__aIfSazgjElrQnq3YX9-F0tkfEPqQ81w"/>
+<div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
+<div class="absolute top-4 left-4 bg-black text-white px-2 py-1 text-xs">ID: 001 // FEATURED</div>
+</div>
+<div class="p-8 lg:p-12 flex flex-col justify-between">
+<div>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-primary text-black px-2 py-0.5 text-xs font-bold uppercase">#Performance</span>
+<span class="border border-black dark:border-white px-2 py-0.5 text-xs font-bold uppercase italic">#WebDev</span>
+</div>
+<h2 class="text-4xl lg:text-6xl font-black leading-none mb-6 uppercase">Mastering Image Lazy Loading</h2>
+<p class="text-lg opacity-80 mb-8 border-l-4 border-primary pl-4">
+                                In the modern web, high-definition images are the primary traffic consumers. If users load everything at once, it's not just bandwidth—it's the LCP performance.
+                            </p>
+</div>
+<div class="flex items-center justify-between">
+<button class="bg-primary text-black px-6 py-3 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter">Execute_Read()</button>
+<span class="text-xs font-mono opacity-50">STAMP: 2026.01.06 // 11_MIN_READ</span>
+</div>
+</div>
+</div>
+</article>
+<article class="article-card group">
+<div class="grid grid-cols-1 lg:grid-cols-2 bg-white dark:bg-zinc-900 border-4 border-black dark:border-white shadow-brutal dark:shadow-brutal-white h-full overflow-hidden">
+<div class="relative overflow-hidden border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-white">
+<img alt="React components visual" class="w-full h-full object-cover duotone-img group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcmYAW74oDC-0peuJLxExZ3OG7_GWM85AooSjnDYVjHfNVaPdgnjT0FFrDv5oP9R2BWBbpKlWzLfQ4KXK1y2hwS3hLcvcPJefupv2zyJHRg9ir-r5BSOP42yVLPWRtuA1b-H2DKK_RG9tTelqT0WLZ7wweXWMjnFTVViCViBrJqDTTxUb_xaJ-70XeWeTfJScBAXjPRnnfBHlBGjoY1jEIt1qsru24_jF-yt5u3MFlPg23_MlAr9r73oeitIzk_wv87p6eDNmQ5mc"/>
+<div class="absolute inset-0 bg-blue-500/20 mix-blend-multiply"></div>
+<div class="absolute top-4 left-4 bg-black text-white px-2 py-1 text-xs">ID: 002</div>
+</div>
+<div class="p-8 lg:p-12 flex flex-col justify-between">
+<div>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-blue-500 text-white px-2 py-0.5 text-xs font-bold uppercase">#React</span>
+<span class="border border-black dark:border-white px-2 py-0.5 text-xs font-bold uppercase italic">#Hooks</span>
+</div>
+<h2 class="text-4xl lg:text-6xl font-black leading-none mb-6 uppercase">Hook Depth: useMemo &amp; useCallback</h2>
+<p class="text-lg opacity-80 mb-8 border-l-4 border-blue-500 pl-4">
+                                Avoiding unnecessary re-renders is the holy grail of React optimization. Let's look at the real-world performance impact of memoization.
+                            </p>
+</div>
+<div class="flex items-center justify-between">
+<button class="bg-blue-500 text-white px-6 py-3 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter">Execute_Read()</button>
+<span class="text-xs font-mono opacity-50">STAMP: 2026.01.07 // 13_MIN_READ</span>
+</div>
+</div>
+</div>
+</article>
+<article class="article-card group">
+<div class="grid grid-cols-1 lg:grid-cols-2 bg-white dark:bg-zinc-900 border-4 border-black dark:border-white shadow-brutal dark:shadow-brutal-white h-full overflow-hidden">
+<div class="relative overflow-hidden border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-white">
+<img alt="Code on screen" class="w-full h-full object-cover duotone-img group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdb040CeBHBgSR1RsjrzouAGFv3smU4EnVra_TG_2mav6DzAu9zRdMVcFDFxQHoAVMQ4uv3rzvliLr_gOAg_pUm6StXSm78NA4iQyjnaKTXs-bTWsZ5BMOeC_F4mGt5e0VDMhgd1TIeLsCfWetlPxvfQ2dXnDoL2mM01-SjbBVKRp7e5TShE0Fl8c-JKN8pTibYxJMM6tEh9XSIMR-kVt6iOAW0maJkEJSZ1P3OrAPDFzuv2GIGnQDCul4KynEAWwGG4Kl0Oxszvg"/>
+<div class="absolute inset-0 bg-red-500/20 mix-blend-multiply"></div>
+<div class="absolute top-4 left-4 bg-black text-white px-2 py-1 text-xs">ID: 003</div>
+</div>
+<div class="p-8 lg:p-12 flex flex-col justify-between">
+<div>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-red-500 text-white px-2 py-0.5 text-xs font-bold uppercase">#CSS</span>
+<span class="border border-black dark:border-white px-2 py-0.5 text-xs font-bold uppercase italic">#UI/UX</span>
+</div>
+<h2 class="text-4xl lg:text-6xl font-black leading-none mb-6 uppercase">CSS Variables &amp; Dark Mode Systems</h2>
+<p class="text-lg opacity-80 mb-8 border-l-4 border-red-500 pl-4">
+                                Dark mode isn't just a trend, it's accessibility. Learn how to architect a robust theming system using pure CSS custom properties.
+                            </p>
+</div>
+<div class="flex items-center justify-between">
+<button class="bg-red-500 text-white px-6 py-3 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter">Execute_Read()</button>
+<span class="text-xs font-mono opacity-50">STAMP: 2026.01.08 // 09_MIN_READ</span>
+</div>
+</div>
+</div>
+</article>
+<div class="flex-none w-[10vw]"></div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 w-full p-6 flex justify-between items-end pointer-events-none">
+<div class="bg-black text-white p-4 border-2 border-primary shadow-brutal pointer-events-auto">
+<h3 class="text-xs font-bold mb-2 uppercase tracking-widest text-primary border-b border-primary/30 pb-1">Weekly_Selection</h3>
+<p class="text-[10px] leading-tight opacity-80 mb-3">Subscribe to get the latest technical <br/>logs directly in your terminal.</p>
+<div class="flex gap-2">
+<input class="bg-zinc-800 border border-zinc-700 text-[10px] px-2 py-1 w-32 focus:ring-1 focus:ring-primary focus:outline-none" placeholder="USER@DOMAIN.COM" type="email"/>
+<button class="bg-primary text-black px-2 py-1 text-[10px] font-bold uppercase">Join</button>
+</div>
+</div>
+<div class="relative radial-container pointer-events-auto group">
+<div class="absolute bottom-full right-full">
+<button class="radial-item absolute bottom-0 right-0 w-12 h-12 rounded-full bg-white dark:bg-zinc-800 border-2 border-black dark:border-white flex items-center justify-center shadow-md hover:bg-primary hover:text-black transition-colors">
+<span class="material-icons text-sm">home</span>
+</button>
+<button class="radial-item absolute bottom-0 right-0 w-12 h-12 rounded-full bg-white dark:bg-zinc-800 border-2 border-black dark:border-white flex items-center justify-center shadow-md hover:bg-primary hover:text-black transition-colors">
+<span class="material-icons text-sm">terminal</span>
+</button>
+<button class="radial-item absolute bottom-0 right-0 w-12 h-12 rounded-full bg-white dark:bg-zinc-800 border-2 border-black dark:border-white flex items-center justify-center shadow-md hover:bg-primary hover:text-black transition-colors">
+<span class="material-icons text-sm">settings</span>
+</button>
+</div>
+<button class="w-16 h-16 rounded-full bg-primary text-black border-4 border-black dark:border-white shadow-brutal flex items-center justify-center group-hover:rotate-45 transition-transform">
+<span class="material-icons text-3xl">add</span>
+</button>
+</div>
+</div>
+<div class="fixed inset-0 -z-10 pointer-events-none opacity-5">
+<div class="w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+</div>
+<script>
+        // Optional: Dynamically change background color based on scroll position
+        const container = document.querySelector('.horizontal-scroll-container');
+        const articles = document.querySelectorAll('.article-card');
+        container.addEventListener('scroll', () => {
+            const scrollPercent = container.scrollLeft / (container.scrollWidth - container.clientWidth);
+            // Example of changing something based on scroll if needed
+            // document.body.style.filter = `hue-rotate(${scrollPercent * 360}deg)`;
+        });
+    </script>
+
+</body></html>

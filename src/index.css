@@ -1,43 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
     body {
-        /* 系统字体栈：零延迟、原生体验 */
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-            'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB',
-            'Microsoft YaHei', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+            'Helvetica Neue', Arial, sans-serif;
         line-height: 1.6;
         font-size: 16px;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    .font-display {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-            'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB',
-            'Microsoft YaHei', sans-serif;
+    h1, h2, h3, h4, h5, h6, .font-display, .font-mono {
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
+            Consolas, 'Liberation Mono', monospace;
         font-weight: 700;
     }
 
-    /* 代码字体：等宽、易区分 */
-    pre,
-    code,
-    kbd,
-    samp {
-        font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
+    pre, code, kbd, samp {
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
             Consolas, 'Liberation Mono', monospace;
     }
 
     code {
         font-size: 0.9em;
+    }
+}
+
+@layer components {
+    /* Duotone image filter for brutalist aesthetic */
+    .duotone-img {
+        filter: grayscale(100%) contrast(120%) brightness(80%) sepia(50%) hue-rotate(80deg);
+    }
+
+    /* Glitch image filter for article detail sidebar */
+    .glitch-img {
+        filter: grayscale(100%) contrast(150%) brightness(90%) sepia(20%);
+        mix-blend-mode: hard-light;
+    }
+
+    /* Horizontal scroll container */
+    .horizontal-scroll-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        /* Show horizontal scrollbar for user awareness */
+        scrollbar-width: thin;
+        scrollbar-color: #00FF41 #1a1a1a;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar-track {
+        background: #1a1a1a;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar-thumb {
+        background: #00FF41;
+        border-radius: 0;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #00cc33;
+    }
+
+    /* Article card for horizontal scroll */
+    .article-card {
+        scroll-snap-align: center;
+        flex: 0 0 85vw;
+        margin-right: 5vw;
+    }
+
+    /* Terminal-style scrollbar */
+    .terminal-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .terminal-scroll::-webkit-scrollbar-track {
+        background: #e5e5e5;
+    }
+
+    .terminal-scroll::-webkit-scrollbar-thumb {
+        background: #000;
+    }
+
+    .dark .terminal-scroll::-webkit-scrollbar-track {
+        background: #1a1a1a;
+    }
+
+    .dark .terminal-scroll::-webkit-scrollbar-thumb {
+        background: #00FF41;
+    }
+
+    /* Glass morphism for mind map nodes */
+    .glass-node {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    }
+
+    /* Brutal button active state */
+    .brutal-btn {
+        @apply transition-all;
+    }
+
+    .brutal-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    }
+
+    .dark .brutal-btn:active {
+        box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
     }
 }
 
@@ -51,24 +130,7 @@
         scrollbar-width: none;
     }
 
-    .code-scroll::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    .code-scroll::-webkit-scrollbar-track {
-        background: #1e2329;
-    }
-
-    .code-scroll::-webkit-scrollbar-thumb {
-        background: #283039;
-        border-radius: 4px;
-    }
-
-    .code-scroll::-webkit-scrollbar-thumb:hover {
-        background: #3f4a56;
-    }
-
-    /* Shimmer 骨架屏动画 */
+    /* Shimmer skeleton animation */
     .skeleton-shimmer {
         background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
         background-size: 200% 100%;
@@ -84,4 +146,44 @@
         0% { background-position: 200% 0; }
         100% { background-position: -200% 0; }
     }
+
+    /* Radial menu item animations */
+    .radial-item {
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Grid background pattern */
+    .grid-pattern {
+        background-image: 
+            linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    /* Striped text effect */
+    .striped-text {
+        background: linear-gradient(
+            45deg,
+            currentColor 25%,
+            transparent 25%,
+            transparent 50%,
+            currentColor 50%,
+            currentColor 75%,
+            transparent 75%,
+            transparent 100%
+        );
+        background-size: 4px 4px;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+}
+
+/* Noise overlay SVG filter */
+.noise-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    opacity: 0.03;
 }

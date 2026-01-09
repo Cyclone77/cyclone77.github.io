@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LOG_ENTRY // MASTERING_LAZY_LOADING</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary: #00FF41;
+            --accent-blue: #0070FF;
+            --background-content: #F5F5F5;
+            --background-side: #0A0A0A;
+            --glass-white: rgba(255, 255, 255, 0.8);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-content);
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glitch-image {
+            filter: grayscale(100%) contrast(150%) brightness(90%) sepia(20%);
+            mix-blend-mode: hard-light;
+        }
+        .terminal-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .terminal-scroll::-webkit-scrollbar-track {
+            background: #e5e5e5;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: #000;
+        }#mind-map-toggle:checked ~ #mind-map-overlay {
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
+        }
+        #mind-map-toggle:checked ~ .flex-container {
+            filter: blur(8px) grayscale(50%);
+            opacity: 0.3;
+        }
+        .glass-node {
+            background: var(--glass-white);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .node-line {
+            background: linear-gradient(90deg, var(--accent-blue), transparent);
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+    </style>
+</head>
+<body class="antialiased overflow-hidden">
+<input class="hidden peer" id="mind-map-toggle" type="checkbox"/>
+<div class="flex-container flex h-screen pt-8 transition-all duration-700">
+<aside class="w-1/3 h-full bg-[var(--background-side)] border-r-4 border-black relative overflow-hidden flex flex-col">
+<div class="relative h-2/3 overflow-hidden">
+<img alt="Glitch Art" class="w-full h-full object-cover glitch-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyexV4o7uQLD2ZFGjZhKiOLs6LCYaAplfGclS6W59SAIxrOeOy4a73LiUUK9A4da1oaDQ4YVNbWluJEAmL6NYsETxEt9TAQdgVgjsBvSVbmJhugkRa6Fd_UWVtV5ImFJ6c5DmhJ5GVcIwUcr0yXuovgO-9_BPdzldMmYZ022WtcOLc04yZIv8IyZp71Vx9Zk0uDsx4CBQKBvkm4FI2-c2pI0Ffc466ZrYqoRbSugFjH3__aIfSazgjElrQnq3YX9-F0tkfEPqQ81w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[var(--background-side)] via-transparent to-transparent"></div>
+<div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+<span class="mono text-white text-9xl font-black select-none">ERROR_001</span>
+</div>
+</div>
+<div class="p-10 flex-1 flex flex-col justify-end">
+<div class="mono text-[var(--primary)] mb-6">
+<div class="text-xs uppercase tracking-[0.2em] mb-2 opacity-60">// METADATA</div>
+<div class="grid grid-cols-2 gap-y-4">
+<div>
+<span class="block text-[10px] opacity-50">STAMP_DATE</span>
+<span class="text-sm font-bold">2026.01.06</span>
+</div>
+<div>
+<span class="block text-[10px] opacity-50">AUTHOR_ID</span>
+<span class="text-sm font-bold">CORE_DEV_77</span>
+</div>
+<div class="col-span-2">
+<span class="block text-[10px] opacity-50">TAG_DIRECTORY</span>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="text-[10px] border border-[var(--primary)] px-2 py-0.5">#PERFORMANCE</span>
+<span class="text-[10px] border border-[var(--primary)] px-2 py-0.5">#WEBDV</span>
+<span class="text-[10px] border border-[var(--primary)] px-2 py-0.5">#OPTIMIZATION</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mono text-[10px] text-white/30 border-t border-white/10 pt-4 uppercase">
+                Connection_Secure: TLS_1.3_AES_256
+            </div>
+</div>
+</aside>
+<main class="flex-1 h-full overflow-y-auto terminal-scroll bg-[var(--background-content)]">
+<article class="max-w-4xl mx-auto py-24 px-12 lg:px-24">
+<header class="mb-16">
+<div class="mono inline-block bg-black text-white text-xs px-2 py-1 mb-6">LOG_TYPE: TECHNICAL_GUIDE</div>
+<h1 class="text-6xl lg:text-8xl font-black uppercase leading-[0.85] tracking-tighter text-black mb-8">
+                    Mastering<br/>
+<span class="text-transparent bg-clip-text bg-[linear-gradient(45deg,black_25%,transparent_25%,transparent_50%,black_50%,black_75%,transparent_75%,transparent_100%)] bg-[length:4px_4px]">Image Lazy</span><br/>
+                    Loading
+                </h1>
+<div class="w-24 h-4 bg-black"></div>
+</header>
+<div class="prose prose-zinc max-w-none">
+<p class="text-xl font-medium leading-relaxed mb-8 border-l-8 border-black pl-8 italic">
+                    In the modern web, high-definition images are the primary traffic consumers. If users load everything at once, it's not just bandwidth—it's the LCP performance.
+                </p>
+<p class="text-lg text-zinc-800 mb-6">
+                    The Core Web Vitals have redefined how we measure performance. Largest Contentful Paint (LCP) often hinges on how efficiently images are served. Lazy loading is no longer an optional "nice-to-have" feature; it's a fundamental requirement for any high-traffic application.
+                </p>
+<h2 class="mono font-black text-3xl uppercase mt-12 mb-6 tracking-tight flex items-center" id="section-01">
+<span class="mr-4">01.</span> THE_NATIVE_ATTRIBUTE
+                </h2>
+<p class="text-lg text-zinc-800 mb-8">
+                    Modern browsers have simplified the implementation through the native <code class="mono bg-zinc-200 px-1">loading="lazy"</code> attribute. This declarative approach allows the browser to manage the resource prioritization based on the viewport proximity.
+                </p>
+<div class="my-10 border-2 border-black bg-[#1E1E1E] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+<div class="bg-black px-4 py-2 border-b border-zinc-800 flex justify-between items-center">
+<div class="flex gap-1.5">
+<div class="w-2 h-2 rounded-full bg-red-500"></div>
+<div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+</div>
+<span class="mono text-[10px] text-zinc-500 uppercase">index.html // read_only</span>
+</div>
+<div class="p-6">
+<pre class="mono text-[var(--primary)] text-sm leading-relaxed overflow-x-auto"><code>&lt;!-- Native Lazy Loading --&gt;
+&lt;img 
+  src="hero-optimized.webp" 
+  loading="lazy" 
+  alt="Performance Graphics"
+  class="w-full"
+/&gt;</code></pre>
+</div>
+<div class="bg-black/50 px-4 py-2 flex gap-4 border-t border-zinc-800">
+<button class="mono text-[10px] text-white font-bold hover:text-[var(--primary)] transition-colors uppercase">EXECUTE(COPY)</button>
+<button class="mono text-[10px] text-white font-bold hover:text-[var(--primary)] transition-colors uppercase">EXECUTE(RUN)</button>
+</div>
+</div>
+<h2 class="mono font-black text-3xl uppercase mt-12 mb-6 tracking-tight flex items-center" id="section-02">
+<span class="mr-4">02.</span> INTERSECTION_OBSERVER_STRATEGY
+                </h2>
+<p class="text-lg text-zinc-800 mb-6">
+                    For more complex scenarios where you need placeholder effects or custom triggering logic, the Intersection Observer API remains the industry standard. This allows for smooth transitions and background-image lazy loading which the native attribute doesn't handle.
+                </p>
+<div class="p-8 bg-zinc-200 border-2 border-black italic mb-12">
+                    "Optimization is not about making things fast; it's about making them fast enough for the human eye to perceive instant response."
+                </div>
+<p class="text-lg text-zinc-800 mb-20">
+                    Continue exploring our archive for more technical logs on performance architecture and modern frontend patterns.
+                </p>
+</div>
+</article>
+</main>
+</div>
+<div class="fixed inset-0 z-[150] opacity-0 invisible transition-all duration-700 pointer-events-none flex items-center justify-center" id="mind-map-overlay">
+<div class="relative w-full h-full max-w-7xl mx-auto flex items-center justify-center">
+<svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
+<path class="stroke-[var(--accent-blue)] stroke-[0.5] opacity-30 fill-none" d="M 640,400 L 400,250"></path>
+<path class="stroke-[var(--accent-blue)] stroke-[0.5] opacity-30 fill-none" d="M 640,400 L 880,250"></path>
+<path class="stroke-[var(--accent-blue)] stroke-[0.5] opacity-30 fill-none" d="M 640,400 L 640,600"></path>
+<circle class="fill-none stroke-[var(--accent-blue)] stroke-[0.2] opacity-10" cx="640" cy="400" r="120"></circle>
+<circle class="fill-none stroke-[var(--accent-blue)] stroke-[0.2] opacity-5" cx="640" cy="400" r="220"></circle>
+</svg>
+<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+<div class="glass-node w-48 h-48 rounded-full flex flex-col items-center justify-center p-6 text-center border-2 border-[var(--accent-blue)] shadow-[0_0_30px_rgba(0,112,255,0.15)]">
+<span class="mono text-[10px] text-[var(--accent-blue)] font-bold mb-2 uppercase tracking-widest">Core Topic</span>
+<span class="text-sm font-black text-black leading-tight uppercase">Lazy Loading Patterns</span>
+</div>
+</div>
+<a class="absolute left-1/4 top-1/3 -translate-x-1/2 -translate-y-1/2 z-10 group" href="#section-01" onclick="document.getElementById('mind-map-toggle').checked = false">
+<div class="glass-node w-36 h-36 rounded-full flex flex-col items-center justify-center p-4 text-center hover:scale-110 transition-transform duration-500 cursor-pointer border border-white/50">
+<span class="mono text-[10px] text-zinc-400 font-bold mb-1">01</span>
+<span class="text-[11px] font-bold text-black uppercase tracking-tighter">Native Attributes</span>
+<div class="mt-2 w-4 h-[1px] bg-[var(--accent-blue)] opacity-0 group-hover:opacity-100 group-hover:w-8 transition-all"></div>
+</div>
+</a>
+<a class="absolute right-1/4 top-1/3 translate-x-1/2 -translate-y-1/2 z-10 group" href="#section-02" onclick="document.getElementById('mind-map-toggle').checked = false">
+<div class="glass-node w-36 h-36 rounded-full flex flex-col items-center justify-center p-4 text-center hover:scale-110 transition-transform duration-500 cursor-pointer border border-white/50">
+<span class="mono text-[10px] text-zinc-400 font-bold mb-1">02</span>
+<span class="text-[11px] font-bold text-black uppercase tracking-tighter">Intersection Observer</span>
+<div class="mt-2 w-4 h-[1px] bg-[var(--accent-blue)] opacity-0 group-hover:opacity-100 group-hover:w-8 transition-all"></div>
+</div>
+</a>
+<div class="absolute left-1/2 bottom-1/4 -translate-x-1/2 translate-y-1/2 z-10">
+<div class="glass-node w-32 h-32 rounded-full flex flex-col items-center justify-center p-4 text-center border border-white/50 opacity-60">
+<span class="mono text-[8px] text-zinc-500 uppercase">Tags</span>
+<span class="text-[10px] font-bold text-black uppercase">Web Performance</span>
+</div>
+</div>
+<label class="absolute bottom-12 left-1/2 -translate-x-1/2 cursor-pointer" for="mind-map-toggle">
+<div class="bg-black text-white px-8 py-3 mono text-xs font-bold tracking-widest hover:bg-[var(--accent-blue)] transition-colors shadow-[4px_4px_0px_0px_rgba(0,112,255,0.3)]">
+                CLOSE_MAP // ESC
+            </div>
+</label>
+</div>
+</div>
+<div class="fixed top-0 left-0 w-full h-8 bg-black z-[100] flex items-center px-4 border-b-2 border-black">
+<div class="mono text-[10px] text-[var(--primary)] mr-4 uppercase font-bold tracking-tighter">Reading_Progress:</div>
+<div class="flex-1 h-3 border border-[var(--primary)] p-[1px] flex gap-1">
+<div class="w-1/4 h-full bg-[var(--primary)]"></div>
+<div class="w-1/4 h-full bg-[var(--primary)]"></div>
+<div class="w-1/4 h-full bg-[var(--primary)] opacity-50"></div>
+<div class="w-1/4 h-full bg-transparent border border-[var(--primary)]/30"></div>
+</div>
+<div class="mono text-[10px] text-[var(--primary)] ml-4 uppercase font-bold tracking-tighter">50%_BUFFERED</div>
+</div>
+<a class="fixed top-14 right-10 z-[60] mono bg-[var(--primary)] text-black font-extrabold px-6 py-3 border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2" href="#">
+<span class="material-symbols-outlined font-black text-sm">arrow_back</span>
+    BACK_TO_ARCHIVE
+</a>
+<label class="fixed top-14 left-1/2 -translate-x-1/2 z-[101] cursor-pointer" for="mind-map-toggle">
+<div class="mono bg-white text-black font-extrabold px-6 py-3 border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-2 group">
+<span class="material-symbols-outlined font-black text-sm group-hover:text-[var(--accent-blue)] transition-colors">hub</span>
+        MIND_MAP_MODE
+    </div>
+</label>
+<div class="fixed bottom-10 right-10 z-[60] flex flex-col items-end group">
+<div class="relative mb-4 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-end gap-3 pointer-events-none group-hover:pointer-events-auto">
+<button class="w-12 h-12 rounded-full bg-white border-2 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[var(--primary)] transition-colors">
+<span class="material-symbols-outlined text-sm">home</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-white border-2 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[var(--primary)] transition-colors">
+<span class="material-symbols-outlined text-sm">terminal</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-white border-2 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[var(--primary)] transition-colors">
+<span class="material-symbols-outlined text-sm">settings</span>
+</button>
+</div>
+<button class="w-16 h-16 rounded-full bg-[var(--primary)] text-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center group-hover:rotate-45 transition-transform">
+<span class="material-symbols-outlined text-3xl font-black">add</span>
+</button>
+</div>
+<div class="fixed inset-0 pointer-events-none z-[200] opacity-[0.03]">
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<filter id="noiseFilter">
+<feTurbulence baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" type="fractalNoise"></feTurbulence>
+</filter>
+<rect filter="url(#noiseFilter)" height="100%" width="100%"></rect>
+</svg>
+</div>
+
+</body></html>
