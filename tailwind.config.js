@@ -23,56 +23,28 @@ export default {
                 'border-dark': '#FFFFFF',
             },
             fontFamily: {
-                // Apple 风格字体栈 - SF Pro + 苹方
+                // Ant Design 风格字体栈 - 完整降级支持
                 sans: [
                     '-apple-system',
                     'BlinkMacSystemFont',
-                    '"SF Pro Display"',
-                    '"SF Pro Text"',
+                    '"Segoe UI"',
+                    'Roboto',
                     '"Helvetica Neue"',
-                    'Helvetica',
                     'Arial',
-                    '"PingFang SC"',
-                    '"Hiragino Sans GB"',
-                    '"Microsoft YaHei UI"',
-                    '"Microsoft YaHei"',
-                    'sans-serif'
+                    '"Noto Sans"',
+                    'sans-serif',
+                    '"Apple Color Emoji"',
+                    '"Segoe UI Emoji"',
+                    '"Segoe UI Symbol"',
+                    '"Noto Color Emoji"'
                 ],
-                // 等宽字体栈 - 用于代码
+                // 代码字体栈 - 更清晰的等宽字体
                 mono: [
-                    '"SF Mono"',
-                    'SFMono-Regular',
-                    'ui-monospace',
-                    'Menlo',
-                    'Monaco',
+                    '"Lucida Console"',
                     'Consolas',
-                    '"Liberation Mono"',
+                    '"Courier New"',
+                    'Monaco',
                     'monospace'
-                ],
-                // 标题字体 - 使用 SF Pro Display
-                display: [
-                    '-apple-system',
-                    'BlinkMacSystemFont',
-                    '"SF Pro Display"',
-                    '"Helvetica Neue"',
-                    'Helvetica',
-                    'Arial',
-                    '"PingFang SC"',
-                    '"Microsoft YaHei"',
-                    'sans-serif'
-                ],
-                // 正文字体
-                body: [
-                    '-apple-system',
-                    'BlinkMacSystemFont',
-                    '"SF Pro Text"',
-                    '"Helvetica Neue"',
-                    'Helvetica',
-                    'Arial',
-                    '"PingFang SC"',
-                    '"Hiragino Sans GB"',
-                    '"Microsoft YaHei"',
-                    'sans-serif'
                 ],
             },
             borderRadius: {

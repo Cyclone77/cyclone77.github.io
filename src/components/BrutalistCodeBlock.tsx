@@ -55,13 +55,13 @@ export default function BrutalistCodeBlock({ code, language, filename }: Brutali
                         background: 'transparent',
                         padding: 0,
                         margin: 0,
-                        fontFamily: '"SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+                        fontFamily: "'Lucida Console', Consolas, 'Courier New', Monaco, monospace",
                         fontSize: '14px',
                         lineHeight: '1.6',
                     }}
                     codeTagProps={{
                         style: {
-                            fontFamily: '"SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+                            fontFamily: "'Lucida Console', Consolas, 'Courier New', Monaco, monospace",
                         },
                     }}
                 >

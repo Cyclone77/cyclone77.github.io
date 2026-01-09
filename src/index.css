@@ -4,36 +4,32 @@
 
 @layer base {
     html {
-        /* Apple 风格字体渲染 */
+        /* 字体渲染优化 */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
     }
 
     body {
-        /* Apple 风格字体栈 - SF Pro + 苹方 */
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-            "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB",
-            "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
-        line-height: 1.6;
-        font-size: 16px;
+        /* Ant Design 风格字体栈 - 完整降级支持 */
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+            'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+        line-height: 1.5715;
+        font-size: 14px;
         font-weight: 400;
-        letter-spacing: -0.01em;
+        /* 数字等宽显示 */
+        font-variant-numeric: tabular-nums;
     }
 
     h1, h2, h3, h4, h5, h6 {
-        /* 标题使用 SF Pro Display 风格 */
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-            "Helvetica Neue", Helvetica, Arial, "PingFang SC",
-            "Microsoft YaHei", sans-serif;
-        font-weight: 600;
-        letter-spacing: -0.02em;
+        font-weight: 500;
+        line-height: 1.4;
     }
 
     .font-mono, pre, code, kbd, samp {
-        /* 代码块字体 - SF Mono */
-        font-family: "SF Mono", SFMono-Regular, ui-monospace, Menlo,
-            Monaco, Consolas, "Liberation Mono", monospace;
+        /* 代码字体栈 - 更清晰的等宽字体 */
+        font-family: 'Lucida Console', Consolas, 'Courier New', Monaco, monospace;
     }
 
     code {

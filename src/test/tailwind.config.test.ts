@@ -52,16 +52,16 @@ describe('Tailwind Config - Brutalist Design Tokens', () => {
     });
 
     describe('Font Family Configuration', () => {
-        it('should configure Apple-style font stack as display font', () => {
-            expect(fontFamily?.display).toContain('-apple-system');
+        it('should configure Ant Design style font stack as sans font', () => {
+            expect(fontFamily?.sans).toContain('-apple-system');
+            expect(fontFamily?.sans).toContain('"Segoe UI"');
+            expect(fontFamily?.sans).toContain('Roboto');
         });
 
-        it('should configure SF Mono font stack as mono font', () => {
-            expect(fontFamily?.mono).toContain('"SF Mono"');
-        });
-
-        it('should configure system sans-serif font stack as body font', () => {
-            expect(fontFamily?.body).toContain('-apple-system');
+        it('should configure code font stack as mono font', () => {
+            expect(fontFamily?.mono).toContain('"Lucida Console"');
+            expect(fontFamily?.mono).toContain('Consolas');
+            expect(fontFamily?.mono).toContain('monospace');
         });
     });
 });
