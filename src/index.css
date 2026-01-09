@@ -198,3 +198,12 @@
     z-index: 200;
     opacity: 0.03;
 }
+
+/* Utterances 评论框全宽 */
+.utterances {
+    max-width: 100% !important;
+}
+
+.utterances-frame {
+    width: 100% !important;
+}

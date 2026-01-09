@@ -74,11 +74,11 @@ export default function Comments({ issueNumber, issueUrl }: CommentsProps) {
     const githubUrl = issueUrl || `https://github.com/Cyclone77/cyclone77.github.io/issues/${issueNumber}`;
 
     return (
-        <section className="pt-6 border-t border-gray-100 dark:border-border-dark">
+        <section className="pt-6">
             <h3 className="text-2xl font-bold text-text-primary-light dark:text-white mb-6">评论</h3>
             
             {/* Utterances 容器 */}
-            <div ref={containerRef} className={`utterances-container ${status === 'error' ? 'hidden' : ''}`} />
+            <div ref={containerRef} className={`utterances-container w-full [&>.utterances]:max-w-full ${status === 'error' ? 'hidden' : ''}`} />
             
             {/* 加载中 */}
             {status === 'loading' && (
