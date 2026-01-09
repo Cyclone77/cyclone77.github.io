@@ -4,6 +4,8 @@ dist
 dist-ssr
 *.local
 
+.kiro
+
 .vscode/*
 !.vscode/extensions.json
 .idea
