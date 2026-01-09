@@ -11,7 +11,7 @@ interface HorizontalScrollContainerProps {
  * - Full viewport height (minus header)
  * - Horizontal scroll with visible scrollbar
  * - Scroll snap for card alignment
- * - Mouse wheel converts to horizontal scroll (both normal and shift+wheel)
+ * - Mouse wheel converts to horizontal scroll with CSS smooth scrolling
  * Requirements: 3.1, 3.2
  */
 export default function HorizontalScrollContainer({ children, className = '' }: HorizontalScrollContainerProps) {
@@ -27,13 +27,12 @@ export default function HorizontalScrollContainer({ children, className = '' }: 
             e.preventDefault();
             
             // Get scroll amount - prioritize deltaX, fallback to deltaY
-            // Shift+wheel also uses deltaY but we want horizontal scroll
             const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
             
-            // Apply smooth horizontal scroll
+            // Apply horizontal scroll with smooth behavior
             container.scrollBy({
                 left: delta,
-                behavior: 'auto'
+                behavior: 'smooth'
             });
         };
 
@@ -49,7 +48,7 @@ export default function HorizontalScrollContainer({ children, className = '' }: 
         <div
             ref={containerRef}
             className={`horizontal-scroll-container flex items-center px-[7.5vw] py-10 ${className}`}
-            style={{ height: 'calc(100vh - 80px)' }}
+            style={{ height: 'calc(100vh - 80px)', scrollBehavior: 'smooth' }}
         >
             {children}
             {/* End spacer for last card visibility */}
