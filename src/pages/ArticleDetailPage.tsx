@@ -168,7 +168,8 @@ function MindMapToggle({ onClick }: { onClick: () => void }) {
     return (
         <button
             onClick={onClick}
-            className="fixed top-[120px] left-1/2 -translate-x-1/2 z-[60] cursor-pointer"
+            className="fixed top-[120px] z-[60] cursor-pointer hidden lg:block"
+            style={{ right: '160px' }}
         >
             <div className="font-mono bg-white text-black font-extrabold px-4 py-2 text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-2 group">
                 <span className="material-symbols-outlined font-black text-sm group-hover:text-blue-500 transition-colors">
@@ -248,7 +249,7 @@ export default function ArticleDetailPage() {
                 content={
                     <article
                         ref={contentRef as React.RefObject<HTMLElement>}
-                        className="max-w-4xl mx-auto py-24 px-8 lg:px-24"
+                        className="max-w-7xl mx-auto py-24 px-8 lg:px-24"
                     >
                         <ArticleHeader article={article} />
                         <ArticleIntro description={article.description} />

@@ -111,7 +111,7 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <Link
                             to={`/article/${article.id}`}
-                            className={`${colors.bg} ${colors.text} px-6 py-3 font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all tracking-tighter font-mono`}
+                            className={`${colors.bg} ${colors.text} px-6 py-3 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all tracking-tighter font-mono`}
                         >
                             阅读文章
                         </Link>
