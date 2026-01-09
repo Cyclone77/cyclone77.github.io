@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Article } from '../data/mockData';
-import { fetchArticleById } from '../services/api';
+import { fetchArticleById, fetchArticles } from '../services/api';
 import SplitLayout from '../components/SplitLayout';
 import ArticleSidebar from '../components/ArticleSidebar';
 import ReadingProgressBar from '../components/ReadingProgressBar';
@@ -266,23 +266,86 @@ function MindMapToggle({ onClick }: { onClick: () => void }) {
     );
 }
 
+function ArticleNavigation({ prevArticle, nextArticle }: { prevArticle: Article | null; nextArticle: Article | null }) {
+    if (!prevArticle && !nextArticle) return null;
+    
+    return (
+        <nav className="mt-12 pt-8 border-t border-zinc-300 dark:border-zinc-700">
+            <div className="flex flex-col sm:flex-row gap-4 justify-between">
+                {/* 上一篇 */}
+                {prevArticle ? (
+                    <Link
+                        to={`/article/${prevArticle.id}`}
+                        className="group flex-1 p-4 border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-500 transition-colors"
+                    >
+                        <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 mb-2">
+                            <span className="material-symbols-outlined text-base">arrow_back</span>
+                            上一篇
+                        </div>
+                        <div className="font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-2">
+                            {prevArticle.title}
+                        </div>
+                    </Link>
+                ) : (
+                    <div className="flex-1" />
+                )}
+                
+                {/* 下一篇 */}
+                {nextArticle ? (
+                    <Link
+                        to={`/article/${nextArticle.id}`}
+                        className="group flex-1 p-4 border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-500 transition-colors text-right"
+                    >
+                        <div className="flex items-center justify-end gap-2 text-sm text-zinc-500 dark:text-zinc-400 mb-2">
+                            下一篇
+                            <span className="material-symbols-outlined text-base">arrow_forward</span>
+                        </div>
+                        <div className="font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-2">
+                            {nextArticle.title}
+                        </div>
+                    </Link>
+                ) : (
+                    <div className="flex-1" />
+                )}
+            </div>
+        </nav>
+    );
+}
+
 // ============ Main Component ============
 
 export default function ArticleDetailPage() {
     const { id } = useParams();
     const [article, setArticle] = useState<Article | null>(null);
+    const [allArticles, setAllArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);
     const [isMindMapOpen, setIsMindMapOpen] = useState(false);
     const contentRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         if (id) {
-            fetchArticleById(Number(id)).then(data => {
-                setArticle(data);
+            Promise.all([
+                fetchArticleById(Number(id)),
+                fetchArticles()
+            ]).then(([articleData, articlesResponse]) => {
+                setArticle(articleData);
+                setAllArticles(articlesResponse.articles);
                 setLoading(false);
             });
         }
     }, [id]);
+
+    // 计算上一篇和下一篇
+    const { prevArticle, nextArticle } = useMemo(() => {
+        if (!article || allArticles.length === 0) {
+            return { prevArticle: null, nextArticle: null };
+        }
+        const currentIndex = allArticles.findIndex(a => a.id === article.id);
+        return {
+            prevArticle: currentIndex > 0 ? allArticles[currentIndex - 1] : null,
+            nextArticle: currentIndex < allArticles.length - 1 ? allArticles[currentIndex + 1] : null,
+        };
+    }, [article, allArticles]);
 
     const headings = useMemo(() => {
         if (!article?.content) return [];
@@ -362,8 +425,11 @@ export default function ArticleDetailPage() {
                         <ArticleIntro description={article.description} />
                         <ArticleContent content={article.content || ''} />
                         
+                        {/* 上一篇/下一篇导航 */}
+                        <ArticleNavigation prevArticle={prevArticle} nextArticle={nextArticle} />
+                        
                         {/* Comments Section */}
-                        <section id="comments-section" className="mt-16 pt-8 border-t-4 border-black dark:border-white">
+                        <section id="comments-section" className="mt-12 pt-8 border-t-4 border-black dark:border-white">
                             <Comments issueNumber={article.number || article.id} />
                         </section>
                     </article>
