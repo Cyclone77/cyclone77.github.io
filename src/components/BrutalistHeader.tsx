@@ -31,12 +31,9 @@ export default function BrutalistHeader() {
                 <div className="flex items-center gap-4">
                     <Link to="/">
                         <span className="text-xl md:text-2xl font-mono font-extrabold bg-primary text-black px-3 py-1 border-2 border-black">
-                            CY-77_LAB
+                            Cyclone77
                         </span>
                     </Link>
-                    <span className="hidden md:inline-block font-mono text-xs uppercase tracking-widest opacity-60">
-                        系统状态: 运行中
-                    </span>
                 </div>
 
                 {/* Navigation and Actions */}
