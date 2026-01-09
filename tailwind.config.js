@@ -23,13 +23,57 @@ export default {
                 'border-dark': '#FFFFFF',
             },
             fontFamily: {
-                // 覆盖 Tailwind 默认的 sans 字体栈
-                sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', 'sans-serif'],
-                // 系统等宽字体栈 - 用于标题和代码，保持 brutalist 风格
-                display: ['ui-monospace', 'SFMono-Regular', '"SF Mono"', 'Menlo', 'Consolas', '"Liberation Mono"', 'monospace'],
-                mono: ['ui-monospace', 'SFMono-Regular', '"SF Mono"', 'Menlo', 'Consolas', '"Liberation Mono"', 'monospace'],
-                // 系统无衬线字体栈 - 用于正文，英文字体在前，中文字体在后
-                body: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', 'sans-serif'],
+                // Apple 风格字体栈 - SF Pro + 苹方
+                sans: [
+                    '-apple-system',
+                    'BlinkMacSystemFont',
+                    '"SF Pro Display"',
+                    '"SF Pro Text"',
+                    '"Helvetica Neue"',
+                    'Helvetica',
+                    'Arial',
+                    '"PingFang SC"',
+                    '"Hiragino Sans GB"',
+                    '"Microsoft YaHei UI"',
+                    '"Microsoft YaHei"',
+                    'sans-serif'
+                ],
+                // 等宽字体栈 - 用于代码
+                mono: [
+                    '"SF Mono"',
+                    'SFMono-Regular',
+                    'ui-monospace',
+                    'Menlo',
+                    'Monaco',
+                    'Consolas',
+                    '"Liberation Mono"',
+                    'monospace'
+                ],
+                // 标题字体 - 使用 SF Pro Display
+                display: [
+                    '-apple-system',
+                    'BlinkMacSystemFont',
+                    '"SF Pro Display"',
+                    '"Helvetica Neue"',
+                    'Helvetica',
+                    'Arial',
+                    '"PingFang SC"',
+                    '"Microsoft YaHei"',
+                    'sans-serif'
+                ],
+                // 正文字体
+                body: [
+                    '-apple-system',
+                    'BlinkMacSystemFont',
+                    '"SF Pro Text"',
+                    '"Helvetica Neue"',
+                    'Helvetica',
+                    'Arial',
+                    '"PingFang SC"',
+                    '"Hiragino Sans GB"',
+                    '"Microsoft YaHei"',
+                    'sans-serif'
+                ],
             },
             borderRadius: {
                 DEFAULT: '0px',

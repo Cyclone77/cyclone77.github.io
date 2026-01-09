@@ -52,7 +52,7 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
         
         return (
             <code
-                className="font-mono bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 text-sm border border-black/20"
+                className="font-mono bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-200 px-1.5 py-0.5 text-sm border border-black/20 dark:border-white/20"
                 {...props}
             >
                 {children}
@@ -68,57 +68,57 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
         return (
             <h2
                 id={id}
-                className="font-mono font-black text-3xl uppercase mt-12 mb-6 tracking-tight flex items-center scroll-mt-16"
+                className="font-mono font-black text-2xl mt-8 mb-4 tracking-tight flex items-center scroll-mt-16 text-black dark:text-white"
             >
-                <span className="mr-4">{sectionNum}.</span>
+                <span className="mr-3">{sectionNum}.</span>
                 {text}
             </h2>
         );
     },
     h3: ({ children }: any) => (
-        <h3 className="font-mono font-bold text-xl mt-8 mb-4 text-zinc-900">{children}</h3>
+        <h3 className="font-mono font-bold text-lg mt-6 mb-3 text-zinc-900 dark:text-zinc-100">{children}</h3>
     ),
     h4: ({ children }: any) => (
-        <h4 className="font-mono font-bold text-lg mt-6 mb-3 text-zinc-800">{children}</h4>
+        <h4 className="font-mono font-bold text-base mt-4 mb-2 text-zinc-800 dark:text-zinc-200">{children}</h4>
     ),
     p: ({ children }: any) => (
-        <p className="text-lg text-zinc-800 mb-6 leading-relaxed">{children}</p>
+        <p className="text-base text-zinc-800 dark:text-zinc-200 mb-2 leading-normal">{children}</p>
     ),
     blockquote: ({ children }: any) => (
-        <blockquote className="border-l-4 border-black bg-zinc-100 px-6 py-4 my-6 italic [&>p]:mb-0 [&>p:last-child]:mb-0">
+        <blockquote className="border-l-4 border-black dark:border-primary bg-zinc-100 dark:bg-zinc-800 px-5 py-3 my-4 italic text-zinc-800 dark:text-zinc-200 [&>p]:mb-0 [&>p:last-child]:mb-0">
             {children}
         </blockquote>
     ),
     ul: ({ children }: any) => (
-        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-800 pl-4">{children}</ul>
+        <ul className="list-disc list-inside space-y-1 mb-4 text-zinc-800 dark:text-zinc-200 pl-4">{children}</ul>
     ),
     ol: ({ children }: any) => (
-        <ol className="list-decimal list-inside space-y-2 mb-6 text-zinc-800 pl-4">{children}</ol>
+        <ol className="list-decimal list-inside space-y-1 mb-4 text-zinc-800 dark:text-zinc-200 pl-4">{children}</ol>
     ),
     li: ({ children }: any) => (
-        <li className="text-lg leading-relaxed">{children}</li>
+        <li className="text-base leading-normal text-zinc-800 dark:text-zinc-200">{children}</li>
     ),
     table: ({ children }: any) => (
-        <div className="overflow-x-auto my-8">
-            <table className="w-full border-collapse border-2 border-black font-mono text-sm">
+        <div className="overflow-x-auto my-5">
+            <table className="w-full border-collapse border-2 border-black dark:border-white font-mono text-sm">
                 {children}
             </table>
         </div>
     ),
     thead: ({ children }: any) => (
-        <thead className="bg-black text-white">{children}</thead>
+        <thead className="bg-black dark:bg-white text-white dark:text-black">{children}</thead>
     ),
     tbody: ({ children }: any) => (
-        <tbody>{children}</tbody>
+        <tbody className="text-zinc-800 dark:text-zinc-200">{children}</tbody>
     ),
     tr: ({ children }: any) => (
-        <tr className="border-b border-black even:bg-zinc-100">{children}</tr>
+        <tr className="border-b border-black dark:border-white/30 even:bg-zinc-100 dark:even:bg-zinc-800">{children}</tr>
     ),
     th: ({ children }: any) => (
-        <th className="px-4 py-3 text-left font-bold uppercase border-r border-white/20 last:border-r-0">{children}</th>
+        <th className="px-3 py-2 text-left font-bold uppercase border-r border-white/20 dark:border-black/20 last:border-r-0">{children}</th>
     ),
     td: ({ children }: any) => (
-        <td className="px-4 py-3 border-r border-black/20 last:border-r-0">{children}</td>
+        <td className="px-3 py-2 border-r border-black/20 dark:border-white/20 last:border-r-0">{children}</td>
     ),
     a: ({ href, children }: any) => (
         <a 
@@ -131,20 +131,20 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
         </a>
     ),
     hr: () => (
-        <hr className="my-12 border-t-4 border-black" />
+        <hr className="my-8 border-t-4 border-black dark:border-white" />
     ),
     img: ({ src, alt }: any) => (
-        <figure className="my-8">
+        <figure className="my-5">
             <img 
                 src={src} 
                 alt={alt} 
-                className="w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" 
+                className="w-full border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]" 
             />
-            {alt && <figcaption className="mt-2 text-sm text-zinc-600 font-mono text-center">{alt}</figcaption>}
+            {alt && <figcaption className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 font-mono text-center">{alt}</figcaption>}
         </figure>
     ),
     strong: ({ children }: any) => (
-        <strong className="font-bold text-black">{children}</strong>
+        <strong className="font-bold text-black dark:text-white">{children}</strong>
     ),
     em: ({ children }: any) => (
         <em className="italic">{children}</em>
@@ -178,20 +178,20 @@ function NotFoundState() {
 function ArticleHeader({ article }: { article: Article }) {
     return (
         <header className="mb-16">
-            <div className="font-mono inline-block bg-black text-white text-xs px-2 py-1 mb-6">
+            <div className="font-mono inline-block bg-black dark:bg-white text-white dark:text-black text-xs px-2 py-1 mb-6">
                 类型: 技术文章
             </div>
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black uppercase leading-tight tracking-tight text-black mb-8">
+            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black leading-tight tracking-tight text-black dark:text-white mb-8">
                 {article.title}
             </h1>
-            <div className="w-24 h-4 bg-black"></div>
+            <div className="w-24 h-4 bg-black dark:bg-primary"></div>
         </header>
     );
 }
 
 function ArticleIntro({ description }: { description: string }) {
     return (
-        <p className="text-xl font-medium leading-relaxed mb-8 border-l-8 border-black pl-8 italic">
+        <p className="text-xl font-medium leading-relaxed mb-8 border-l-8 border-black dark:border-primary pl-8 italic text-zinc-800 dark:text-zinc-200">
             {description}
         </p>
     );

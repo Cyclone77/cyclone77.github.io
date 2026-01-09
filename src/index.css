@@ -3,28 +3,37 @@
 @tailwind utilities;
 
 @layer base {
-    body {
-        /* 系统字体栈 - 零延迟加载，原生体验 */
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB",
-            "Microsoft YaHei", sans-serif;
-        line-height: 1.6;
-        font-size: 16px;
+    html {
+        /* Apple 风格字体渲染 */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
     }
 
-    h1, h2, h3, h4, h5, h6, .font-display, .font-mono {
-        /* 标题使用系统等宽字体保持 brutalist 风格 */
-        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo,
-            Consolas, "Liberation Mono", monospace;
-        font-weight: 700;
+    body {
+        /* Apple 风格字体栈 - SF Pro + 苹方 */
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+            "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB",
+            "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: -0.01em;
     }
 
-    pre, code, kbd, samp {
-        /* 代码块字体 - 系统等宽字体栈 */
-        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo,
-            Consolas, "Liberation Mono", monospace;
+    h1, h2, h3, h4, h5, h6 {
+        /* 标题使用 SF Pro Display 风格 */
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+            "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+            "Microsoft YaHei", sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    .font-mono, pre, code, kbd, samp {
+        /* 代码块字体 - SF Mono */
+        font-family: "SF Mono", SFMono-Regular, ui-monospace, Menlo,
+            Monaco, Consolas, "Liberation Mono", monospace;
     }
 
     code {
