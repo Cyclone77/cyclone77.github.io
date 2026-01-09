@@ -23,7 +23,7 @@ export default {
                 'border-dark': '#FFFFFF',
             },
             fontFamily: {
-                // Ant Design 风格字体栈 - 完整降级支持
+                // Ant Design 官方字体栈
                 sans: [
                     '-apple-system',
                     'BlinkMacSystemFont',
@@ -38,7 +38,7 @@ export default {
                     '"Segoe UI Symbol"',
                     '"Noto Color Emoji"'
                 ],
-                // 代码字体栈 - 更清晰的等宽字体
+                // 代码字体栈
                 mono: [
                     '"Lucida Console"',
                     'Consolas',

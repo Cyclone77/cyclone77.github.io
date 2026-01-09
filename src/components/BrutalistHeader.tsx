@@ -30,7 +30,7 @@ export default function BrutalistHeader() {
                 {/* Logo and Status */}
                 <div className="flex items-center gap-4">
                     <Link to="/">
-                        <span className="text-xl md:text-2xl font-mono font-extrabold bg-primary text-black px-3 py-1 border-2 border-black">
+                        <span className="text-xl md:text-2xl font-extrabold bg-primary text-black px-3 py-1 border-2 border-black">
                             Cyclone77
                         </span>
                     </Link>
@@ -50,7 +50,7 @@ export default function BrutalistHeader() {
                     </button>
 
                     {/* Desktop Navigation Links */}
-                    <div className="hidden md:flex items-center gap-8 font-mono font-bold text-sm uppercase">
+                    <div className="hidden md:flex items-center gap-8 font-bold text-sm">
                         <Link
                             to="/"
                             className="hover:underline decoration-primary decoration-4 underline-offset-4"

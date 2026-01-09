@@ -94,7 +94,7 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-3xl lg:text-5xl font-black leading-none mb-4 uppercase font-mono">
+                        <h2 className="text-3xl lg:text-5xl font-black leading-none mb-4">
                             {article.title}
                         </h2>
 
@@ -111,11 +111,11 @@ export default function ArticleCard({ article, index, accentColor }: ArticleCard
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <Link
                             to={`/article/${article.id}`}
-                            className={`${colors.bg} ${colors.text} px-6 py-3 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all tracking-tighter font-mono`}
+                            className={`${colors.bg} ${colors.text} px-6 py-3 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all`}
                         >
                             阅读文章
                         </Link>
-                        <span className="text-xs font-mono opacity-50">
+                        <span className="text-xs opacity-50">
                             发布: {formatDate(article.date)} // {formatReadTime(article.readTime)}
                         </span>
                     </div>
