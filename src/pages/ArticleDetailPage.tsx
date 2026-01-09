@@ -10,6 +10,7 @@ import ReadingProgressBar from '../components/ReadingProgressBar';
 import MindMapOverlay from '../components/MindMapOverlay';
 import BrutalistCodeBlock from '../components/BrutalistCodeBlock';
 import RadialMenu from '../components/RadialMenu';
+import Comments from '../components/Comments';
 
 // ============ Utility Functions ============
 
@@ -339,8 +340,7 @@ export default function ArticleDetailPage() {
                         
                         {/* Comments Section */}
                         <section id="comments-section" className="mt-16 pt-8 border-t-4 border-black dark:border-white">
-                            <h3 className="font-mono font-bold text-xl mb-6 text-black dark:text-white">评论区</h3>
-                            <p className="text-zinc-600 dark:text-zinc-400">评论功能开发中...</p>
+                            <Comments issueNumber={article.id} />
                         </section>
                     </article>
                 }
