@@ -340,7 +340,7 @@ export default function ArticleDetailPage() {
                         
                         {/* Comments Section */}
                         <section id="comments-section" className="mt-16 pt-8 border-t-4 border-black dark:border-white">
-                            <Comments issueNumber={article.id} />
+                            <Comments issueNumber={article.number || article.id} />
                         </section>
                     </article>
                 }
