@@ -52,7 +52,7 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
         
         return (
             <code
-                className="font-mono bg-zinc-200 px-1"
+                className="font-mono bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 text-sm border border-black/20"
                 {...props}
             >
                 {children}
@@ -75,19 +75,82 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
             </h2>
         );
     },
+    h3: ({ children }: any) => (
+        <h3 className="font-mono font-bold text-xl mt-8 mb-4 text-zinc-900">{children}</h3>
+    ),
+    h4: ({ children }: any) => (
+        <h4 className="font-mono font-bold text-lg mt-6 mb-3 text-zinc-800">{children}</h4>
+    ),
     p: ({ children }: any) => (
         <p className="text-lg text-zinc-800 mb-6 leading-relaxed">{children}</p>
     ),
     blockquote: ({ children }: any) => (
-        <div className="p-8 bg-zinc-200 border-2 border-black italic mb-12">
+        <blockquote className="border-l-4 border-black bg-zinc-100 px-6 py-4 my-6 italic [&>p]:mb-0 [&>p:last-child]:mb-0">
             {children}
-        </div>
+        </blockquote>
     ),
     ul: ({ children }: any) => (
-        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-800">{children}</ul>
+        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-800 pl-4">{children}</ul>
     ),
     ol: ({ children }: any) => (
-        <ol className="list-decimal list-inside space-y-2 mb-6 text-zinc-800">{children}</ol>
+        <ol className="list-decimal list-inside space-y-2 mb-6 text-zinc-800 pl-4">{children}</ol>
+    ),
+    li: ({ children }: any) => (
+        <li className="text-lg leading-relaxed">{children}</li>
+    ),
+    table: ({ children }: any) => (
+        <div className="overflow-x-auto my-8">
+            <table className="w-full border-collapse border-2 border-black font-mono text-sm">
+                {children}
+            </table>
+        </div>
+    ),
+    thead: ({ children }: any) => (
+        <thead className="bg-black text-white">{children}</thead>
+    ),
+    tbody: ({ children }: any) => (
+        <tbody>{children}</tbody>
+    ),
+    tr: ({ children }: any) => (
+        <tr className="border-b border-black even:bg-zinc-100">{children}</tr>
+    ),
+    th: ({ children }: any) => (
+        <th className="px-4 py-3 text-left font-bold uppercase border-r border-white/20 last:border-r-0">{children}</th>
+    ),
+    td: ({ children }: any) => (
+        <td className="px-4 py-3 border-r border-black/20 last:border-r-0">{children}</td>
+    ),
+    a: ({ href, children }: any) => (
+        <a 
+            href={href} 
+            className="text-primary underline decoration-2 underline-offset-2 hover:bg-primary hover:text-black transition-colors"
+            target={href?.startsWith('http') ? '_blank' : undefined}
+            rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+        >
+            {children}
+        </a>
+    ),
+    hr: () => (
+        <hr className="my-12 border-t-4 border-black" />
+    ),
+    img: ({ src, alt }: any) => (
+        <figure className="my-8">
+            <img 
+                src={src} 
+                alt={alt} 
+                className="w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" 
+            />
+            {alt && <figcaption className="mt-2 text-sm text-zinc-600 font-mono text-center">{alt}</figcaption>}
+        </figure>
+    ),
+    strong: ({ children }: any) => (
+        <strong className="font-bold text-black">{children}</strong>
+    ),
+    em: ({ children }: any) => (
+        <em className="italic">{children}</em>
+    ),
+    del: ({ children }: any) => (
+        <del className="line-through text-zinc-500">{children}</del>
     ),
 });
 

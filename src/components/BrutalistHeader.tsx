@@ -41,16 +41,16 @@ export default function BrutalistHeader() {
                     {/* Theme Toggle */}
                     <button
                         onClick={toggleTheme}
-                        className="hover:text-primary transition-colors"
+                        className="hover:text-primary transition-colors flex items-center"
                         aria-label="切换主题"
                     >
-                        <span className="material-symbols-outlined">
+                        <span className="material-symbols-outlined text-[22px] leading-none">
                             {theme === 'light' ? 'dark_mode' : 'light_mode'}
                         </span>
                     </button>
 
                     {/* Desktop Navigation Links */}
-                    <div className="hidden md:flex gap-8 font-mono font-bold text-sm uppercase">
+                    <div className="hidden md:flex items-center gap-8 font-mono font-bold text-sm uppercase">
                         <Link
                             to="/"
                             className="hover:underline decoration-primary decoration-4 underline-offset-4"
@@ -74,10 +74,10 @@ export default function BrutalistHeader() {
                     {/* Search Icon */}
                     <button
                         onClick={() => setIsSearchOpen(true)}
-                        className="hover:text-primary transition-colors cursor-pointer"
+                        className="hover:text-primary transition-colors cursor-pointer flex items-center"
                         aria-label="搜索"
                     >
-                        <span className="material-symbols-outlined">search</span>
+                        <span className="material-symbols-outlined text-[22px] leading-none">search</span>
                     </button>
                 </div>
             </nav>
