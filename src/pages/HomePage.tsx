@@ -127,21 +127,25 @@ function FeaturedSection({ article }: { article: Article }) {
 
 /** 文章卡片 */
 function ArticleCard({ article }: { article: Article }) {
+    const hasCover = !!article.coverImage;
+
     return (
         <Link
             to={`/article/${article.id}`}
             className="group relative flex flex-col sm:flex-row gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-border-dark transition-all hover:shadow-md cursor-pointer"
         >
-            {/* 封面图 */}
-            <div className="sm:w-48 h-48 sm:h-auto shrink-0 rounded-lg bg-gray-100 dark:bg-border-dark overflow-hidden relative">
-                <LazyImage
-                    src={article.coverImage || DEFAULT_COVER}
-                    alt={article.title}
-                    fallback={DEFAULT_COVER}
-                    className="w-full h-full transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-            </div>
+            {/* 封面图 - 只在有封面时显示 */}
+            {hasCover && (
+                <div className="sm:w-48 h-48 sm:h-auto shrink-0 rounded-lg bg-gray-100 dark:bg-border-dark overflow-hidden relative">
+                    <LazyImage
+                        src={article.coverImage!}
+                        alt={article.title}
+                        fallback={DEFAULT_COVER}
+                        className="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+            )}
 
             {/* 文章信息 */}
             <div className="flex flex-1 flex-col justify-between py-1">

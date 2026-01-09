@@ -26,18 +26,18 @@ export default function LazyImage({ src, alt, fallback = DEFAULT_FALLBACK, class
 
     return (
         <div className={`relative overflow-hidden ${className}`}>
-            {/* 加载中的骨架屏 */}
+            {/* 加载中的骨架屏 - shimmer 动画 */}
             {status === 'loading' && (
-                <div className="absolute inset-0 bg-gray-200 dark:bg-border-dark animate-pulse" />
+                <div className="absolute inset-0 skeleton-shimmer" />
             )}
-            
+
             <img
                 src={currentSrc}
                 alt={alt}
                 loading="lazy"
                 onLoad={handleLoad}
                 onError={handleError}
-                className={`w-full h-full object-cover transition-opacity duration-300 ${
+                className={`w-full h-full object-cover transition-opacity duration-500 ${
                     status === 'loaded' ? 'opacity-100' : 'opacity-0'
                 }`}
             />

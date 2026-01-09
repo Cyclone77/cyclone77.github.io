@@ -111,10 +111,12 @@ function ArticleHeader({ article, onCommentClick }: { article: Article; onCommen
 
 /** 文章封面图 */
 function ArticleCover({ article }: { article: Article }) {
+    if (!article.coverImage) return null;
+
     return (
         <div className="w-full aspect-[2/1] rounded-2xl overflow-hidden bg-gray-200 dark:bg-surface-dark shadow-xl">
             <LazyImage
-                src={article.coverImage || DEFAULT_COVER}
+                src={article.coverImage}
                 alt={article.title}
                 fallback={DEFAULT_COVER}
                 className="w-full h-full hover:scale-105 transition-transform duration-1000"

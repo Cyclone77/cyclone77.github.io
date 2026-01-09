@@ -67,4 +67,21 @@
     .code-scroll::-webkit-scrollbar-thumb:hover {
         background: #3f4a56;
     }
+
+    /* Shimmer 骨架屏动画 */
+    .skeleton-shimmer {
+        background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s ease-in-out infinite;
+    }
+
+    .dark .skeleton-shimmer {
+        background: linear-gradient(90deg, #283039 25%, #1c242d 50%, #283039 75%);
+        background-size: 200% 100%;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
 }
