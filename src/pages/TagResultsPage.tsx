@@ -102,7 +102,7 @@ export default function TagResultsPage() {
       <div className="
         h-screen flex items-center justify-center
         bg-background-light dark:bg-background-dark 
-        font-mono text-text-primary-light dark:text-primary
+        font-mono text-text-primary-light dark:text-zinc-300
       ">
         <div className="text-center">
           <div className="animate-pulse text-2xl mb-2">[加载中...]</div>
@@ -150,7 +150,7 @@ export default function TagResultsPage() {
         <ResultsLogDecoration />
 
         {/* 中央内容区 */}
-        <div className="flex-1 flex flex-col p-6 overflow-hidden">
+        <div className="flex-1 flex flex-col px-20 py-6 overflow-hidden">
           {/* 排序控制面板 */}
           <SortingMatrix
             currentSort={sortMode}
@@ -161,17 +161,17 @@ export default function TagResultsPage() {
           <div className="
             flex-1 overflow-y-auto pr-4 
             flex flex-col gap-6
-            scrollbar-thin scrollbar-track-black scrollbar-thumb-[#00FF41]
+            scrollbar-thin scrollbar-track-zinc-900 scrollbar-thumb-zinc-500
           "
           style={{
             scrollbarWidth: 'thin',
-            scrollbarColor: '#00FF41 #000',
+            scrollbarColor: '#71717a #18181b',
           }}
           >
             {filteredArticles.length === 0 ? (
               <div className="
                 flex-1 flex items-center justify-center
-                font-mono text-text-primary-light dark:text-primary
+                font-mono text-text-primary-light dark:text-zinc-300
               ">
                 <div className="text-center">
                   <div className="text-2xl mb-2">[未找到文章]</div>

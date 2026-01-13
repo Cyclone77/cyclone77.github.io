@@ -16,17 +16,17 @@ export default function ResultsStatusBar({ articleCount }: ResultsStatusBarProps
   return (
     <footer className="
       w-full p-4 
-      border-t-4 border-border-light dark:border-primary 
-      bg-surface-light dark:bg-black 
+      border-t-4 border-border-light dark:border-zinc-500 
+      bg-surface-light dark:bg-zinc-900 
       flex justify-between items-center 
       text-[10px] font-bold z-50
-      font-mono text-text-primary-light dark:text-primary
+      font-mono text-text-primary-light dark:text-zinc-400
     ">
       {/* 左侧状态信息 */}
       <div className="flex gap-4">
         <span>状态: 正常</span>
         <span>连接数: {(articleCount * 100 + 29).toLocaleString()}</span>
-        <span className="bg-black dark:bg-primary text-white dark:text-black px-1">已加密</span>
+        <span className="bg-black dark:bg-zinc-300 text-white dark:text-black px-1">已加密</span>
       </div>
 
       {/* 右侧版本和版权 */}

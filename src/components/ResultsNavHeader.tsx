@@ -27,8 +27,8 @@ export default function ResultsNavHeader({ primaryTag, articleCount }: ResultsNa
     <nav className="
       w-full z-50 p-4 
       flex justify-between items-center 
-      bg-surface-light dark:bg-black 
-      border-b-4 border-border-light dark:border-primary
+      bg-white dark:bg-zinc-900 
+      border-b-4 border-black dark:border-zinc-500
       font-mono
     ">
       {/* 左侧：返回按钮和筛选标签 */}
@@ -37,10 +37,10 @@ export default function ResultsNavHeader({ primaryTag, articleCount }: ResultsNa
           onClick={handleBack}
           className="
             group flex items-center gap-3 
-            bg-black dark:bg-primary 
+            bg-black dark:bg-zinc-300 
             text-white dark:text-black 
             px-4 py-2 font-black 
-            hover:bg-gray-800 dark:hover:bg-white 
+            hover:bg-gray-800 dark:hover:bg-zinc-400 
             transition-colors
             cursor-pointer
           "
@@ -50,17 +50,17 @@ export default function ResultsNavHeader({ primaryTag, articleCount }: ResultsNa
         </button>
         
         <div className="hidden md:block">
-          <span className="text-xs opacity-60 text-text-primary-light dark:text-primary">当前筛选:</span>
-          <span className="text-xl font-bold ml-2 text-text-primary-light dark:text-primary">#{primaryTag.toUpperCase()}</span>
+          <span className="text-xs opacity-60 text-black dark:text-zinc-400">当前筛选:</span>
+          <span className="text-xl font-bold ml-2 text-black dark:text-zinc-200">#{primaryTag.toUpperCase()}</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 text-xs text-text-primary-light dark:text-primary">
+      <div className="flex items-center gap-4 text-xs text-black dark:text-zinc-300">
         <div className="flex flex-col items-end">
           <span className="opacity-50 tracking-tighter">响应延迟: 0.002ms</span>
           <span>文章数量: {articleCount.toLocaleString()}</span>
         </div>
-        <div className="w-10 h-10 border-2 border-border-light dark:border-primary flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-black dark:border-zinc-500 flex items-center justify-center">
           <span className="text-lg">⚙</span>
         </div>
       </div>

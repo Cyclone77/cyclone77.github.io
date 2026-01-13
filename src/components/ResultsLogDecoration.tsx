@@ -20,7 +20,7 @@ export default function ResultsLogDecoration() {
       hidden lg:block w-32 p-4 
       text-[10px] opacity-40 
       select-none flex-shrink-0
-      font-mono text-text-primary-light dark:text-primary
+      font-mono text-text-primary-light dark:text-zinc-500
       whitespace-nowrap
     ">
       <div>系统报告_09</div>

@@ -26,15 +26,15 @@ export default function SortingMatrix({ currentSort, onSortChange }: SortingMatr
     <div className="
       w-full p-4 mb-8 
       flex flex-wrap items-center justify-between gap-4
-      border-4 border-border-light dark:border-primary 
-      bg-surface-light dark:bg-black
-      shadow-brutal dark:shadow-[8px_8px_0px_0px_#00FF41]
+      border-4 border-black dark:border-zinc-500 
+      bg-white dark:bg-zinc-900
+      shadow-brutal dark:shadow-[4px_4px_0px_0px_rgba(113,113,122,1)]
       font-mono
     ">
       {/* 左侧：排序选项 */}
       <div className="flex items-center gap-6">
         <div className="flex flex-col">
-          <span className="text-[8px] opacity-60 text-text-primary-light dark:text-primary">排序方式</span>
+          <span className="text-[8px] opacity-60 text-black dark:text-zinc-400">排序方式</span>
           <div className="flex gap-2 mt-1">
             {SORT_OPTIONS.map(({ mode, label }) => (
               <button
@@ -44,8 +44,8 @@ export default function SortingMatrix({ currentSort, onSortChange }: SortingMatr
                   px-3 py-1 text-xs font-bold
                   transition-colors cursor-pointer
                   ${currentSort === mode
-                    ? 'bg-black dark:bg-primary text-white dark:text-black'
-                    : 'border border-border-light dark:border-primary text-text-primary-light dark:text-primary hover:bg-gray-100 dark:hover:bg-primary/20'
+                    ? 'bg-black dark:bg-zinc-300 text-white dark:text-black'
+                    : 'border border-black dark:border-zinc-500 text-black dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
                   }
                 `}
               >
@@ -55,15 +55,15 @@ export default function SortingMatrix({ currentSort, onSortChange }: SortingMatr
           </div>
         </div>
         
-        <div className="h-10 w-px bg-border-light/30 dark:bg-primary/30 hidden md:block" />
+        <div className="h-10 w-px bg-black/30 dark:bg-zinc-600 hidden md:block" />
         
         <div className="flex flex-col">
-          <span className="text-[8px] opacity-60 text-text-primary-light dark:text-primary">数据模式</span>
-          <span className="text-xs font-bold text-text-primary-light dark:text-white">[原始数据]</span>
+          <span className="text-[8px] opacity-60 text-black dark:text-zinc-400">数据模式</span>
+          <span className="text-xs font-bold text-black dark:text-zinc-300">[原始数据]</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 text-text-primary-light dark:text-primary">
+      <div className="flex items-center gap-4 text-black dark:text-zinc-300">
         <span className="text-[10px] animate-pulse">● 信号良好</span>
         <span className="text-lg">📊</span>
       </div>
