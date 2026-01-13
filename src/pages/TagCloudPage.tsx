@@ -57,9 +57,9 @@ export default function TagCloudPage() {
     return tagName.toLowerCase().includes(searchQuery.toLowerCase());
   }, [searchQuery]);
 
-  // 标签点击处理 - 导航到首页并传递 tag 参数
+  // 标签点击处理 - 导航到标签结果页面
   const handleTagClick = useCallback((tagName: string) => {
-    navigate(`/?tag=${encodeURIComponent(tagName)}`);
+    navigate(`/tags/${encodeURIComponent(tagName)}`);
   }, [navigate]);
 
   // ESC 键清除搜索

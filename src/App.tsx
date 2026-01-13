@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import ArticleDetailPage from './pages/ArticleDetailPage';
 import TagCloudPage from './pages/TagCloudPage';
+import TagResultsPage from './pages/TagResultsPage';
 
 function App() {
     return (
@@ -15,6 +16,8 @@ function App() {
                         <Route path="article/:id" element={<ArticleDetailPage />} />
                         <Route path="tags" element={<TagCloudPage />} />
                     </Route>
+                    {/* 标签结果页面使用独立布局 */}
+                    <Route path="/tags/:tagName" element={<TagResultsPage />} />
                 </Routes>
             </HashRouter>
         </ThemeProvider>
