@@ -52,7 +52,8 @@ export default function Comments({ issueNumber, issueUrl }: CommentsProps) {
         return () => {
             clearInterval(checkLoaded);
         };
-    }, [issueNumber]); // 只依赖 issueNumber
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [issueNumber]); // 故意只依赖 issueNumber，theme 变化通过 postMessage 处理
 
     // 主题切换时更新 utterances 主题（不重新加载）
     useEffect(() => {

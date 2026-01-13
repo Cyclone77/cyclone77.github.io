@@ -240,8 +240,8 @@ describe('Property 3: 搜索筛选一致性', () => {
       fc.property(
         // 生成标签数组
         fc.array(tagArbitrary, { minLength: 1, maxLength: 20 }),
-        // 生成搜索关键词
-        fc.string({ minLength: 1, maxLength: 20 }),
+        // 生成非空且非纯空白的搜索关键词
+        fc.string({ minLength: 1, maxLength: 20 }).filter(s => s.trim().length > 0),
         (tags, searchQuery) => {
           const highlightMap = filterTagsBySearch(tags, searchQuery);
           

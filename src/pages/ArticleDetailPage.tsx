@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, ReactNode, InputHTMLAttributes } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Article } from '../data/mockData';
@@ -11,6 +11,31 @@ import MindMapOverlay from '../components/MindMapOverlay';
 import BrutalistCodeBlock from '../components/BrutalistCodeBlock';
 import RadialMenu from '../components/RadialMenu';
 import Comments from '../components/Comments';
+
+// ============ Type Definitions ============
+
+interface MarkdownComponentProps {
+    children?: ReactNode;
+    className?: string;
+}
+
+interface CodeProps extends MarkdownComponentProps {
+    inline?: boolean;
+}
+
+interface LinkProps extends MarkdownComponentProps {
+    href?: string;
+}
+
+interface ImageProps {
+    src?: string;
+    alt?: string;
+}
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+    type?: string;
+    checked?: boolean;
+}
 
 // ============ Utility Functions ============
 
@@ -39,7 +64,7 @@ function extractHeadings(content: string): Array<{ id: string; text: string; lev
 // ============ Markdown Components (GitHub Style) ============
 
 const createMarkdownComponents = (sectionCounter: { current: number }) => ({
-    code({ inline, className, children, ...props }: any) {
+    code({ inline, className, children }: CodeProps) {
         const match = /language-(\w+)/.exec(className || '');
         const code = String(children).replace(/\n$/, '');
         
@@ -54,20 +79,17 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
         
         // GitHub 风格的行内代码
         return (
-            <code
-                className="font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.5 text-[85%] rounded-md"
-                {...props}
-            >
+            <code className="font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 px-1.5 py-0.5 text-[85%] rounded-md">
                 {children}
             </code>
         );
     },
-    h1: ({ children }: any) => (
+    h1: ({ children }: MarkdownComponentProps) => (
         <h1 className="text-[2em] font-semibold mt-6 mb-4 pb-[0.3em] border-b border-zinc-300 dark:border-zinc-700 text-black dark:text-white leading-[1.25]">
             {children}
         </h1>
     ),
-    h2: ({ children }: any) => {
+    h2: ({ children }: MarkdownComponentProps) => {
         sectionCounter.current++;
         const sectionNum = String(sectionCounter.current).padStart(2, '0');
         const id = `section-${sectionNum}`;
@@ -81,58 +103,58 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
             </h2>
         );
     },
-    h3: ({ children }: any) => (
+    h3: ({ children }: MarkdownComponentProps) => (
         <h3 className="text-[1.25em] font-semibold mt-6 mb-4 text-black dark:text-white leading-[1.25]">{children}</h3>
     ),
-    h4: ({ children }: any) => (
+    h4: ({ children }: MarkdownComponentProps) => (
         <h4 className="text-[1em] font-semibold mt-6 mb-4 text-black dark:text-white leading-[1.25]">{children}</h4>
     ),
-    h5: ({ children }: any) => (
+    h5: ({ children }: MarkdownComponentProps) => (
         <h5 className="text-[0.875em] font-semibold mt-6 mb-4 text-black dark:text-white leading-[1.25]">{children}</h5>
     ),
-    h6: ({ children }: any) => (
+    h6: ({ children }: MarkdownComponentProps) => (
         <h6 className="text-[0.85em] font-semibold mt-6 mb-4 text-zinc-600 dark:text-zinc-400 leading-[1.25]">{children}</h6>
     ),
-    p: ({ children }: any) => (
+    p: ({ children }: MarkdownComponentProps) => (
         <p className="text-base text-zinc-800 dark:text-zinc-200 mb-4 mt-0 leading-[1.6]">{children}</p>
     ),
-    blockquote: ({ children }: any) => (
+    blockquote: ({ children }: MarkdownComponentProps) => (
         <blockquote className="border-l-[0.25em] border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 px-4 my-4 [&>p]:mb-0 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
             {children}
         </blockquote>
     ),
-    ul: ({ children }: any) => (
+    ul: ({ children }: MarkdownComponentProps) => (
         <ul className="list-disc pl-[2em] mb-4 mt-0 text-zinc-800 dark:text-zinc-200">{children}</ul>
     ),
-    ol: ({ children }: any) => (
+    ol: ({ children }: MarkdownComponentProps) => (
         <ol className="list-decimal pl-[2em] mb-4 mt-0 text-zinc-800 dark:text-zinc-200">{children}</ol>
     ),
-    li: ({ children }: any) => (
+    li: ({ children }: MarkdownComponentProps) => (
         <li className="text-base leading-[1.6] text-zinc-800 dark:text-zinc-200 mt-1">{children}</li>
     ),
-    table: ({ children }: any) => (
+    table: ({ children }: MarkdownComponentProps) => (
         <div className="overflow-x-auto my-4">
             <table className="border-collapse border-spacing-0 w-full text-sm">
                 {children}
             </table>
         </div>
     ),
-    thead: ({ children }: any) => (
+    thead: ({ children }: MarkdownComponentProps) => (
         <thead className="text-zinc-800 dark:text-zinc-200">{children}</thead>
     ),
-    tbody: ({ children }: any) => (
+    tbody: ({ children }: MarkdownComponentProps) => (
         <tbody className="text-zinc-800 dark:text-zinc-200">{children}</tbody>
     ),
-    tr: ({ children }: any) => (
+    tr: ({ children }: MarkdownComponentProps) => (
         <tr className="border-t border-zinc-300 dark:border-zinc-700 even:bg-zinc-50 dark:even:bg-zinc-800/50">{children}</tr>
     ),
-    th: ({ children }: any) => (
+    th: ({ children }: MarkdownComponentProps) => (
         <th className="px-3 py-2 text-left font-semibold border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800">{children}</th>
     ),
-    td: ({ children }: any) => (
+    td: ({ children }: MarkdownComponentProps) => (
         <td className="px-3 py-2 border border-zinc-300 dark:border-zinc-700">{children}</td>
     ),
-    a: ({ href, children }: any) => (
+    a: ({ href, children }: LinkProps) => (
         <a 
             href={href} 
             className="text-[#0969da] dark:text-[#58a6ff] no-underline hover:underline"
@@ -145,7 +167,7 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
     hr: () => (
         <hr className="my-6 h-[0.25em] p-0 bg-zinc-300 dark:bg-zinc-700 border-0" />
     ),
-    img: ({ src, alt }: any) => (
+    img: ({ src, alt }: ImageProps) => (
         <img 
             src={src} 
             alt={alt || ''} 
@@ -153,17 +175,17 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
             style={{ maxWidth: '100%' }}
         />
     ),
-    strong: ({ children }: any) => (
+    strong: ({ children }: MarkdownComponentProps) => (
         <strong className="font-semibold text-black dark:text-white">{children}</strong>
     ),
-    em: ({ children }: any) => (
+    em: ({ children }: MarkdownComponentProps) => (
         <em className="italic">{children}</em>
     ),
-    del: ({ children }: any) => (
+    del: ({ children }: MarkdownComponentProps) => (
         <del className="line-through">{children}</del>
     ),
     // GitHub 风格的任务列表
-    input: ({ type, checked, ...props }: any) => {
+    input: ({ type, checked, ...props }: InputProps) => {
         if (type === 'checkbox') {
             return (
                 <input 
