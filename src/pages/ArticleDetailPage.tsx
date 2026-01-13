@@ -183,7 +183,7 @@ const createMarkdownComponents = (sectionCounter: { current: number }) => ({
 
 function LoadingState() {
     return (
-        <div className="h-screen flex items-center justify-center bg-background-light">
+        <div className="h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
             <div className="font-mono text-primary animate-pulse">加载中...</div>
         </div>
     );
@@ -191,8 +191,8 @@ function LoadingState() {
 
 function NotFoundState() {
     return (
-        <div className="h-screen flex flex-col items-center justify-center bg-background-light">
-            <h2 className="font-mono text-2xl font-bold mb-4">错误_404: 文章未找到</h2>
+        <div className="h-screen flex flex-col items-center justify-center bg-background-light dark:bg-background-dark">
+            <h2 className="font-mono text-2xl font-bold mb-4 text-black dark:text-white">错误_404: 文章未找到</h2>
             <Link to="/" className="font-mono text-primary hover:underline">
                 返回首页
             </Link>
@@ -244,7 +244,7 @@ function BackButton() {
     return (
         <Link
             to="/"
-            className="fixed top-[120px] right-10 z-[60] w-10 h-10 font-mono bg-primary text-black font-extrabold text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            className="fixed top-[120px] right-10 z-[60] w-10 h-10 font-mono bg-primary text-black font-extrabold text-sm border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:active:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all flex items-center justify-center"
             title="返回首页"
         >
             <span className="material-symbols-outlined font-black text-lg">arrow_back</span>
@@ -256,7 +256,7 @@ function MindMapToggle({ onClick }: { onClick: () => void }) {
     return (
         <button
             onClick={onClick}
-            className="fixed top-[120px] right-[90px] z-[60] w-10 h-10 cursor-pointer hidden lg:flex font-mono bg-white text-black font-extrabold text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all items-center justify-center group"
+            className="fixed top-[120px] right-[90px] z-[60] w-10 h-10 cursor-pointer hidden lg:flex font-mono bg-white dark:bg-zinc-800 text-black dark:text-white font-extrabold text-sm border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:active:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all items-center justify-center group"
             title="思维导图"
         >
             <span className="material-symbols-outlined font-black text-lg group-hover:text-blue-500 transition-colors">

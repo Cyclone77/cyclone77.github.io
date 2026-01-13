@@ -55,6 +55,7 @@ export default function RadialMenu({ items, position = 'bottom-right' }: RadialM
                             w-12 h-12 rounded-full
                             bg-white dark:bg-zinc-800
                             border-2 border-black dark:border-white
+                            text-black dark:text-white
                             flex items-center justify-center
                             shadow-brutal dark:shadow-brutal-white
                             hover:bg-primary hover:text-black

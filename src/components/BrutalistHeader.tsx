@@ -36,7 +36,7 @@ export default function BrutalistHeader() {
                     </Link>
                 </div>
 
-                {/* Navigation and Actions */}
+                {/* Actions */}
                 <div className="flex items-center gap-4 md:gap-6">
                     {/* Theme Toggle */}
                     <button
@@ -48,28 +48,6 @@ export default function BrutalistHeader() {
                             {theme === 'light' ? 'dark_mode' : 'light_mode'}
                         </span>
                     </button>
-
-                    {/* Desktop Navigation Links */}
-                    <div className="hidden md:flex items-center gap-8 font-bold text-sm">
-                        <Link
-                            to="/"
-                            className="hover:underline decoration-primary decoration-4 underline-offset-4"
-                        >
-                            文章归档
-                        </Link>
-                        <a
-                            href="#"
-                            className="hover:underline decoration-primary decoration-4 underline-offset-4"
-                        >
-                            技术专题
-                        </a>
-                        <a
-                            href="#"
-                            className="hover:underline decoration-primary decoration-4 underline-offset-4"
-                        >
-                            关于我
-                        </a>
-                    </div>
 
                     {/* Search Icon */}
                     <button
