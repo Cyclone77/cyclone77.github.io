@@ -34,6 +34,14 @@ export default function BrutalistHeader() {
                             Cyclone77
                         </span>
                     </Link>
+                    {/* 标签云导航链接 */}
+                    <Link
+                        to="/tags"
+                        className="flex items-center gap-1 text-sm font-mono hover:text-primary transition-colors"
+                    >
+                        <span className="material-symbols-outlined !text-[18px]">tag</span>
+                        <span className="hidden sm:inline">标签云</span>
+                    </Link>
                 </div>
 
                 {/* Actions */}

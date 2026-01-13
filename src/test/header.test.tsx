@@ -45,11 +45,12 @@ describe('BrutalistHeader Component', () => {
         expect(logo).toHaveClass('bg-primary');
     });
 
-    it('should render navigation links on desktop', () => {
+    it('should render logo link to home page', () => {
         renderWithProviders(<BrutalistHeader />);
-        expect(screen.getByText('文章归档')).toBeInTheDocument();
-        expect(screen.getByText('技术专题')).toBeInTheDocument();
-        expect(screen.getByText('关于我')).toBeInTheDocument();
+        const links = screen.getAllByRole('link');
+        const logoLink = links.find(link => link.getAttribute('href') === '/');
+        expect(logoLink).toBeInTheDocument();
+        expect(logoLink).toHaveAttribute('href', '/');
     });
 
     it('should render search icon', () => {

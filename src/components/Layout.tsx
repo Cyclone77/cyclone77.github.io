@@ -8,9 +8,10 @@ export default function Layout() {
     const location = useLocation();
     const isHomePage = location.pathname === '/';
     const isArticlePage = location.pathname.startsWith('/article/');
+    const isTagCloudPage = location.pathname === '/tags';
 
-    // Homepage and article pages use full-screen layouts without footer
-    const useFullScreenLayout = isHomePage || isArticlePage;
+    // Homepage, article pages, and tag cloud page use full-screen layouts without footer
+    const useFullScreenLayout = isHomePage || isArticlePage || isTagCloudPage;
 
     return (
         <div className={`${useFullScreenLayout ? 'h-screen overflow-hidden' : 'min-h-screen'} flex flex-col bg-background-light dark:bg-background-dark text-black dark:text-white transition-colors duration-500`}>

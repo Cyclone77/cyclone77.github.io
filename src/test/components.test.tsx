@@ -5,6 +5,8 @@ import BrutalistButton from '../components/BrutalistButton';
 import RadialMenu from '../components/RadialMenu';
 import SubscribeWidget from '../components/SubscribeWidget';
 import NoiseOverlay from '../components/NoiseOverlay';
+import TagBubble from '../components/TagBubble';
+import { Tag, TagPosition } from '../utils/tagCloud';
 
 /**
  * Feature: ui-redesign-brutalist
@@ -133,5 +135,94 @@ describe('NoiseOverlay Component', () => {
         const { container } = render(<NoiseOverlay />);
         const turbulence = container.querySelector('feTurbulence');
         expect(turbulence).toBeInTheDocument();
+    });
+});
+
+
+/**
+ * TagBubble 组件单元测试
+ * Validates: Requirements 2.3, 2.6
+ */
+describe('TagBubble Component', () => {
+    // 测试用的标签数据
+    const mockTag: Tag = {
+        name: 'React',
+        count: 10,
+        color: '#00FF41',
+        description: 'React 相关文章',
+        type: 'category',
+    };
+
+    // 测试用的位置数据
+    const mockPosition: TagPosition = {
+        x: 50,
+        y: 50,
+        fontSize: 'text-xl',
+        zIndex: 15,
+    };
+
+    it('应该渲染正确的标签名称格式（#前缀）', () => {
+        const handleClick = vi.fn();
+        render(
+            <TagBubble
+                tag={mockTag}
+                position={mockPosition}
+                isHighlighted={true}
+                onClick={handleClick}
+            />
+        );
+        
+        // 验证标签名称显示为 #React 格式
+        expect(screen.getByText('#React')).toBeInTheDocument();
+    });
+
+    it('应该在点击时触发 onClick 回调并传递标签名称', () => {
+        const handleClick = vi.fn();
+        render(
+            <TagBubble
+                tag={mockTag}
+                position={mockPosition}
+                isHighlighted={true}
+                onClick={handleClick}
+            />
+        );
+        
+        const button = screen.getByTestId('tag-bubble');
+        fireEvent.click(button);
+        
+        // 验证点击回调被调用，并传递正确的标签名称
+        expect(handleClick).toHaveBeenCalledTimes(1);
+        expect(handleClick).toHaveBeenCalledWith('React');
+    });
+
+    it('应该渲染为可点击的按钮元素', () => {
+        const handleClick = vi.fn();
+        render(
+            <TagBubble
+                tag={mockTag}
+                position={mockPosition}
+                isHighlighted={true}
+                onClick={handleClick}
+            />
+        );
+        
+        const button = screen.getByRole('button');
+        expect(button).toBeInTheDocument();
+        expect(button).toHaveClass('cursor-pointer');
+    });
+
+    it('应该包含正确的无障碍标签', () => {
+        const handleClick = vi.fn();
+        render(
+            <TagBubble
+                tag={mockTag}
+                position={mockPosition}
+                isHighlighted={true}
+                onClick={handleClick}
+            />
+        );
+        
+        const button = screen.getByRole('button');
+        expect(button).toHaveAttribute('aria-label', '标签: React, 10 篇文章');
     });
 });

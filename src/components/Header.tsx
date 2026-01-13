@@ -39,6 +39,13 @@ export default function Header() {
                                     Cyclone77
                                 </h2>
                             </Link>
+                            <Link
+                                to="/tags"
+                                className="hidden sm:flex items-center gap-1 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-matrix-green transition-colors font-mono text-sm"
+                            >
+                                <span className="material-symbols-outlined !text-[18px]">tag</span>
+                                <span>标签云</span>
+                            </Link>
                         </div>
 
                         <div className="flex flex-1 justify-end gap-4 sm:gap-8">
