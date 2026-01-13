@@ -78,9 +78,50 @@ function seededRandom(seed: number): number {
 }
 
 /**
+ * 估算标签的大致尺寸（基于字体大小和标签名长度）
+ * 返回宽度和高度的百分比估算值
+ */
+function estimateTagSize(tagName: string, fontSize: string): { width: number; height: number } {
+  // 基于字体大小的基础尺寸（百分比）
+  const baseSizes: Record<string, { charWidth: number; height: number }> = {
+    'text-4xl': { charWidth: 2.5, height: 5 },
+    'text-3xl': { charWidth: 2, height: 4 },
+    'text-2xl': { charWidth: 1.6, height: 3.5 },
+    'text-xl': { charWidth: 1.3, height: 3 },
+    'text-base': { charWidth: 1, height: 2.5 },
+    'text-sm': { charWidth: 0.8, height: 2 },
+  };
+  
+  const size = baseSizes[fontSize] || baseSizes['text-sm'];
+  // 标签名长度 + # 前缀 + padding
+  const width = (tagName.length + 1) * size.charWidth + 3;
+  const height = size.height + 1;
+  
+  return { width, height };
+}
+
+/**
+ * 检查两个标签是否重叠
+ */
+function checkOverlap(
+  pos1: { x: number; y: number; width: number; height: number },
+  pos2: { x: number; y: number; width: number; height: number },
+  padding: number = 2
+): boolean {
+  const halfWidth1 = pos1.width / 2 + padding;
+  const halfHeight1 = pos1.height / 2 + padding;
+  const halfWidth2 = pos2.width / 2 + padding;
+  const halfHeight2 = pos2.height / 2 + padding;
+  
+  return Math.abs(pos1.x - pos2.x) < (halfWidth1 + halfWidth2) &&
+         Math.abs(pos1.y - pos2.y) < (halfHeight1 + halfHeight2);
+}
+
+/**
  * 生成标签位置数组
  * 使用确定性随机（基于标签名的哈希），避免每次渲染位置变化
  * 预留中央区域给搜索框，避免重叠
+ * 添加碰撞检测，避免标签之间重叠
  * 
  * @param tags - 标签数组
  * @returns 标签位置数组
@@ -91,48 +132,82 @@ export function generateTagPositions(tags: Tag[]): TagPosition[] {
   const maxCount = Math.max(...tags.map(t => t.count), 1);
   
   // 定义安全区域边界（百分比）
-  const margin = 10; // 边缘留白
+  const margin = 8; // 边缘留白
   const centerX = 50;
   const centerY = 50;
-  const centerExclusionRadius = 15; // 中央搜索框区域半径
+  const centerExclusionRadius = 18; // 中央搜索框区域半径
   
   const positions: TagPosition[] = [];
+  const placedTags: Array<{ x: number; y: number; width: number; height: number }> = [];
   
-  tags.forEach((tag) => {
+  // 按 count 降序排序，优先放置大标签
+  const sortedTags = [...tags].sort((a, b) => b.count - a.count);
+  
+  sortedTags.forEach((tag) => {
     const hash = hashString(tag.name);
+    const fontSize = calculateFontSize(tag.count, maxCount);
+    const tagSize = estimateTagSize(tag.name, fontSize);
     
-    // 使用多个种子生成不同的随机值
-    let x = margin + seededRandom(hash) * (100 - 2 * margin);
-    let y = margin + seededRandom(hash + 1) * (100 - 2 * margin);
+    let bestX = 0;
+    let bestY = 0;
+    let found = false;
     
-    // 检查是否在中央排除区域内
-    const distFromCenter = Math.sqrt(
-      Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
-    );
-    
-    // 如果在中央区域，将位置推到外围
-    if (distFromCenter < centerExclusionRadius) {
-      const angle = Math.atan2(y - centerY, x - centerX);
-      x = centerX + Math.cos(angle) * (centerExclusionRadius + 5);
-      y = centerY + Math.sin(angle) * (centerExclusionRadius + 5);
+    // 尝试多个位置，找到不重叠的位置
+    for (let attempt = 0; attempt < 50 && !found; attempt++) {
+      // 使用不同的种子生成候选位置
+      let x = margin + seededRandom(hash + attempt * 100) * (100 - 2 * margin);
+      let y = margin + seededRandom(hash + attempt * 100 + 1) * (100 - 2 * margin);
+      
+      // 检查是否在中央排除区域内
+      const distFromCenter = Math.sqrt(
+        Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+      );
+      
+      // 如果在中央区域，将位置推到外围
+      if (distFromCenter < centerExclusionRadius) {
+        const angle = Math.atan2(y - centerY, x - centerX);
+        x = centerX + Math.cos(angle) * (centerExclusionRadius + 5);
+        y = centerY + Math.sin(angle) * (centerExclusionRadius + 5);
+      }
       
       // 确保在边界内
-      x = Math.max(margin, Math.min(100 - margin, x));
-      y = Math.max(margin, Math.min(100 - margin, y));
+      x = Math.max(margin + tagSize.width / 2, Math.min(100 - margin - tagSize.width / 2, x));
+      y = Math.max(margin + tagSize.height / 2, Math.min(100 - margin - tagSize.height / 2, y));
+      
+      // 检查与已放置标签的碰撞
+      const currentTag = { x, y, width: tagSize.width, height: tagSize.height };
+      const hasCollision = placedTags.some(placed => checkOverlap(currentTag, placed));
+      
+      if (!hasCollision) {
+        bestX = x;
+        bestY = y;
+        found = true;
+      } else if (attempt === 49) {
+        // 最后一次尝试，使用当前位置（可能有轻微重叠）
+        bestX = x;
+        bestY = y;
+      }
     }
-    
-    const fontSize = calculateFontSize(tag.count, maxCount);
     
     // zIndex 基于 count，count 越大层级越高
     const zIndex = 10 + Math.floor((tag.count / maxCount) * 10);
     
+    placedTags.push({ x: bestX, y: bestY, width: tagSize.width, height: tagSize.height });
+    
     positions.push({
-      x,
-      y,
+      x: bestX,
+      y: bestY,
       fontSize,
       zIndex,
     });
   });
   
-  return positions;
+  // 恢复原始顺序
+  const originalOrderPositions: TagPosition[] = [];
+  tags.forEach((tag) => {
+    const sortedIndex = sortedTags.findIndex(t => t.name === tag.name);
+    originalOrderPositions.push(positions[sortedIndex]);
+  });
+  
+  return originalOrderPositions;
 }
