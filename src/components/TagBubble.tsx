@@ -68,6 +68,7 @@ export default function TagBubble({ tag, position, isHighlighted, onClick }: Tag
       type="button"
       onClick={handleClick}
       className={`
+        group
         absolute font-mono font-bold
         cursor-pointer select-none
         transition-all duration-200 ease-out
@@ -120,6 +121,42 @@ export default function TagBubble({ tag, position, isHighlighted, onClick }: Tag
       aria-label={`标签: ${tag.name}, ${tag.count} 篇文章`}
     >
       {formatTagName(tag.name)}
+      {/* 文章数量角标 */}
+      <span
+        className="
+          absolute
+          -top-1 -right-1
+          sm:-top-1.5 sm:-right-1.5
+          md:-top-2 md:-right-2
+          
+          min-w-[14px] h-[14px]
+          sm:min-w-[16px] sm:h-[16px]
+          md:min-w-[20px] md:h-[20px]
+          
+          flex items-center justify-center
+          
+          text-[8px] sm:text-[9px] md:text-[10px]
+          font-bold font-mono
+          
+          rounded-full
+          
+          /* 浅色模式 */
+          bg-[#0A5F2C] text-white
+          border border-white
+          
+          /* 深色模式 */
+          dark:bg-[#00FF41] dark:text-black
+          dark:border-black
+          
+          /* 悬停时反转颜色 */
+          group-hover:bg-white group-hover:text-[#0A5F2C]
+          dark:group-hover:bg-black dark:group-hover:text-[#00FF41]
+          
+          transition-colors duration-200
+        "
+      >
+        {tag.count}
+      </span>
     </button>
   );
 }
