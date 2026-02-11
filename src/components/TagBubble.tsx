@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { formatTagName, TagPosition, Tag } from '../utils/tagCloud';
+import { throttle } from '../utils/throttle';
 
 interface TagBubbleProps {
   tag: Tag;
@@ -37,23 +38,24 @@ const fontSizeMap: Record<string, { mobile: string; tablet: string; desktop: str
 export default function TagBubble({ tag, position, isHighlighted, onClick }: TagBubbleProps) {
   const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
-  // 监听屏幕宽度变化，区分移动端（<640px）、平板端（640-768px）和桌面端（>=768px）
+  // 使用 useMemo 缓存屏幕尺寸判断逻辑，避免不必要的重新计算
+  const getScreenSize = useMemo(() => () => {
+    const width = window.innerWidth;
+    if (width < 640) return 'mobile';
+    if (width < 768) return 'tablet';
+    return 'desktop';
+  }, []);
+
+  // 监听屏幕宽度变化，使用节流优化性能
   useEffect(() => {
-    const updateScreenSize = () => {
-      const width = window.innerWidth;
-      if (width < 640) {
-        setScreenSize('mobile');
-      } else if (width < 768) {
-        setScreenSize('tablet');
-      } else {
-        setScreenSize('desktop');
-      }
-    };
+    const updateScreenSize = throttle(() => {
+      setScreenSize(getScreenSize());
+    }, 100);
 
     updateScreenSize();
     window.addEventListener('resize', updateScreenSize);
     return () => window.removeEventListener('resize', updateScreenSize);
-  }, []);
+  }, [getScreenSize]);
 
   const handleClick = () => {
     onClick(tag.name);

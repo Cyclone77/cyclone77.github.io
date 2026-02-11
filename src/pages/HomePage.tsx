@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useSearchParams } from 'react-router';
 import { Article } from '../data/mockData';
 import { fetchArticles } from '../services/api';
@@ -13,7 +13,7 @@ import ArticleCard from '../components/ArticleCard';
  * - Tag filtering via URL parameter
  * Requirements: 3.1, 4.4
  */
-export default function HomePage() {
+function HomePage() {
     const [searchParams] = useSearchParams();
     const tagFilter = searchParams.get('tag');
     
@@ -84,3 +84,10 @@ export default function HomePage() {
         </main>
     );
 }
+
+// 使用 React.memo 防止不必要的重渲染
+// 只有当 props 或内部 state 变化时才重新渲染
+export default memo(HomePage, (prevProps, nextProps) => {
+    // HomePage 没有 props，所以总是返回 true 避免因父组件重渲染而重渲染
+    return true;
+});

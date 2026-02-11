@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { fetchTags } from '../services/api';
 import { Tag, TagPosition, generateTagPositions } from '../utils/tagCloud';
@@ -26,7 +26,6 @@ export default function TagCloudPage() {
   
   // 状态管理
   const [tags, setTags] = useState<Tag[]>([]);
-  const [tagPositions, setTagPositions] = useState<TagPosition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,7 +37,6 @@ export default function TagCloudPage() {
         setLoading(true);
         const response = await fetchTags();
         setTags(response.tags);
-        setTagPositions(generateTagPositions(response.tags));
         setError(null);
       } catch (err) {
         setError('无法加载标签数据');
@@ -47,9 +45,14 @@ export default function TagCloudPage() {
         setLoading(false);
       }
     }
-    
+
     loadTags();
   }, []);
+
+  // 使用 useMemo 缓存标签位置计算，避免每次渲染都重新计算
+  const tagPositions = useMemo(() => {
+    return generateTagPositions(tags);
+  }, [tags]);
 
   // 判断标签是否匹配搜索关键词（不区分大小写）
   const isTagHighlighted = useCallback((tagName: string): boolean => {
